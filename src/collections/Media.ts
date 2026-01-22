@@ -3,14 +3,14 @@ import type { CollectionConfig } from 'payload'
 export const Media: CollectionConfig = {
   slug: 'media',
   admin: {
-    group: 'Content',
+    group: 'Asset',
   },
   access: {
     read: () => true,
   },
   upload: {
-    staticDir: 'media',
-    mimeTypes: ['image/*', 'audio/*', 'video/*', 'application/octet-stream'],
+    staticDir: '../media',
+    mimeTypes: ['image/*', 'audio/*', 'video/*'],
     imageSizes: [
       {
         name: 'thumbnail',
@@ -36,7 +36,6 @@ export const Media: CollectionConfig = {
     {
       name: 'alt',
       type: 'text',
-      required: true,
     },
     {
       name: 'caption',

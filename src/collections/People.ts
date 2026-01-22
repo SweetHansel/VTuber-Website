@@ -1,10 +1,10 @@
 import type { CollectionConfig } from 'payload'
 
-export const Artists: CollectionConfig = {
-  slug: 'artists',
+export const People: CollectionConfig = {
+  slug: 'people',
   admin: {
     useAsTitle: 'name',
-    group: 'Content',
+    group: 'Ungrouped',
   },
   access: {
     read: () => true,
@@ -40,6 +40,15 @@ export const Artists: CollectionConfig = {
       type: 'textarea',
     },
     {
+      name: 'channels',
+      type: 'relationship',
+      relationTo: 'channels',
+      hasMany: true,
+      admin: {
+        description: 'Associated channels',
+      },
+    },
+    {
       name: 'socialLinks',
       type: 'array',
       fields: [
@@ -63,6 +72,12 @@ export const Artists: CollectionConfig = {
           required: true,
         },
       ],
+    },
+    {
+      name: 'tags',
+      type: 'relationship',
+      relationTo: 'tags',
+      hasMany: true,
     },
   ],
 }

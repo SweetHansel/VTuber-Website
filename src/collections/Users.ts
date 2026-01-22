@@ -27,5 +27,13 @@ export const Users: CollectionConfig = {
       name: 'displayName',
       type: 'text',
     },
+    {
+      name: 'person',
+      type: 'relationship',
+      relationTo: 'people',
+      admin: {
+        description: 'Link to associated person profile (optional)',
+      },
+    },
   ],
 }

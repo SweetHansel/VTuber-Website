@@ -3,7 +3,7 @@ import type { GlobalConfig } from 'payload'
 export const LivestreamSettings: GlobalConfig = {
   slug: 'livestream-settings',
   admin: {
-    group: 'Livestream',
+    group: 'Site',
   },
   access: {
     read: () => true,

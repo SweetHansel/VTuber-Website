@@ -73,11 +73,56 @@ export const Videos: CollectionConfig = {
       },
     },
     {
-      name: 'relatedTrack',
+      name: 'relatedTracks',
       type: 'relationship',
       relationTo: 'music-tracks',
+      hasMany: true,
       admin: {
-        description: 'Link to associated music track (for MVs)',
+        description: 'Associated music tracks (for MVs, mashups)',
+      },
+    },
+    {
+      name: 'credits',
+      type: 'array',
+      admin: {
+        description: 'Credits for this video',
+      },
+      fields: [
+        {
+          name: 'role',
+          type: 'select',
+          options: [
+            { label: 'Director', value: 'director' },
+            { label: 'Editor', value: 'editor' },
+            { label: 'Animator', value: 'animator' },
+            { label: 'Illustrator', value: 'illustrator' },
+            { label: 'Cameraman', value: 'cameraman' },
+            { label: 'Motion Graphics', value: 'motion-graphics' },
+            { label: 'Other', value: 'other' },
+          ],
+          required: true,
+        },
+        {
+          name: 'person',
+          type: 'relationship',
+          relationTo: 'people',
+        },
+        {
+          name: 'name',
+          type: 'text',
+          admin: {
+            description: 'Manual name if not in people collection',
+          },
+        },
+      ],
+    },
+    {
+      name: 'featuredPeople',
+      type: 'relationship',
+      relationTo: 'people',
+      hasMany: true,
+      admin: {
+        description: 'People appearing in this video',
       },
     },
     {

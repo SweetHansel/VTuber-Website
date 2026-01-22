@@ -1,11 +1,11 @@
 import type { CollectionConfig } from 'payload'
 
-export const TrackedChannels: CollectionConfig = {
-  slug: 'tracked-channels',
+export const Channels: CollectionConfig = {
+  slug: 'channels',
   admin: {
     useAsTitle: 'name',
-    group: 'Livestream',
-    defaultColumns: ['name', 'platform', 'isOwner', 'enabled'],
+    group: 'Ungrouped',
+    defaultColumns: ['name', 'platform', 'trackLivestream'],
   },
   access: {
     read: () => true,
@@ -25,6 +25,7 @@ export const TrackedChannels: CollectionConfig = {
       options: [
         { label: 'Twitch', value: 'twitch' },
         { label: 'YouTube', value: 'youtube' },
+        { label: 'TikTok', value: 'tiktok' },
       ],
       required: true,
     },
@@ -53,11 +54,11 @@ export const TrackedChannels: CollectionConfig = {
       },
     },
     {
-      name: 'isOwner',
+      name: 'trackLivestream',
       type: 'checkbox',
-      defaultValue: false,
+      defaultValue: true,
       admin: {
-        description: 'Is this the main VTuber channel?',
+        description: 'Enable livestream tracking for this channel',
       },
     },
     {
@@ -66,14 +67,6 @@ export const TrackedChannels: CollectionConfig = {
       defaultValue: 1,
       admin: {
         description: 'Alert priority (higher = more prominent)',
-      },
-    },
-    {
-      name: 'enabled',
-      type: 'checkbox',
-      defaultValue: true,
-      admin: {
-        description: 'Enable livestream tracking for this channel',
       },
     },
   ],

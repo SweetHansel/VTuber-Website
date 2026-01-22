@@ -4,8 +4,8 @@ export const Artworks: CollectionConfig = {
   slug: 'artworks',
   admin: {
     useAsTitle: 'title',
-    group: 'Gallery',
-    defaultColumns: ['title', 'artworkType', 'artist', 'createdAt'],
+    group: 'Content',
+    defaultColumns: ['title', 'artworkType', 'createdAt'],
   },
   access: {
     read: () => true,
@@ -37,18 +37,46 @@ export const Artworks: CollectionConfig = {
       required: true,
     },
     {
-      name: 'artist',
-      type: 'relationship',
-      relationTo: 'artists',
+      name: 'credits',
+      type: 'array',
       admin: {
-        description: 'Credit the artist',
+        description: 'Credits for this artwork',
       },
+      fields: [
+        {
+          name: 'role',
+          type: 'select',
+          options: [
+            { label: 'Artist', value: 'artist' },
+            { label: 'Illustrator', value: 'illustrator' },
+            { label: 'Colorist', value: 'colorist' },
+            { label: 'Line Art', value: 'line-art' },
+            { label: 'Background', value: 'background' },
+            { label: 'Commissioner', value: 'commissioner' },
+          ],
+          required: true,
+        },
+        {
+          name: 'person',
+          type: 'relationship',
+          relationTo: 'people',
+        },
+        {
+          name: 'name',
+          type: 'text',
+          admin: {
+            description: 'Manual name if not in people collection',
+          },
+        },
+      ],
     },
     {
-      name: 'artistName',
-      type: 'text',
+      name: 'featuredPeople',
+      type: 'relationship',
+      relationTo: 'people',
+      hasMany: true,
       admin: {
-        description: 'Manual artist name if not in artists collection',
+        description: 'People depicted in this artwork',
       },
     },
     {

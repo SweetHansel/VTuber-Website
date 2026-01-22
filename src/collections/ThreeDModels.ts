@@ -4,7 +4,7 @@ export const ThreeDModels: CollectionConfig = {
   slug: '3d-models',
   admin: {
     useAsTitle: 'name',
-    group: 'VTuber',
+    group: 'Model',
     defaultColumns: ['name', 'modelType', 'createdAt'],
   },
   access: {
@@ -110,13 +110,19 @@ export const ThreeDModels: CollectionConfig = {
         {
           name: 'artist',
           type: 'relationship',
-          relationTo: 'artists',
+          relationTo: 'people',
         },
         {
           name: 'name',
           type: 'text',
         },
       ],
+    },
+    {
+      name: 'tags',
+      type: 'relationship',
+      relationTo: 'tags',
+      hasMany: true,
     },
     {
       name: 'debutDate',

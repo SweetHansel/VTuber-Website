@@ -2,9 +2,6 @@ import type { GlobalConfig } from 'payload'
 
 export const Profile: GlobalConfig = {
   slug: 'profile',
-  admin: {
-    group: 'Site',
-  },
   access: {
     read: () => true,
   },
@@ -34,10 +31,6 @@ export const Profile: GlobalConfig = {
       relationTo: 'media',
     },
     {
-      name: 'bio',
-      type: 'richText',
-    },
-    {
       name: 'shortBio',
       type: 'textarea',
       admin: {
@@ -52,10 +45,6 @@ export const Profile: GlobalConfig = {
       },
     },
     {
-      name: 'debutDate',
-      type: 'date',
-    },
-    {
       name: 'height',
       type: 'text',
       admin: {
@@ -63,48 +52,40 @@ export const Profile: GlobalConfig = {
       },
     },
     {
-      name: 'personalInfo',
-      type: 'group',
+      name: 'traits',
+      type: 'array',
+      admin: {
+        description: 'Dynamic personality traits (e.g., Hobbies, Likes, Dislikes, Food, Games)',
+      },
       fields: [
         {
-          name: 'hobbies',
-          type: 'array',
-          fields: [
-            {
-              name: 'hobby',
-              type: 'text',
-              required: true,
-            },
-          ],
+          name: 'category',
+          type: 'text',
+          required: true,
+          admin: {
+            description: 'Category name (e.g., "Hobbies", "Likes", "Dislikes")',
+          },
         },
         {
-          name: 'likes',
-          type: 'array',
-          fields: [
-            {
-              name: 'item',
-              type: 'text',
-              required: true,
-            },
-          ],
+          name: 'icon',
+          type: 'text',
+          admin: {
+            description: 'Lucide icon name',
+          },
         },
         {
-          name: 'dislikes',
-          type: 'array',
-          fields: [
-            {
-              name: 'item',
-              type: 'text',
-              required: true,
-            },
-          ],
+          name: 'color',
+          type: 'text',
+          admin: {
+            description: 'Hex color for UI',
+          },
         },
         {
-          name: 'personality',
+          name: 'items',
           type: 'array',
           fields: [
             {
-              name: 'trait',
+              name: 'value',
               type: 'text',
               required: true,
             },

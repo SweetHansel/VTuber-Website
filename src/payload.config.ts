@@ -1,7 +1,6 @@
 import { buildConfig } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -9,57 +8,57 @@ import { fileURLToPath } from 'url'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Tags } from './collections/Tags'
-import { Categories } from './collections/Categories'
-import { Artists } from './collections/Artists'
-import { BlogPosts } from './collections/BlogPosts'
 import { Announcements } from './collections/Announcements'
 import { Artworks } from './collections/Artworks'
-import { MusicTracks } from './collections/MusicTracks'
-import { MusicAlbums } from './collections/MusicAlbums'
+import { BlogPosts } from './collections/BlogPosts'
 import { Videos } from './collections/Videos'
+import { MusicTracks } from './collections/MusicTracks'
 import { Live2DModels } from './collections/Live2DModels'
 import { ThreeDModels } from './collections/ThreeDModels'
-import { TrackedChannels } from './collections/TrackedChannels'
+import { People } from './collections/People'
+import { Albums } from './collections/Albums'
+import { Channels } from './collections/Channels'
 
 // Globals
 import { Profile } from './globals/Profile'
 import { SiteSettings } from './globals/SiteSettings'
-import { Navigation } from './globals/Navigation'
+import { Links } from './globals/Links'
+import { Themes } from './globals/Themes'
 import { LivestreamSettings } from './globals/LivestreamSettings'
-import { LandingPage } from './globals/LandingPage'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
+  serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'https://localhost:3000',
   admin: {
     user: Users.slug,
     importMap: {
       baseDir: path.resolve(dirname),
+      importMapFile: path.resolve(dirname, 'app', '(payload)', 'admin','[[...segments]]','importMap.ts'),
     },
   },
   collections: [
-    Users,
-    Media,
     Tags,
-    Categories,
-    Artists,
-    BlogPosts,
     Announcements,
     Artworks,
-    MusicTracks,
-    MusicAlbums,
+    BlogPosts,
     Videos,
+    MusicTracks,
     Live2DModels,
     ThreeDModels,
-    TrackedChannels,
+    People,
+    Albums,
+    Channels,
+    Users,
+    Media,
   ],
   globals: [
     Profile,
     SiteSettings,
-    Navigation,
+    Links,
+    Themes,
     LivestreamSettings,
-    LandingPage,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || 'your-secret-key-change-in-production',
@@ -68,19 +67,7 @@ export default buildConfig({
   },
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URI || '',
+      connectionString: process.env.DATABASE_URI,
     },
   }),
-  plugins: [
-    ...(process.env.BLOB_READ_WRITE_TOKEN
-      ? [
-          vercelBlobStorage({
-            collections: {
-              media: true,
-            },
-            token: process.env.BLOB_READ_WRITE_TOKEN,
-          }),
-        ]
-      : []),
-  ],
 })

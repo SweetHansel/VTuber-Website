@@ -1,10 +1,10 @@
 import type { CollectionConfig } from 'payload'
 
-export const MusicAlbums: CollectionConfig = {
-  slug: 'music-albums',
+export const Albums: CollectionConfig = {
+  slug: 'albums',
   admin: {
     useAsTitle: 'title',
-    group: 'Music',
+    group: 'Ungrouped',
     defaultColumns: ['title', 'albumType', 'releaseDate'],
   },
   access: {
@@ -40,10 +40,6 @@ export const MusicAlbums: CollectionConfig = {
       hasMany: true,
     },
     {
-      name: 'description',
-      type: 'richText',
-    },
-    {
       name: 'releaseDate',
       type: 'date',
     },
@@ -69,6 +65,12 @@ export const MusicAlbums: CollectionConfig = {
           required: true,
         },
       ],
+    },
+    {
+      name: 'tags',
+      type: 'relationship',
+      relationTo: 'tags',
+      hasMany: true,
     },
   ],
 }

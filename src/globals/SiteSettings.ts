@@ -37,31 +37,6 @@ export const SiteSettings: GlobalConfig = {
       },
     },
     {
-      name: 'colors',
-      type: 'group',
-      fields: [
-        {
-          name: 'primary',
-          type: 'text',
-          admin: {
-            description: 'Primary brand color (hex)',
-          },
-        },
-        {
-          name: 'secondary',
-          type: 'text',
-        },
-        {
-          name: 'accent',
-          type: 'text',
-        },
-        {
-          name: 'background',
-          type: 'text',
-        },
-      ],
-    },
-    {
       name: 'analytics',
       type: 'group',
       fields: [

@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --experimental-https",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "generate:importmap": "payload generate:importmap"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.72.0",
@@ -19,12 +20,14 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.28.1",
     "lucide-react": "^0.562.0",
-    "next": "16.1.4",
+    "graphql": "^16.12.0",
+    "next": "^15.1.6",
     "payload": "^3.72.0",
     "pixi-live2d-display": "^0.4.0",
     "pixi.js": "^8.15.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "sharp": "^0.34.5",
     "tailwind-merge": "^3.4.0",
     "three": "^0.182.0",
     "zustand": "^5.0.10"
@@ -35,8 +38,8 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/three": "^0.182.0",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.4",
+    "eslint": "^9.18.0",
+    "eslint-config-next": "^15.1.6",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

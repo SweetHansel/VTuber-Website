@@ -5,7 +5,7 @@ export const BlogPosts: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     group: 'Content',
-    defaultColumns: ['title', 'status', 'category', 'publishedAt'],
+    defaultColumns: ['title', 'status', 'publishedAt'],
   },
   access: {
     read: () => true,
@@ -41,11 +41,6 @@ export const BlogPosts: CollectionConfig = {
       name: 'content',
       type: 'richText',
       required: true,
-    },
-    {
-      name: 'category',
-      type: 'relationship',
-      relationTo: 'categories',
     },
     {
       name: 'tags',

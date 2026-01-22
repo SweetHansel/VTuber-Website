@@ -4,7 +4,7 @@ export const MusicTracks: CollectionConfig = {
   slug: 'music-tracks',
   admin: {
     useAsTitle: 'title',
-    group: 'Music',
+    group: 'Content',
     defaultColumns: ['title', 'trackType', 'releaseDate'],
   },
   access: {
@@ -53,7 +53,6 @@ export const MusicTracks: CollectionConfig = {
       type: 'text',
       admin: {
         description: 'Original artist (for covers)',
-        condition: (data) => data.trackType === 'cover',
       },
     },
     {
@@ -82,13 +81,13 @@ export const MusicTracks: CollectionConfig = {
         {
           name: 'artist',
           type: 'relationship',
-          relationTo: 'artists',
+          relationTo: 'people',
         },
         {
           name: 'name',
           type: 'text',
           admin: {
-            description: 'Manual name if not in artists collection',
+            description: 'Manual name if not in people collection',
           },
         },
       ],
@@ -121,6 +120,14 @@ export const MusicTracks: CollectionConfig = {
     {
       name: 'releaseDate',
       type: 'date',
+    },
+    {
+      name: 'album',
+      type: 'relationship',
+      relationTo: 'albums',
+      admin: {
+        description: 'Album this track belongs to',
+      },
     },
     {
       name: 'tags',

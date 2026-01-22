@@ -4,7 +4,7 @@ export const Live2DModels: CollectionConfig = {
   slug: 'live2d-models',
   admin: {
     useAsTitle: 'name',
-    group: 'VTuber',
+    group: 'Model',
     defaultColumns: ['name', 'version', 'createdAt'],
   },
   access: {
@@ -78,13 +78,13 @@ export const Live2DModels: CollectionConfig = {
         {
           name: 'artist',
           type: 'relationship',
-          relationTo: 'artists',
+          relationTo: 'people',
         },
         {
           name: 'name',
           type: 'text',
           admin: {
-            description: 'Manual name if not in artists collection',
+            description: 'Manual name if not in people collection',
           },
         },
       ],
@@ -100,6 +100,12 @@ export const Live2DModels: CollectionConfig = {
       admin: {
         description: 'Currently in use',
       },
+    },
+    {
+      name: 'tags',
+      type: 'relationship',
+      relationTo: 'tags',
+      hasMany: true,
     },
     {
       name: 'expressions',

@@ -14,6 +14,9 @@ export const Themes: GlobalConfig = {
       type: 'text',
       admin: {
         description: 'Primary brand color (hex)',
+        components: {
+          Field: '/components/admin/ColorPicker#ColorPicker',
+        },
       },
     },
     {
@@ -21,6 +24,9 @@ export const Themes: GlobalConfig = {
       type: 'text',
       admin: {
         description: 'Secondary color (hex)',
+        components: {
+          Field: '/components/admin/ColorPicker#ColorPicker',
+        },
       },
     },
     {
@@ -28,6 +34,9 @@ export const Themes: GlobalConfig = {
       type: 'text',
       admin: {
         description: 'Accent color (hex)',
+        components: {
+          Field: '/components/admin/ColorPicker#ColorPicker',
+        },
       },
     },
     {
@@ -53,39 +62,6 @@ export const Themes: GlobalConfig = {
       admin: {
         description: 'Media displayed on the music page',
       },
-    },
-    {
-      name: 'animationSettings',
-      type: 'group',
-      fields: [
-        {
-          name: 'type',
-          type: 'select',
-          options: [
-            { label: 'Float', value: 'float' },
-            { label: 'Bounce', value: 'bounce' },
-            { label: 'Sway', value: 'sway' },
-            { label: 'None', value: 'none' },
-          ],
-          defaultValue: 'float',
-        },
-        {
-          name: 'duration',
-          type: 'number',
-          defaultValue: 4,
-          admin: {
-            description: 'Animation duration in seconds',
-          },
-        },
-        {
-          name: 'amplitude',
-          type: 'number',
-          defaultValue: 8,
-          admin: {
-            description: 'Movement amount in pixels',
-          },
-        },
-      ],
     },
   ],
 }

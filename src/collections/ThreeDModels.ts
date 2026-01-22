@@ -34,11 +34,14 @@ export const ThreeDModels: CollectionConfig = {
       required: true,
     },
     {
-      name: 'previewImages',
+      name: 'showcase',
       type: 'array',
+      admin: {
+        description: 'Images, GIFs, or videos showcasing the model',
+      },
       fields: [
         {
-          name: 'image',
+          name: 'media',
           type: 'upload',
           relationTo: 'media',
           required: true,
@@ -47,6 +50,14 @@ export const ThreeDModels: CollectionConfig = {
           name: 'caption',
           type: 'text',
         },
+        {
+          name: 'isFeatured',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: {
+            description: 'Use as main showcase image',
+          },
+        },
       ],
     },
     {
@@ -54,8 +65,30 @@ export const ThreeDModels: CollectionConfig = {
       type: 'upload',
       relationTo: 'media',
       admin: {
-        description: 'VRM/3D model file',
+        description: 'VRM or GLB/GLTF file for 3D viewer (optional - uploading exposes the file)',
       },
+    },
+    {
+      name: 'refSheets',
+      type: 'array',
+      admin: {
+        description: 'Reference sheets (character design, turnarounds, color refs)',
+      },
+      fields: [
+        {
+          name: 'media',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+        {
+          name: 'label',
+          type: 'text',
+          admin: {
+            description: 'e.g., "Front view", "Color palette", "Expressions"',
+          },
+        },
+      ],
     },
     {
       name: 'description',

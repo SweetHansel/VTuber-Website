@@ -33,11 +33,44 @@ export const Live2DModels: CollectionConfig = {
       required: true,
     },
     {
-      name: 'previewImages',
+      name: 'modelFile',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description: 'Live2D model file (optional - uploading exposes the file)',
+      },
+    },
+    {
+      name: 'refSheets',
       type: 'array',
+      admin: {
+        description: 'Reference sheets (character design, turnarounds, color refs)',
+      },
       fields: [
         {
-          name: 'image',
+          name: 'media',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+        {
+          name: 'label',
+          type: 'text',
+          admin: {
+            description: 'e.g., "Front view", "Color palette", "Expressions"',
+          },
+        },
+      ],
+    },
+    {
+      name: 'showcase',
+      type: 'array',
+      admin: {
+        description: 'Images, GIFs, or videos showcasing the model',
+      },
+      fields: [
+        {
+          name: 'media',
           type: 'upload',
           relationTo: 'media',
           required: true,
@@ -46,15 +79,15 @@ export const Live2DModels: CollectionConfig = {
           name: 'caption',
           type: 'text',
         },
+        {
+          name: 'isFeatured',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: {
+            description: 'Use as main showcase image',
+          },
+        },
       ],
-    },
-    {
-      name: 'modelFile',
-      type: 'upload',
-      relationTo: 'media',
-      admin: {
-        description: 'Live2D model JSON file (model3.json)',
-      },
     },
     {
       name: 'description',

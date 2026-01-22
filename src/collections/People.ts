@@ -4,7 +4,7 @@ export const People: CollectionConfig = {
   slug: 'people',
   admin: {
     useAsTitle: 'name',
-    group: 'Ungrouped',
+    group: 'Collections',
   },
   access: {
     read: () => true,
@@ -20,14 +20,17 @@ export const People: CollectionConfig = {
       type: 'select',
       hasMany: true,
       options: [
+        { label: 'Content Creator', value: 'content-creator' },
+        { label: 'Manager', value: 'manager' },
+        { label: 'Moderator', value: 'moderator' },
+        { label: 'Other', value: 'other' },
         { label: 'Illustrator', value: 'illustrator' },
-        { label: 'Live2D Rigger', value: 'live2d-rigger' },
+        { label: 'Rigger', value: 'rigger' },
         { label: '3D Modeler', value: '3d-modeler' },
         { label: 'Music Producer', value: 'music-producer' },
         { label: 'Mixer', value: 'mixer' },
         { label: 'Video Editor', value: 'video-editor' },
         { label: 'Animator', value: 'animator' },
-        { label: 'Other', value: 'other' },
       ],
     },
     {

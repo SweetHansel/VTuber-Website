@@ -1,6 +1,7 @@
 import { buildConfig } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import sharp from 'sharp'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -70,4 +71,5 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI,
     },
   }),
+  sharp,
 })

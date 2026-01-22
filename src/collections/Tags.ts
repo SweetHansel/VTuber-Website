@@ -4,6 +4,7 @@ export const Tags: CollectionConfig = {
   slug: 'tags',
   admin: {
     useAsTitle: 'name',
+    group: 'Collections',
   },
   access: {
     read: () => true,
@@ -28,6 +29,9 @@ export const Tags: CollectionConfig = {
       type: 'text',
       admin: {
         description: 'Hex color code (e.g., #FF5733)',
+        components: {
+          Field: '/components/admin/ColorPicker#ColorPicker',
+        },
       },
     },
   ],

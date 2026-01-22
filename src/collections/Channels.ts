@@ -4,7 +4,7 @@ export const Channels: CollectionConfig = {
   slug: 'channels',
   admin: {
     useAsTitle: 'name',
-    group: 'Ungrouped',
+    group: 'Collections',
     defaultColumns: ['name', 'platform', 'trackLivestream'],
   },
   access: {

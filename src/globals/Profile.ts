@@ -2,6 +2,9 @@ import type { GlobalConfig } from 'payload'
 
 export const Profile: GlobalConfig = {
   slug: 'profile',
+  admin: {
+    group: 'Content',
+  },
   access: {
     read: () => true,
   },
@@ -78,6 +81,9 @@ export const Profile: GlobalConfig = {
           type: 'text',
           admin: {
             description: 'Hex color for UI',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
           },
         },
         {

@@ -4,7 +4,7 @@ export const Albums: CollectionConfig = {
   slug: 'albums',
   admin: {
     useAsTitle: 'title',
-    group: 'Ungrouped',
+    group: 'Collections',
     defaultColumns: ['title', 'albumType', 'releaseDate'],
   },
   access: {

@@ -1,10 +1,15 @@
 'use client'
 
-import { motion, MotionValue } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useParallax } from '@/animations'
 import { cn } from '@/lib/utils'
 import { useAnimationStore } from '@/stores/animationStore'
-import { ReactNode } from 'react'
+import { ReactNode, forwardRef } from 'react'
+
+export interface AspectRatio {
+  width: number
+  height: number
+}
 
 interface Container2_5DProps {
   children: ReactNode
@@ -14,57 +19,78 @@ interface Container2_5DProps {
   rotateYRange?: [number, number]
   perspective?: number
   disabled?: boolean
+  aspectRatio?: AspectRatio
+  isFocused?: boolean
+  onClick?: () => void
 }
 
-export function Container2_5D({
-  children,
-  className,
-  depth = 0,
-  rotateXRange = [-5, 5],
-  rotateYRange = [-5, 5],
-  perspective = 1000,
-  disabled = false,
-}: Container2_5DProps) {
-  const { parallaxEnabled } = useAnimationStore()
-  const { containerRef, values, style } = useParallax({
-    rotateXRange,
-    rotateYRange,
-    perspective,
-  })
+export const Container2_5D = forwardRef<HTMLDivElement, Container2_5DProps>(
+  function Container2_5D(
+    {
+      children,
+      className,
+      depth = 0,
+      rotateXRange = [-5, 5],
+      rotateYRange = [-5, 5],
+      perspective = 1000,
+      disabled = false,
+      aspectRatio,
+      isFocused = true,
+      onClick,
+    },
+    ref
+  ) {
+    const { parallaxEnabled } = useAnimationStore()
+    const { containerRef, values, style } = useParallax({
+      rotateXRange,
+      rotateYRange,
+      perspective,
+    })
 
-  const isEnabled = parallaxEnabled && !disabled
+    const isEnabled = parallaxEnabled && !disabled
 
-  return (
-    <div
-      ref={containerRef as React.RefObject<HTMLDivElement>}
-      className={cn('relative', className)}
-      style={isEnabled ? style : undefined}
-    >
-      <motion.div
-        style={
-          isEnabled
-            ? {
-                rotateX: values.rotateX,
-                rotateY: values.rotateY,
-                transformStyle: 'preserve-3d',
-              }
-            : undefined
-        }
-        className="h-full w-full"
+    const aspectRatioStyle = aspectRatio
+      ? { aspectRatio: `${aspectRatio.width} / ${aspectRatio.height}` }
+      : undefined
+
+    return (
+      <div
+        ref={ref || (containerRef as React.RefObject<HTMLDivElement>)}
+        className={cn(
+          'relative transition-all duration-500',
+          !isFocused && 'scale-95 opacity-70',
+          onClick && 'cursor-pointer',
+          className
+        )}
+        style={{ ...aspectRatioStyle, ...(isEnabled ? style : undefined) }}
+        onClick={onClick}
       >
-        <div
-          style={{
-            transform: depth !== 0 ? `translateZ(${depth}px)` : undefined,
-            transformStyle: 'preserve-3d',
-          }}
+        <motion.div
+          style={
+            isEnabled
+              ? {
+                  rotateX: values.rotateX,
+                  rotateY: values.rotateY,
+                  transformStyle: 'preserve-3d',
+                }
+              : undefined
+          }
           className="h-full w-full"
         >
-          {children}
-        </div>
-      </motion.div>
-    </div>
-  )
-}
+          <div
+            style={{
+              transform: depth !== 0 ? `translateZ(${depth}px)` : undefined,
+              transformStyle: 'preserve-3d',
+            }}
+            className="h-full w-full"
+          >
+            {children}
+          </div>
+        </motion.div>
+      </div>
+    )
+  }
+)
 
 // Layer component for adding depth to children within a 2.5D container
 interface LayerProps {

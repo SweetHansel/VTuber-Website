@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export type Section = 'about' | 'artworks' | 'discography' | 'vtuber-models'
+export type Section = 'toc' | 'about' | 'artworks' | 'discography' | 'vtuber-models'
 
 interface NavigationState {
   currentSection: Section
@@ -14,10 +14,10 @@ interface NavigationState {
   setScrollDirection: (direction: 'up' | 'down' | null) => void
 }
 
-const sections: Section[] = ['about', 'artworks', 'discography', 'vtuber-models']
+const sections: Section[] = ['toc', 'about', 'artworks', 'discography', 'vtuber-models']
 
 export const useNavigationStore = create<NavigationState>((set, get) => ({
-  currentSection: 'about',
+  currentSection: 'toc',
   previousSection: null,
   isTransitioning: false,
   scrollDirection: null,

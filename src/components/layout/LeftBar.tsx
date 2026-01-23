@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   useNavigationStore,
   sections,
@@ -31,7 +29,6 @@ const sectionLabels: Record<Section, string> = {
 
 export function LeftBar() {
   const { currentSection, setSection, isTransitioning } = useNavigationStore();
-  const [isVisible, setIsVisible] = useState(false);
 
   return (
     <div className="fixed left-0 top-1/2 z-50 -translate-y-1/2 flex flex-col gap-2 rounded-r-2xl bg-black/40 p-3 backdrop-blur-lg">
@@ -43,7 +40,6 @@ export function LeftBar() {
           <button
             key={section}
             onClick={() => setSection(section)}
-            disabled={isTransitioning}
             className={cn(
               "group relative flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-300",
               isActive
@@ -53,15 +49,6 @@ export function LeftBar() {
             aria-label={sectionLabels[section]}
           >
             <Icon className="h-5 w-5" />
-
-            {/* Active indicator */}
-            {isActive && (
-              <motion.div
-                layoutId="activeSection"
-                className="absolute -left-1.5 h-8 w-1 rounded-full bg-white"
-                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-              />
-            )}
 
             {/* Tooltip */}
             <span className="absolute left-full ml-3 whitespace-nowrap rounded-md bg-black/80 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">

@@ -1,53 +1,34 @@
 import { create } from 'zustand'
 
-export type FocusTarget = 'left' | 'right' | null
-
-export interface AspectRatioConfig {
-  container: { width: number; height: number } // e.g., 8:4
-  frame: { width: number; height: number } // e.g., 4:3
-  anchor: { x: 'left' | 'center' | 'right'; y: 'top' | 'center' | 'bottom' }
-}
+export type FocusState = 'default' | 'left' | 'bottom-right'
 
 interface LayoutState {
-  // Focus management
-  focusTarget: FocusTarget
+  focusState: FocusState
   isTransitioning: boolean
 
-  // Aspect ratio configs
-  leftConfig: AspectRatioConfig
-  rightConfig: AspectRatioConfig
-
   // Actions
-  setFocus: (target: FocusTarget) => void
+  setFocus: (state: FocusState) => void
   setTransitioning: (isTransitioning: boolean) => void
-  setLeftConfig: (config: Partial<AspectRatioConfig>) => void
-  setRightConfig: (config: Partial<AspectRatioConfig>) => void
+  goBack: () => void
 }
 
-const defaultLeftConfig: AspectRatioConfig = {
-  container: { width: 16, height: 9 },
-  frame: { width: 4, height: 3 },
-  anchor: { x: 'center', y: 'center' },
-}
-
-const defaultRightConfig: AspectRatioConfig = {
-  container: { width: 16, height: 9 },
-  frame: { width: 4, height: 3 },
-  anchor: { x: 'center', y: 'center' },
-}
+// Layout percentages based on focus state
+export const layoutConfig = {
+  default: { A: 30, B: 60 },      // A=left width%, B=bottom-right height%
+  left: { A: 100, B: 60 },
+  'bottom-right': { A: 0, B: 100 },
+} as const
 
 export const useLayoutStore = create<LayoutState>((set, get) => ({
-  focusTarget: 'right', // Default focus on main content
+  focusState: 'default',
   isTransitioning: false,
-  leftConfig: defaultLeftConfig,
-  rightConfig: defaultRightConfig,
 
-  setFocus: (target) => {
-    const { focusTarget, isTransitioning } = get()
-    if (target === focusTarget || isTransitioning) return
+  setFocus: (state) => {
+    const { focusState, isTransitioning } = get()
+    if (state === focusState || isTransitioning) return
 
     set({
-      focusTarget: target,
+      focusState: state,
       isTransitioning: true,
     })
 
@@ -59,13 +40,17 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
 
   setTransitioning: (isTransitioning) => set({ isTransitioning }),
 
-  setLeftConfig: (config) =>
-    set((state) => ({
-      leftConfig: { ...state.leftConfig, ...config },
-    })),
+  goBack: () => {
+    const { focusState, isTransitioning } = get()
+    if (focusState === 'default' || isTransitioning) return
 
-  setRightConfig: (config) =>
-    set((state) => ({
-      rightConfig: { ...state.rightConfig, ...config },
-    })),
+    set({
+      focusState: 'default',
+      isTransitioning: true,
+    })
+
+    setTimeout(() => {
+      set({ isTransitioning: false })
+    }, 500)
+  },
 }))

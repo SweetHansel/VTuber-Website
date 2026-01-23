@@ -26,15 +26,23 @@ export function AspectLock({
 }: AspectLockProps) {
   const parentRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const lastDimensionsRef = useRef({ width: 0, height: 0 });
 
   useEffect(() => {
     if (!off) {
       const parent = parentRef.current?.parentElement;
       if (!parent) return;
 
+      let debounceTimer: NodeJS.Timeout | null = null;
+
       const updateDimensions = () => {
         const parentWidth = parent.clientWidth;
         const parentHeight = parent.clientHeight;
+
+        // Don't resize if parent is collapsed or too small
+        const minSize = 100;
+        if (parentWidth < minSize || parentHeight < minSize) return;
+
         const parentRatio = parentWidth / parentHeight;
 
         let width: number;
@@ -50,19 +58,36 @@ export function AspectLock({
           height = width / aspectRatio;
         }
 
-        setDimensions({ width, height });
+        // Only update if dimensions actually changed
+        if (
+          Math.abs(width - lastDimensionsRef.current.width) > 1 ||
+          Math.abs(height - lastDimensionsRef.current.height) > 1
+        ) {
+          console.log("width:", width);
+          console.log("height:", height);
+          lastDimensionsRef.current = { width, height };
+          setDimensions({ width, height });
+        }
       };
 
-      // Initial calculation
-      updateDimensions();
+      const debouncedUpdate = () => {
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(updateDimensions, 100);
+      };
+
+      // Initial calculation (debounced)
+      debouncedUpdate();
 
       // Use ResizeObserver for parent size changes
-      const resizeObserver = new ResizeObserver(updateDimensions);
+      const resizeObserver = new ResizeObserver(debouncedUpdate);
       resizeObserver.observe(parent);
 
-      return () => resizeObserver.disconnect();
+      return () => {
+        if (debounceTimer) clearTimeout(debounceTimer);
+        resizeObserver.disconnect();
+      };
     }
-  }, [aspectRatio]);
+  }, [aspectRatio, off]);
 
   // Calculate position styles based on anchor
   const positionStyles: React.CSSProperties = {
@@ -107,12 +132,12 @@ export function AspectLock({
         className={cn("pointer-events-auto", className)}
         style={{
           ...positionStyles,
-          width: off ? '100%': dimensions.width,
-          height:  off ? '100%': dimensions.height,
+          width: off ? "100%" : dimensions.width,
+          height: off ? "100%" : dimensions.height,
         }}
         animate={{
-          width:  off ? '100%': dimensions.width,
-          height:  off ? '100%': dimensions.height,
+          width: off ? "100%" : dimensions.width,
+          height: off ? "100%" : dimensions.height,
         }}
         transition={{ duration: 0.5, ease: "easeInOut" }}
       >

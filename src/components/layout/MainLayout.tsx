@@ -50,18 +50,18 @@ export function MainLayout({ children }: MainLayoutProps) {
     <div className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Main Layout Container */}
       <AspectLock aspectRatio={4 / 3} off={focusState!="default"} anchorX="center" anchorY="center">
-        <main className="flex h-full w-full gap-4 p-4">
+        <main className="bg-red-600 flex h-full w-full gap-4 p-4">
           {/* Left Section */}
           <motion.div
-            className="relative h-full overflow-hidden rounded-2xl"
+            className="relative h-full overflow-visible"
             animate={{
               width: `${leftWidth}%`,
               opacity: leftWidth === 0 ? 0 : 1,
             }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             <AspectLock aspectRatio={3 / 4} anchorX="right" anchorY="center">
-              <div className="rounded-2xl  bg-black/30 backdrop-blur-lg h-full w-full">
+              <div className="rounded-2xl bg-black/30 backdrop-blur-lg h-full w-full overflow-hidden">
                 {/* Click Overlay - only visible in default state */}
                 <AnimatePresence>
                   {focusState === "default" && (
@@ -91,7 +91,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           >
             {/* Top Right */}
             <motion.div
-              className="relative w-full overflow-hidden rounded-2xl"
+              className="relative w-full overflow-visible"
               animate={{
                 height: `${topRightHeight}%`,
                 opacity: topRightHeight === 0 ? 0 : 1,
@@ -120,7 +120,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
             {/* Bottom Right - Main Content */}
             <motion.div
-              className="relative w-full overflow-hidden rounded-2xl"
+              className="relative w-full overflow-visible"
               animate={{
                 height: `${bottomRightHeight}%`,
                 opacity: rightWidth === 0 ? 0 : 1,
@@ -133,7 +133,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                   initial={false}
                   onExitComplete={() => setTransitioning(false)}
                 >
-                  <div className="h-full w-full rounded-2xl  bg-black/30 backdrop-blur-lg">
+                  <div className="h-full w-full rounded-2xl  bg-black/30 backdrop-blur-lg overflow-hidden">
                     <AnimatePresence>
                       {/* Bottom-right overlay */}
                       {focusState === "default" && (

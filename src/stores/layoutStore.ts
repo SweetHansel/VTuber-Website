@@ -14,8 +14,8 @@ interface LayoutState {
 
 // Layout percentages based on focus state
 export const layoutConfig = {
-  default: { A: 30, B: 60 },      // A=left width%, B=bottom-right height%
-  left: { A: 100, B: 60 },
+  default: { A: 40, B: 50 },      // A=left width%, B=bottom-right height%
+  left: { A: 100, B: 50 },
   'bottom-right': { A: 0, B: 100 },
 } as const
 

@@ -20,8 +20,6 @@ export interface CursorEffect {
 
 interface InteractiveMediaProps {
   className?: string
-  width?: number
-  height?: number
   depth?: number
 
   // Media states
@@ -48,8 +46,6 @@ interface CursorSpawn {
 
 export function InteractiveMedia({
   className,
-  width = 200,
-  height = 200,
   depth = -20,
   defaultMedia,
   hoverMedia,
@@ -148,8 +144,6 @@ export function InteractiveMedia({
       className={cn('relative select-none', className)}
       style={{
         transform: `translateZ(${depth}px)`,
-        width,
-        height,
       }}
       onMouseEnter={handleHoverStart}
       onMouseLeave={handleHoverEnd}
@@ -171,9 +165,8 @@ export function InteractiveMedia({
           <Image
             src={currentMedia.src}
             alt={currentMedia.alt || 'Interactive media'}
-            width={width}
-            height={height}
-            className="h-full w-full object-contain"
+            fill
+            className="object-contain"
             unoptimized // Allow GIFs to animate
           />
         </motion.div>

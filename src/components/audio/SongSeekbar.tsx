@@ -88,7 +88,7 @@ export function SongSeekbar() {
           className="group h-1 cursor-pointer bg-white/10"
         >
           <motion.div
-            className="h-full bg-purple-500 transition-all group-hover:h-1.5"
+            className="h-full bg-blue-500 transition-all group-hover:h-1.5"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
@@ -186,7 +186,7 @@ export function SongSeekbar() {
               step="0.01"
               value={volume}
               onChange={(e) => setVolume(parseFloat(e.target.value))}
-              className="h-1 w-20 appearance-none rounded-full bg-white/20 accent-purple-500"
+              className="h-1 w-20 appearance-none rounded-full bg-white/20 accent-blue-500"
             />
           </div>
 
@@ -195,7 +195,7 @@ export function SongSeekbar() {
             onClick={() => setShowQueue(!showQueue)}
             className={cn(
               'p-2 transition-colors',
-              showQueue ? 'text-purple-400' : 'text-white/60 hover:text-white'
+              showQueue ? 'text-blue-400' : 'text-white/60 hover:text-white'
             )}
           >
             <ListMusic className="h-5 w-5" />
@@ -252,7 +252,7 @@ export function SongSeekbar() {
                               {[1, 2, 3].map((bar) => (
                                 <motion.span
                                   key={bar}
-                                  className="w-0.5 rounded-full bg-purple-500"
+                                  className="w-0.5 rounded-full bg-blue-500"
                                   animate={{ height: [2, 8, 2] }}
                                   transition={{
                                     duration: 0.5,

@@ -105,7 +105,7 @@ export function VTuberModelsPage() {
             onClick={() => setSelectedModel(model.id)}
             className={cn(
               'group cursor-pointer overflow-hidden rounded-xl bg-white/5 transition-colors hover:bg-white/10',
-              selectedModel === model.id && 'ring-2 ring-purple-500'
+              selectedModel === model.id && 'ring-2 ring-blue-500'
             )}
           >
             {/* Thumbnail */}

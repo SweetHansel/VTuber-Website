@@ -22,7 +22,7 @@ export interface ContentCardProps {
 }
 
 const typeColors: Record<string, string> = {
-  stream: 'bg-purple-500/20 text-purple-300',
+  stream: 'bg-blue-500/20 text-blue-300',
   event: 'bg-blue-500/20 text-blue-300',
   release: 'bg-green-500/20 text-green-300',
   collab: 'bg-pink-500/20 text-pink-300',

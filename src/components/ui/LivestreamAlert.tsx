@@ -51,7 +51,7 @@ export function LivestreamAlert() {
           )}
         >
           {/* Background with gradient */}
-          <div className="relative bg-gradient-to-br from-red-600 to-purple-600 p-0.5">
+          <div className="relative bg-gradient-to-br from-red-600 to-blue-600 p-0.5">
             <div className="relative bg-slate-900 p-3">
               {/* Close button */}
               <button

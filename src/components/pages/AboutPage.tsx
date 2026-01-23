@@ -43,7 +43,7 @@ export function AboutPage() {
       >
         <motion.div
           variants={staggerItemVariants}
-          className="relative aspect-[3/4] w-48 overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 lg:w-full"
+          className="relative aspect-[3/4] w-48 overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 lg:w-full"
         >
           <Image
             src={profileData.avatar}
@@ -72,7 +72,7 @@ export function AboutPage() {
         <motion.div variants={staggerItemVariants}>
           <h1 className="text-3xl font-bold text-white">{profileData.name}</h1>
           <p className="text-lg text-white/60">{profileData.japaneseName}</p>
-          <p className="mt-1 text-purple-300">{profileData.tagline}</p>
+          <p className="mt-1 text-blue-300">{profileData.tagline}</p>
         </motion.div>
 
         {/* Bio */}
@@ -104,7 +104,7 @@ export function AboutPage() {
             icon={Gamepad}
             title="Hobbies"
             items={profileData.hobbies}
-            color="purple"
+            color="blue"
           />
 
           {/* Likes */}
@@ -157,11 +157,11 @@ interface InfoSectionProps {
   icon: LucideIcon
   title: string
   items: string[]
-  color: 'purple' | 'pink' | 'red' | 'blue'
+  color: 'blue' | 'pink' | 'red' | 'blue'
 }
 
 const colorMap = {
-  purple: 'text-purple-400',
+  blue: 'text-blue-400',
   pink: 'text-pink-400',
   red: 'text-red-400',
   blue: 'text-blue-400',

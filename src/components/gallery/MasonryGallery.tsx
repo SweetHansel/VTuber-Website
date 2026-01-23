@@ -136,9 +136,9 @@ export function MasonryGallery({ filter = 'all' }: MasonryGalleryProps) {
                   className={cn(
                     'rounded-full px-2 py-0.5 text-xs font-medium capitalize',
                     artwork.artworkType === 'official'
-                      ? 'bg-purple-500/80 text-white'
+                      ? 'bg-blue-500/80 text-white'
                       : artwork.artworkType === 'fanart'
-                      ? 'bg-pink-500/80 text-white'
+                      ? 'bg-cyan-500/80 text-white'
                       : 'bg-gray-500/80 text-white'
                   )}
                 >

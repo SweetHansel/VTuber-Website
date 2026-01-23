@@ -129,7 +129,7 @@ export function AspectLock({
   return (
     <div ref={parentRef} className="pointer-events-none absolute inset-0">
       <motion.div
-        className={cn("pointer-events-auto", className)}
+        className={cn("pointer-events-auto perspective-1000", className)}
         style={{
           ...positionStyles,
           width: off ? "100%" : dimensions.width,

@@ -75,7 +75,7 @@ export function SongCard({
       whileTap={{ scale: 0.98 }}
       className={cn(
         'group cursor-pointer overflow-hidden rounded-xl bg-white/5 transition-colors hover:bg-white/10',
-        isCurrentTrack && 'ring-2 ring-purple-500'
+        isCurrentTrack && 'ring-2 ring-blue-500'
       )}
     >
       {/* Cover Art */}
@@ -116,7 +116,7 @@ export function SongCard({
                 ? 'bg-green-500/80 text-white'
                 : trackType === 'cover'
                 ? 'bg-blue-500/80 text-white'
-                : 'bg-purple-500/80 text-white'
+                : 'bg-blue-500/80 text-white'
             )}
           >
             {trackType}
@@ -130,7 +130,7 @@ export function SongCard({
               {[1, 2, 3].map((bar) => (
                 <motion.span
                   key={bar}
-                  className="w-1 rounded-full bg-purple-500"
+                  className="w-1 rounded-full bg-blue-500"
                   animate={{
                     height: [4, 12, 4],
                   }}

@@ -1,4 +1,3 @@
-export { PageContainer } from './PageContainer'
 export { AboutPage } from './AboutPage'
 export { ArtworksPage } from './ArtworksPage'
 export { DiscographyPage } from './DiscographyPage'

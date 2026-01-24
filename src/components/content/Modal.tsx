@@ -80,7 +80,7 @@ interface ModalContentProps {
   data: Record<string, unknown> | null
 }
 
-function ModalContent({ type, id, data }: ModalContentProps) {
+function ModalContent({ type, data }: ModalContentProps) {
   if (!data) {
     return (
       <div className="py-8 text-center text-white/60">Loading...</div>

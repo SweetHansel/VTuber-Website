@@ -1,7 +1,7 @@
 import type { Variants, Transition } from 'framer-motion'
 
 // Base transition for idle animations
-const idleTransition = (duration: number, delay = 0): Transition => ({
+const _idleTransition = (duration: number, delay = 0): Transition => ({
   duration,
   delay,
   repeat: Infinity,

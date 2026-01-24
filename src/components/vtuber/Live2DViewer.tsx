@@ -60,6 +60,7 @@ export function Live2DViewer({
         model.x = width / 2
         model.y = height / 2
 
+        // @ts-expect-error - Live2DModel type mismatch with PIXI Container
         app.stage.addChild(model)
 
         // Enable mouse tracking

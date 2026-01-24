@@ -1,8 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
 import { useLayoutStore, layoutConfig } from "@/stores/layoutStore";
 import { useNavigationStore, type Section } from "@/stores/navigationStore";
 import { SongSeekbar } from "@/components/audio/SongSeekbar";
@@ -22,7 +20,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface MainLayoutProps {
-  children?: ReactNode;
+  children?: React.ReactNode;
 }
 
 // Page mapping for bottom-right container
@@ -34,8 +32,8 @@ const pages: Record<Section, React.ComponentType> = {
   "vtuber-models": VTuberModelsPage,
 };
 
-export function MainLayout({ children }: MainLayoutProps) {
-  const { focusState, setFocus, goBack } = useLayoutStore();
+export function MainLayout({ children: _children }: MainLayoutProps) {
+  const { focusState, setFocus } = useLayoutStore();
   const { currentSection, scrollDirection, setTransitioning } =
     useNavigationStore();
 

@@ -157,14 +157,13 @@ interface InfoSectionProps {
   icon: LucideIcon
   title: string
   items: string[]
-  color: 'blue' | 'pink' | 'red' | 'blue'
+  color: 'blue' | 'pink' | 'red'
 }
 
 const colorMap = {
   blue: 'text-blue-400',
   pink: 'text-pink-400',
   red: 'text-red-400',
-  blue: 'text-blue-400',
 }
 
 function InfoSection({ icon: Icon, title, items, color }: InfoSectionProps) {

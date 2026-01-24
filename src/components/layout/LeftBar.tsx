@@ -6,7 +6,7 @@ import {
   type Section,
 } from "@/stores/navigationStore";
 import { cn } from "@/lib/utils";
-import { User, Image, Music, Box, Home, LucideIcon, Menu } from "lucide-react";
+import { User, Image, Music, Box, Home, LucideIcon } from "lucide-react";
 
 // Filter out 'toc' for navigation display - only show content sections
 const navSections = sections.filter((s) => s !== "toc");
@@ -28,7 +28,7 @@ const sectionLabels: Record<Section, string> = {
 };
 
 export function LeftBar() {
-  const { currentSection, setSection, isTransitioning } = useNavigationStore();
+  const { currentSection, setSection } = useNavigationStore();
 
   return (
     <div className="fixed left-0 top-1/2 z-50 -translate-y-1/2 flex flex-col gap-2 rounded-r-2xl bg-black/40 p-3 backdrop-blur-lg">

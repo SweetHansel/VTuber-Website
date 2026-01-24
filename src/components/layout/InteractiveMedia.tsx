@@ -2,9 +2,8 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { cn } from '@/lib/utils'
-import { useAnimationStore } from '@/stores/animationStore'
 
 export interface MediaState {
   src: string
@@ -55,7 +54,6 @@ export function InteractiveMedia({
   onHoverStart,
   onHoverEnd,
 }: InteractiveMediaProps) {
-  const { idleAnimationsEnabled } = useAnimationStore()
   const [isHovered, setIsHovered] = useState(false)
   const [isClicked, setIsClicked] = useState(false)
   const [cursorSpawns, setCursorSpawns] = useState<CursorSpawn[]>([])

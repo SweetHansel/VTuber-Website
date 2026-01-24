@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect, useState, useCallback } from 'react'
+import { useRef, useEffect, useCallback } from 'react'
 import { useSpring, useTransform, MotionValue } from 'framer-motion'
 import { useAnimationStore } from '@/stores/animationStore'
 

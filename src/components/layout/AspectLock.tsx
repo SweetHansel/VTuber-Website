@@ -94,6 +94,9 @@ export function AspectLock({
     position: "absolute",
   };
 
+  // Build transform parts
+  const transforms: string[] = [];
+
   // X positioning
   if (anchorX === "left") {
     positionStyles.left = 0;
@@ -101,7 +104,7 @@ export function AspectLock({
     positionStyles.right = 0;
   } else {
     positionStyles.left = "50%";
-    positionStyles.translateX = "-50%";
+    transforms.push("translateX(-50%)");
   }
 
   // Y positioning
@@ -111,20 +114,13 @@ export function AspectLock({
     positionStyles.bottom = 0;
   } else {
     positionStyles.top = "50%";
-    positionStyles.translateY = "-50%";
+    transforms.push("translateY(-50%)");
   }
 
-  // Build transform string
-  const transforms: string[] = [];
-  if (positionStyles.translateX)
-    transforms.push(`translateX(${positionStyles.translateX})`);
-  if (positionStyles.translateY)
-    transforms.push(`translateY(${positionStyles.translateY})`);
+  // Apply transform if needed
   if (transforms.length > 0) {
     positionStyles.transform = transforms.join(" ");
   }
-  delete positionStyles.translateX;
-  delete positionStyles.translateY;
 
   return (
     <div ref={parentRef} className="pointer-events-none absolute inset-0">

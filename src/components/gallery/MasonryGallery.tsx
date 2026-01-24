@@ -1,11 +1,10 @@
 'use client'
 
-import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useModalStore } from '@/stores/modalStore'
 import { cn } from '@/lib/utils'
-import { ExternalLink, Heart } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 
 interface Artwork {
   id: string

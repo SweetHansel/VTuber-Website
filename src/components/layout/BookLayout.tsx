@@ -43,7 +43,7 @@ export function BookLayout() {
 
   const handleWheel = (e: React.WheelEvent) => {
     const direction = e.deltaY > 0 ? 1 : -1;
-    setIndex((prev) => clamp(prev + direction*0.1, 0, sections.length));
+    setIndex((prev) => clamp(prev + direction*0.1, 1, sections.length));
   };
 
   return (
@@ -55,26 +55,37 @@ export function BookLayout() {
       {sections.map((section, i) => {
         const offsetLeft = 180 - clamp(index - i, 0, 1) * 180;
         const offsetRight = clamp(index - i - 1, 0, 1) * -180;
-        console.log(section, offsetLeft)
+
+        // Z-index logic: pages swap z-order at 90 degrees
+        // Left pages: when open (< 90), show on top; when closed (>= 90), stack by index
+        // Right pages: when open (> -90), show on top; when closed (<= -90), stack by reverse index
+        const zLeft = offsetLeft < 90
+          ? sections.length * 2 + i  // open: high z, ordered by i
+          : sections.length - i;      // closed: stack with higher i on top
+
+        const zRight = offsetRight > -90
+          ? sections.length * 2 + (sections.length - i)  // open: high z
+          : i;  // closed: stack with lower i on top
+
         return (
           <div key={section} className="contents">
             <div
-              className={cn("absolute bg-red-500 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden",
-                "z-"+(sections.length+1-i)
-              )}
+              className="absolute bg-red-500 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden"
               style={{
-                transform: "rotateY(" + offsetLeft + "deg)",
+                transform: `rotateY(${offsetLeft}deg)`,
+                zIndex: zLeft,
               }}
             >
               {section}
             </div>
             <div
-              className={cn("absolute bg-green-500 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden",
-                "z-"+(sections.length+1-i),
-                offsetLeft == 180 ? "hidden" :""
+              className={cn(
+                "absolute bg-green-500 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden",
+                offsetLeft === 180 && "hidden"
               )}
               style={{
-                transform: "rotateY(" + offsetRight + "deg)",
+                transform: `rotateY(${offsetRight}deg)`,
+                zIndex: zRight,
               }}
             >
               {section}

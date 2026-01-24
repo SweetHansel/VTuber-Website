@@ -6,6 +6,7 @@ import { staggerContainerVariants, staggerItemVariants } from '@/animations'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import { ChevronRight, User, Box } from 'lucide-react'
+import type { PageContent } from '@/components/layout/BookLayout'
 
 type ModelTab = 'live2d' | '3d'
 
@@ -43,7 +44,19 @@ const mockModels = {
   ],
 }
 
-export function VTuberModelsPage() {
+function VTuberModelsLeft() {
+  return (
+    <div className="flex h-full items-center justify-center p-6">
+      <div className="text-center text-white">
+        <Box className="mx-auto h-16 w-16 mb-4 text-white/60" />
+        <h2 className="text-xl font-bold">Model Showcase</h2>
+        <p className="text-sm text-white/60 mt-2">Live2D & 3D Models</p>
+      </div>
+    </div>
+  )
+}
+
+function VTuberModelsRight() {
   const [activeTab, setActiveTab] = useState<ModelTab>('live2d')
   const [selectedModel, setSelectedModel] = useState<string | null>(null)
 
@@ -158,4 +171,9 @@ export function VTuberModelsPage() {
       )}
     </motion.div>
   )
+}
+
+export const VTuberModelsPage: PageContent = {
+  Left: VTuberModelsLeft,
+  Right: VTuberModelsRight,
 }

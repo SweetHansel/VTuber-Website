@@ -1,43 +1,23 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion,  } from "framer-motion";
 import { useLayoutStore, layoutConfig } from "@/stores/layoutStore";
-import { useNavigationStore, type Section } from "@/stores/navigationStore";
 import { SongSeekbar } from "@/components/audio/SongSeekbar";
 import { LivestreamAlert } from "@/components/ui/LivestreamAlert";
 import { Modal } from "@/components/content/Modal";
 import { UpdatesPage } from "@/components/pages/UpdatesPage";
-import { ToCPage } from "@/components/pages/ToCPage";
-import { AboutPage } from "@/components/pages/AboutPage";
-import { ArtworksPage } from "@/components/pages/ArtworksPage";
-import { DiscographyPage } from "@/components/pages/DiscographyPage";
-import { VTuberModelsPage } from "@/components/pages/VTuberModelsPage";
-import { pageVariants } from "@/animations";
 import { LeftBar } from "./LeftBar";
 import { InteractiveMedia } from "./InteractiveMedia";
 import { AspectLock } from "./AspectLock";
-import Image from "next/image";
+import { BookLayout } from "./BookLayout";
 import { cn } from "@/lib/utils";
 
 interface MainLayoutProps {
   children?: React.ReactNode;
 }
 
-// Page mapping for bottom-right container
-const pages: Record<Section, React.ComponentType> = {
-  toc: ToCPage,
-  about: AboutPage,
-  artworks: ArtworksPage,
-  discography: DiscographyPage,
-  "vtuber-models": VTuberModelsPage,
-};
-
 export function MainLayout({ children: _children }: MainLayoutProps) {
   const { focusState, setFocus } = useLayoutStore();
-  const { currentSection, scrollDirection, setTransitioning } =
-    useNavigationStore();
-
-  const CurrentPage = pages[currentSection];
   const config = layoutConfig[focusState];
 
   // Calculate dimensions
@@ -56,7 +36,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
         anchorY="center"
       >
         <main
-          className="flex h-full w-full gap-4 pt-4"
+          className="flex h-full w-full gap-4 pt-4 px-4"
           onClick={() => setFocus("default")}
         >
           {/* Left Section */}
@@ -77,19 +57,21 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                     : "",
                 )}
                 onClick={(e) => {
-                  if (focusState == "default" ) setFocus("left");
+                  if (focusState == "default") setFocus("left");
                   e.stopPropagation();
                 }}
               >
-                <Image
-                  src={"/placeholder-flipphone.png"}
-                  height={1080}
-                  width={700}
-                  alt={"flip phone"}
+                <InteractiveMedia
                   className="h-full w-full object-contain absolute bottom-0"
+                  defaultMedia={{
+                    src: "/placeholder-flipphone.png",
+                    alt: "Character idle",
+                  }}
                 />
-                <div className="bg-blue-900/80 absolute top-[11.4%] left-[10%] h-[62%] w-[80.3%]"
-                 onClick={(e) => e.stopPropagation()}>
+                <div
+                  className="bg-blue-900/80 absolute top-[11.4%] left-[10%] h-[62%] w-[80.3%]"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <UpdatesPage />
                 </div>
               </div>
@@ -148,37 +130,20 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
               transition={{ duration: 0.5, ease: "easeInOut" }}
             >
               <AspectLock aspectRatio={16 / 9} anchorX="left" anchorY="top">
-                <AnimatePresence
-                  mode="wait"
-                  initial={false}
-                  onExitComplete={() => setTransitioning(false)}
-                >
                   <div
                     className={cn(
-                      "h-full w-full bg-blue-900/80 backdrop-blur-lg overflow-hidden",
+                      "h-full w-full bg-blue-900/80 backdrop-blur-lg",
                       focusState == "default"
                         ? "transform-3d  rotate-x-12 -rotate-z-5 -translate-z-1"
                         : "",
                     )}
                     onClick={(e) => {
-                      if (focusState == "default" )setFocus("bottom-right");
+                      if (focusState == "default") setFocus("bottom-right");
                       e.stopPropagation();
                     }}
                   >
-                    <motion.div
-                      key={currentSection}
-                      variants={pageVariants}
-                      initial="initial"
-                      animate="enter"
-                      exit="exit"
-                      custom={scrollDirection || "right"}
-                      className="h-full w-full"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <CurrentPage />
-                    </motion.div>
+                    <BookLayout/>
                   </div>
-                </AnimatePresence>
               </AspectLock>
             </motion.div>
           </motion.div>

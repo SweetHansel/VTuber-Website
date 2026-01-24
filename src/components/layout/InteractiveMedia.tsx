@@ -147,19 +147,8 @@ export function InteractiveMedia({
       onMouseLeave={handleHoverEnd}
       onClick={handleClick}
       onMouseMove={handleMouseMove}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
     >
       {/* Main media */}
-      <AnimatePresence mode="sync">
-        <motion.div
-          key={currentMedia.src}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="h-full w-full"
-        >
           <Image
             src={currentMedia.src}
             alt={currentMedia.alt || 'Interactive media'}
@@ -167,8 +156,6 @@ export function InteractiveMedia({
             className="object-contain"
             unoptimized // Allow GIFs to animate
           />
-        </motion.div>
-      </AnimatePresence>
 
       {/* Cursor effect spawns */}
       <AnimatePresence>

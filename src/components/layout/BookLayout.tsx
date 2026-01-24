@@ -1,28 +1,20 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { ToCPage } from "@/components/pages/ToCPage";
 import { AboutPage } from "@/components/pages/AboutPage";
 import { ArtworksPage } from "@/components/pages/ArtworksPage";
 import { DiscographyPage } from "@/components/pages/DiscographyPage";
 import { VTuberModelsPage } from "@/components/pages/VTuberModelsPage";
+import { useBookStore, sections, type Section } from "@/stores/bookStore";
 import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 // Page content type
 export interface PageContent {
   Left: React.ComponentType;
   Right: React.ComponentType;
 }
-
-// Sections
-export const sections = [
-  "toc",
-  "about",
-  "artworks",
-  "discography",
-  "vtuber-models",
-] as const;
-export type Section = (typeof sections)[number];
 
 // Utility
 const clamp = (value: number, min: number, max: number) =>
@@ -38,9 +30,10 @@ const pages: Record<Section, PageContent> = {
 };
 
 export function BookLayout() {
-  const [index, setIndex] = useState(1);
+  const { index, setIndex, nextPage, prevPage } = useBookStore();
   const isScrollingRef = useRef(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const touchStartRef = useRef<number | null>(null);
 
   // Decay toward nearest whole number when not scrolling
   useEffect(() => {
@@ -64,31 +57,55 @@ export function BookLayout() {
 
     animationId = requestAnimationFrame(decay);
     return () => cancelAnimationFrame(animationId);
-  }, []);
+  }, [setIndex]);
 
   const handleWheel = (e: React.WheelEvent) => {
     const direction = e.deltaY > 0 ? 1 : -1;
     setIndex((prev) => clamp(prev + direction * 0.1, 1, sections.length));
 
-    // Mark as scrolling
     isScrollingRef.current = true;
 
-    // Clear previous timeout
     if (scrollTimeoutRef.current) {
       clearTimeout(scrollTimeoutRef.current);
     }
 
-    // After 100ms of no scroll, allow decay
     scrollTimeoutRef.current = setTimeout(() => {
       isScrollingRef.current = false;
     }, 100);
   };
+
+  // Touch/swipe handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartRef.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartRef.current === null) return;
+
+    const diff = touchStartRef.current - e.touches[0].clientX;
+    setIndex((prev) => clamp(prev + diff * 0.005, 1, sections.length));
+    touchStartRef.current = e.touches[0].clientX;
+
+    isScrollingRef.current = true;
+  };
+
+  const handleTouchEnd = () => {
+    touchStartRef.current = null;
+    isScrollingRef.current = false;
+  };
+
+  const currentPage = Math.round(index);
+  const canGoPrev = currentPage > 1;
+  const canGoNext = currentPage < sections.length;
 
   return (
     <div
       className="absolute h-[90%] w-[90%] top-[5%] left-[5%] perspective-[1000px]"
       onClick={(e) => e.stopPropagation()}
       onWheel={handleWheel}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {sections.map((section, i) => {
         const Page = pages[section];
@@ -130,6 +147,32 @@ export function BookLayout() {
           </div>
         );
       })}
+
+      {/* Triangle navigation overlays */}
+      {canGoPrev && (
+        <button
+          onClick={prevPage}
+          className="absolute bottom-0 left-0 w-0 h-0 z-50 cursor-pointer
+            border-b-[60px] border-b-white/20
+            border-r-[60px] border-r-transparent
+            hover:border-b-white/40 transition-colors"
+          aria-label="Previous page"
+        >
+          <ChevronLeft className="absolute bottom-[-50px] left-[5px] w-4 h-4 text-white/60" />
+        </button>
+      )}
+      {canGoNext && (
+        <button
+          onClick={nextPage}
+          className="absolute bottom-0 right-0 w-0 h-0 z-50 cursor-pointer
+            border-b-[60px] border-b-white/20
+            border-l-[60px] border-l-transparent
+            hover:border-b-white/40 transition-colors"
+          aria-label="Next page"
+        >
+          <ChevronRight className="absolute bottom-[-50px] right-[5px] w-4 h-4 text-white/60" />
+        </button>
+      )}
     </div>
   );
 }

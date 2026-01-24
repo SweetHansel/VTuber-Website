@@ -16,7 +16,7 @@ const filters: { label: string; value: MusicFilter }[] = [
   { label: 'Originals', value: 'originals' },
 ]
 
-function DiscographyLeft() {
+function DiscographyRight() {
   return (
     <div className="flex h-full items-center justify-center">
       <InteractiveMedia
@@ -31,7 +31,7 @@ function DiscographyLeft() {
   )
 }
 
-function DiscographyRight() {
+function DiscographyLeft() {
   const [filter, setFilter] = useState<MusicFilter>('all')
 
   return (

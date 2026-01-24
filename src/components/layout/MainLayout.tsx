@@ -1,6 +1,6 @@
 "use client";
 
-import { motion,  } from "framer-motion";
+import { motion } from "framer-motion";
 import { useLayoutStore, layoutConfig } from "@/stores/layoutStore";
 import { SongSeekbar } from "@/components/audio/SongSeekbar";
 import { LivestreamAlert } from "@/components/ui/LivestreamAlert";
@@ -130,20 +130,20 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
               transition={{ duration: 0.5, ease: "easeInOut" }}
             >
               <AspectLock aspectRatio={16 / 9} anchorX="left" anchorY="top">
-                  <div
-                    className={cn(
-                      "h-full w-full bg-blue-900/80 backdrop-blur-lg",
-                      focusState == "default"
-                        ? "transform-3d  rotate-x-12 -rotate-z-5 -translate-z-1"
-                        : "",
-                    )}
-                    onClick={(e) => {
-                      if (focusState == "default") setFocus("bottom-right");
-                      e.stopPropagation();
-                    }}
-                  >
-                    <BookLayout/>
-                  </div>
+                <div
+                  className={cn(
+                    "h-full w-full bg-blue-950/80 backdrop-blur-lg",
+                    focusState == "default"
+                      ? "transform-3d  rotate-x-12 -rotate-z-5 -translate-z-1"
+                      : "",
+                  )}
+                  onClick={(e) => {
+                    if (focusState == "default") setFocus("bottom-right");
+                    e.stopPropagation();
+                  }}
+                >
+                  <BookLayout />
+                </div>
               </AspectLock>
             </motion.div>
           </motion.div>

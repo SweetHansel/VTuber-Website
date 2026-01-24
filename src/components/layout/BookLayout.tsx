@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
 import { ToCPage } from "@/components/pages/ToCPage";
 import { AboutPage } from "@/components/pages/AboutPage";
 import { ArtworksPage } from "@/components/pages/ArtworksPage";
@@ -40,10 +39,49 @@ const pages: Record<Section, PageContent> = {
 
 export function BookLayout() {
   const [index, setIndex] = useState(1);
+  const isScrollingRef = useRef(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Decay toward nearest whole number when not scrolling
+  useEffect(() => {
+    let animationId: number;
+
+    const decay = () => {
+      if (!isScrollingRef.current) {
+        setIndex((prev) => {
+          const target = Math.round(prev);
+          const diff = target - prev;
+
+          // If close enough, snap to target
+          if (Math.abs(diff) < 0.01) return target;
+
+          // Move toward target with decay factor
+          return prev + diff * 0.15;
+        });
+      }
+      animationId = requestAnimationFrame(decay);
+    };
+
+    animationId = requestAnimationFrame(decay);
+    return () => cancelAnimationFrame(animationId);
+  }, []);
 
   const handleWheel = (e: React.WheelEvent) => {
     const direction = e.deltaY > 0 ? 1 : -1;
-    setIndex((prev) => clamp(prev + direction*0.1, 1, sections.length));
+    setIndex((prev) => clamp(prev + direction * 0.1, 1, sections.length));
+
+    // Mark as scrolling
+    isScrollingRef.current = true;
+
+    // Clear previous timeout
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+
+    // After 100ms of no scroll, allow decay
+    scrollTimeoutRef.current = setTimeout(() => {
+      isScrollingRef.current = false;
+    }, 100);
   };
 
   return (
@@ -53,34 +91,33 @@ export function BookLayout() {
       onWheel={handleWheel}
     >
       {sections.map((section, i) => {
+        const Page = pages[section];
         const offsetLeft = 180 - clamp(index - i, 0, 1) * 180;
         const offsetRight = clamp(index - i - 1, 0, 1) * -180;
 
         // Z-index logic: pages swap z-order at 90 degrees
-        // Left pages: when open (< 90), show on top; when closed (>= 90), stack by index
-        // Right pages: when open (> -90), show on top; when closed (<= -90), stack by reverse index
         const zLeft = offsetLeft < 90
-          ? sections.length * 2 + i  // open: high z, ordered by i
-          : sections.length - i;      // closed: stack with higher i on top
+          ? sections.length * 2 + i
+          : sections.length - i;
 
         const zRight = offsetRight > -90
-          ? sections.length * 2 + (sections.length - i)  // open: high z
-          : i;  // closed: stack with lower i on top
+          ? sections.length * 2 + (sections.length - i)
+          : i;
 
         return (
           <div key={section} className="contents">
             <div
-              className="absolute bg-red-500 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden"
+              className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden overflow-hidden"
               style={{
                 transform: `rotateY(${offsetLeft}deg)`,
                 zIndex: zLeft,
               }}
             >
-              {section}
+              <Page.Left />
             </div>
             <div
               className={cn(
-                "absolute bg-green-500 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden",
+                "absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden overflow-hidden",
                 offsetLeft === 180 && "hidden"
               )}
               style={{
@@ -88,7 +125,7 @@ export function BookLayout() {
                 zIndex: zRight,
               }}
             >
-              {section}
+              <Page.Right />
             </div>
           </div>
         );

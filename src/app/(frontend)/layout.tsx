@@ -1,0 +1,29 @@
+import { Geist, Geist_Mono } from 'next/font/google'
+import { AudioProvider } from '@/components/audio/AudioProvider'
+import { MainLayout } from '@/components/layout/MainLayout'
+
+const geistSans = Geist({
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+})
+
+const geistMono = Geist_Mono({
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+})
+
+export default function FrontendLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <AudioProvider>
+          <MainLayout>{children}</MainLayout>
+        </AudioProvider>
+      </body>
+    </html>
+  )
+}

@@ -50,13 +50,6 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-      {/* Background click layer - catches clicks not on content */}
-      {focusState !== "default" && (
-        <div
-          className="absolute inset-0 z-1"
-          onClick={() => setFocus("default")}
-        />
-      )}
       {/* Main Layout Container */}
       <AspectLock
         aspectRatio={4 / 3}
@@ -64,7 +57,10 @@ export function MainLayout({ children }: MainLayoutProps) {
         anchorX="center"
         anchorY="center"
       >
-        <main className="flex h-full w-full gap-4 pt-4">
+        <main
+          className="flex h-full w-full gap-4 pt-4"
+          onClick={() => setFocus("default")}
+        >
           {/* Left Section */}
           <motion.div
             className="relative h-full overflow-visible "
@@ -77,26 +73,16 @@ export function MainLayout({ children }: MainLayoutProps) {
             <AspectLock aspectRatio={7 / 11} anchorX="right" anchorY="bottom">
               <div
                 className={cn(
-                  "h-full w-full overflow-hidden",
+                  "h-full w-full overflow-hidden z-10",
                   focusState == "default"
                     ? "transform-3d  rotate-x-18 rotate-z-5"
                     : "",
                 )}
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  if (focusState == "default" ) setFocus("left");
+                  e.stopPropagation();
+                }}
               >
-                {/* Click Overlay - only visible in default state */}
-                <AnimatePresence>
-                  {focusState === "default" && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute right-0 top-0 cursor-pointer h-full w-full z-40"
-                      onClick={() => setFocus("left")}
-                    />
-                  )}
-                </AnimatePresence>
                 <Image
                   src={"/placeholder-flipphone.png"}
                   height={1080}
@@ -104,7 +90,8 @@ export function MainLayout({ children }: MainLayoutProps) {
                   alt={"flip phone"}
                   className="h-full w-full object-contain absolute bottom-0"
                 />
-                <div className="bg-blue-900/80 absolute top-[11.4%] left-[10%] h-[62%] w-[80.3%]">
+                <div className="bg-blue-900/80 absolute top-[11.4%] left-[10%] h-[62%] w-[80.3%]"
+                 onClick={(e) => e.stopPropagation()}>
                   <UpdatesPage />
                 </div>
               </div>
@@ -130,7 +117,10 @@ export function MainLayout({ children }: MainLayoutProps) {
               transition={{ duration: 0.5, ease: "easeInOut" }}
             >
               <AspectLock aspectRatio={1} anchorX="left" anchorY="bottom">
-                <div className="h-full w-full" onClick={(e) => e.stopPropagation()}>
+                <div
+                  className="h-full w-full"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <InteractiveMedia
                     className="h-full w-full"
                     defaultMedia={{
@@ -167,26 +157,16 @@ export function MainLayout({ children }: MainLayoutProps) {
                 >
                   <div
                     className={cn(
-                      "h-full w-full bg-blue-900 backdrop-blur-lg overflow-hidden",
+                      "h-full w-full bg-blue-900/80 backdrop-blur-lg overflow-hidden",
                       focusState == "default"
                         ? "transform-3d  rotate-x-12 -rotate-z-5 -translate-z-1"
                         : "",
                     )}
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      if (focusState == "default" )setFocus("bottom-right");
+                      e.stopPropagation();
+                    }}
                   >
-                    <AnimatePresence>
-                      {/* Bottom-right overlay */}
-                      {focusState === "default" && (
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="absolute top-0 left-0 cursor-pointer h-full w-full z-40"
-                          onClick={() => setFocus("bottom-right")}
-                        />
-                      )}
-                    </AnimatePresence>
                     <motion.div
                       key={currentSection}
                       variants={pageVariants}
@@ -195,6 +175,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                       exit="exit"
                       custom={scrollDirection || "right"}
                       className="h-full w-full"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <CurrentPage />
                     </motion.div>
@@ -205,24 +186,6 @@ export function MainLayout({ children }: MainLayoutProps) {
           </motion.div>
         </main>
       </AspectLock>
-
-
-      {/* Floating Back Button */}
-      <AnimatePresence>
-        {focusState !== "default" && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.2 }}
-            onClick={goBack}
-            className="fixed bottom-8 left-8 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-lg transition-colors hover:bg-white/30"
-            aria-label="Go back"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </motion.button>
-        )}
-      </AnimatePresence>
 
       <LeftBar />
 

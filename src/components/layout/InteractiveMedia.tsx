@@ -153,7 +153,7 @@ export function InteractiveMedia({
       whileTap={{ scale: 0.95 }}
     >
       {/* Main media */}
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="sync">
         <motion.div
           key={currentMedia.src}
           initial={{ opacity: 0 }}

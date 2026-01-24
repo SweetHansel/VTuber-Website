@@ -7,7 +7,7 @@ import { LivestreamAlert } from "@/components/ui/LivestreamAlert";
 import { Modal } from "@/components/content/Modal";
 import { UpdatesPage } from "@/components/pages/UpdatesPage";
 import { LeftBar } from "./LeftBar";
-import { InteractiveMedia } from "./InteractiveMedia";
+import { InteractiveMediaFromCMS } from "./InteractiveMediaFromCMS";
 import { AspectLock } from "./AspectLock";
 import { BookLayout } from "./BookLayout";
 import { cn } from "@/lib/utils";
@@ -61,11 +61,14 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                   e.stopPropagation();
                 }}
               >
-                <InteractiveMedia
+                <InteractiveMediaFromCMS
+                  location="landing-left"
                   className="h-full w-full object-contain absolute bottom-0"
-                  defaultMedia={{
-                    src: "/placeholder-flipphone.png",
-                    alt: "Character idle",
+                  fallback={{
+                    defaultMedia: {
+                      src: "/placeholder-flipphone.png",
+                      alt: "Phone decoration",
+                    },
                   }}
                 />
                 <div
@@ -101,19 +104,22 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                   className="h-full w-full"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <InteractiveMedia
+                  <InteractiveMediaFromCMS
+                    location="landing-character"
                     className="h-full w-full"
-                    defaultMedia={{
-                      src: "/placeholder-idle.gif",
-                      alt: "Character idle",
-                    }}
-                    hoverMedia={{
-                      src: "/placeholder-hover.gif",
-                      alt: "Character hover",
-                    }}
-                    clickMedia={{
-                      src: "/placeholder-click.gif",
-                      alt: "Character click",
+                    fallback={{
+                      defaultMedia: {
+                        src: "/placeholder-idle.gif",
+                        alt: "Character idle",
+                      },
+                      hoverMedia: {
+                        src: "/placeholder-hover.gif",
+                        alt: "Character hover",
+                      },
+                      clickMedia: {
+                        src: "/placeholder-click.gif",
+                        alt: "Character click",
+                      },
                     }}
                   />
                 </div>

@@ -19,6 +19,7 @@ import { ThreeDModels } from './collections/ThreeDModels'
 import { People } from './collections/People'
 import { Albums } from './collections/Albums'
 import { Channels } from './collections/Channels'
+import { InteractiveMedia } from './collections/InteractiveMedia'
 
 // Globals
 import { Profile } from './globals/Profile'
@@ -51,6 +52,7 @@ export default buildConfig({
     People,
     Albums,
     Channels,
+    InteractiveMedia,
     Users,
     Media,
   ],

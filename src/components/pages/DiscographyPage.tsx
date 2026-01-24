@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { SongGrid } from '@/components/discography/SongGrid'
-import { InteractiveMedia } from '@/components/layout/InteractiveMedia'
+import { InteractiveMediaFromCMS } from '@/components/layout/InteractiveMediaFromCMS'
 import { staggerContainerVariants, staggerItemVariants } from '@/animations'
 import { cn } from '@/lib/utils'
 import type { PageContent } from '@/components/layout/BookLayout'
@@ -19,12 +19,15 @@ const filters: { label: string; value: MusicFilter }[] = [
 function DiscographyRight() {
   return (
     <div className="flex h-full items-center justify-center">
-      <InteractiveMedia
+      <InteractiveMediaFromCMS
+        location="page-discography"
         className="w-[280px] h-[350px]"
         depth={-40}
-        defaultMedia={{
-          src: '/placeholder-artwork.png',
-          alt: 'Discography background',
+        fallback={{
+          defaultMedia: {
+            src: '/placeholder-artwork.png',
+            alt: 'Discography background',
+          },
         }}
       />
     </div>

@@ -1,9 +1,11 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { Loader2 } from 'lucide-react'
 import { SongCard, type SongCardProps } from './SongCard'
+import { useMusicTracks, type MusicTrack } from '@/hooks/useCMS'
 
-// Mock data - will be replaced with CMS data
+// Fallback mock data
 const mockSongs: SongCardProps[] = [
   {
     id: '1',
@@ -68,13 +70,48 @@ interface SongGridProps {
   filter?: 'all' | 'covers' | 'originals'
 }
 
+function transformTrack(track: MusicTrack): SongCardProps {
+  return {
+    id: track.id,
+    title: track.title,
+    trackType: track.trackType === 'karaoke' ? 'cover' : track.trackType,
+    coverArt: track.coverArt?.url || '/placeholder-cover-1.jpg',
+    audioUrl: track.audioFile?.url,
+    duration: track.duration,
+    originalArtist: track.originalArtist,
+    streamingLinks: track.streamingLinks,
+  }
+}
+
 export function SongGrid({ filter = 'all' }: SongGridProps) {
-  const filteredSongs = mockSongs.filter((song) => {
-    if (filter === 'all') return true
-    if (filter === 'covers') return song.trackType === 'cover'
-    if (filter === 'originals') return song.trackType === 'original' || song.trackType === 'remix'
-    return true
-  })
+  const { data: tracks, loading, error } = useMusicTracks(filter)
+
+  // Use CMS data if available, otherwise use mock data
+  const songs: SongCardProps[] = tracks && tracks.length > 0
+    ? tracks.map(transformTrack)
+    : mockSongs
+
+  // Apply filter for fallback data (CMS data is already filtered)
+  const filteredSongs = tracks && tracks.length > 0
+    ? songs
+    : songs.filter((song) => {
+        if (filter === 'all') return true
+        if (filter === 'covers') return song.trackType === 'cover'
+        if (filter === 'originals') return song.trackType === 'original' || song.trackType === 'remix'
+        return true
+      })
+
+  if (loading) {
+    return (
+      <div className="flex h-40 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-white/40" />
+      </div>
+    )
+  }
+
+  if (error) {
+    console.warn('Failed to fetch music tracks, using fallback data:', error)
+  }
 
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">

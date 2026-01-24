@@ -27,7 +27,7 @@ export const ColorPicker: React.FC<TextFieldClientProps> = ({ field, path }) => 
         <TextInput
           path={path}
           value={value || ''}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
           placeholder="#000000"
           style={{ flex: 1 }}
         />

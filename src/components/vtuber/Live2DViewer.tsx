@@ -24,8 +24,8 @@ export function Live2DViewer({
   useEffect(() => {
     if (!canvasRef.current || !modelUrl) return
 
-    let app: any = null
-    let model: any = null
+    let app: InstanceType<typeof import('pixi.js').Application> | null = null
+    let model: Awaited<ReturnType<typeof import('pixi-live2d-display').Live2DModel.from>> | null = null
 
     const loadModel = async () => {
       try {
@@ -37,7 +37,7 @@ export function Live2DViewer({
         const { Live2DModel } = await import('pixi-live2d-display')
 
         // Register Live2DModel with PIXI
-        // @ts-ignore
+        // @ts-expect-error - PIXI Ticker type mismatch with Live2DModel
         Live2DModel.registerTicker(PIXI.Ticker)
 
         // Create PIXI application

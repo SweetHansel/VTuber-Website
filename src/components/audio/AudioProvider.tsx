@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef } from 'react'
 import { useAudioStore } from '@/stores/audioStore'
 
 export function AudioProvider({ children }: { children: React.ReactNode }) {
@@ -10,7 +10,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     currentTrack,
     isPlaying,
     volume,
-    playbackPosition,
+    // playbackPosition,
     setPlaybackPosition,
     setDuration,
     playNext,
@@ -95,9 +95,9 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       audioRef.current.currentTime = e.detail
     }
 
-    window.addEventListener('audio-seek' as any, handleSeek as EventListener)
+    window.addEventListener('audio-seek', handleSeek as EventListener)
     return () => {
-      window.removeEventListener('audio-seek' as any, handleSeek as EventListener)
+      window.removeEventListener('audio-seek', handleSeek as EventListener)
     }
   }, [])
 

@@ -81,7 +81,7 @@ export async function GET() {
     const streams: LiveStream[] = []
 
     // Try to get channels from CMS first
-    let channels = await getChannelsFromCMS()
+    const channels = await getChannelsFromCMS()
 
     // If no channels from CMS, the array will be empty - that's fine
     // The frontend will just show no live streams

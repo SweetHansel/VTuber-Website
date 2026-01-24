@@ -8,10 +8,11 @@
   },
   "scripts": {
     "dev": "next dev --experimental-https",
-    "build": "next build",
+    "build": "payload generate:importmap && payload migrate && next build",
     "start": "next start",
     "lint": "eslint",
-    "generate:importmap": "payload generate:importmap"
+    "generate:importmap": "payload generate:importmap",
+    "migrate": "payload migrate"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.72.0",

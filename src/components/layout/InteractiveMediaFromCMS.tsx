@@ -32,7 +32,12 @@ function transformCMSData(data: InteractiveMediaData): {
   clickMedia?: MediaState
   cursorEffect?: CursorEffect
   depth?: number
-} {
+} | null {
+  // If no media URL, return null - don't render anything
+  if (!data.defaultState?.media?.url) {
+    return null
+  }
+
   const result: {
     defaultMedia: MediaState
     hoverMedia?: MediaState
@@ -41,7 +46,7 @@ function transformCMSData(data: InteractiveMediaData): {
     depth?: number
   } = {
     defaultMedia: {
-      src: data.defaultState?.media?.url || '/placeholder-idle.gif',
+      src: data.defaultState.media.url,
       alt: data.defaultState?.alt,
       sound: data.defaultState?.sound?.url,
     },
@@ -112,6 +117,11 @@ export function InteractiveMediaFromCMS({
 
   const transformed = transformCMSData(data)
 
+  // No valid media to display
+  if (!transformed) {
+    return null
+  }
+
   return (
     <InteractiveMedia
       className={className}
@@ -170,6 +180,11 @@ export function InteractiveMediaWithData({
   }
 
   const transformed = transformCMSData(data)
+
+  // No valid media to display
+  if (!transformed) {
+    return null
+  }
 
   return (
     <InteractiveMedia

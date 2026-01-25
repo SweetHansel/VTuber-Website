@@ -87,7 +87,7 @@ export interface ProfileData {
 }
 
 export function useProfile() {
-  return useFetch<ProfileData>('/api/profile')
+  return useFetch<ProfileData>('/api/cms/profile')
 }
 
 // Music tracks hook
@@ -108,7 +108,7 @@ export interface MusicTrack {
 
 export function useMusicTracks(filter?: 'all' | 'covers' | 'originals') {
   const queryParam = filter && filter !== 'all' ? `?type=${filter}` : ''
-  return useFetch<MusicTrack[]>(`/api/music-tracks${queryParam}`)
+  return useFetch<MusicTrack[]>(`/api/cms/music-tracks${queryParam}`)
 }
 
 // Artworks hook
@@ -128,7 +128,7 @@ export interface Artwork {
 
 export function useArtworks(filter?: 'all' | 'fanart' | 'official' | 'meme') {
   const queryParam = filter && filter !== 'all' ? `?type=${filter}` : ''
-  return useFetch<Artwork[]>(`/api/artworks${queryParam}`)
+  return useFetch<Artwork[]>(`/api/cms/artworks${queryParam}`)
 }
 
 // Updates hook (announcements + blog posts)
@@ -148,7 +148,7 @@ export interface UpdateItem {
 
 export function useUpdates(filter?: 'all' | 'announcements' | 'blogs') {
   const queryParam = filter && filter !== 'all' ? `?filter=${filter}` : ''
-  return useFetch<UpdateItem[]>(`/api/updates${queryParam}`)
+  return useFetch<UpdateItem[]>(`/api/cms/updates${queryParam}`)
 }
 
 // Models hook
@@ -180,7 +180,7 @@ export interface ModelsData {
 
 export function useModels(type?: 'live2d' | '3d') {
   const queryParam = type ? `?type=${type}` : ''
-  return useFetch<ModelsData>(`/api/models${queryParam}`)
+  return useFetch<ModelsData>(`/api/cms/models${queryParam}`)
 }
 
 // Interactive media hook
@@ -216,8 +216,8 @@ export interface InteractiveMediaData {
 
 export function useInteractiveMedia(location?: string) {
   const url = location
-    ? `/api/interactive-media?location=${encodeURIComponent(location)}`
-    : '/api/interactive-media'
+    ? `/api/cms/interactive-media?location=${encodeURIComponent(location)}`
+    : '/api/cms/interactive-media'
   return useFetch<InteractiveMediaData | InteractiveMediaData[]>(url, { skip: !location && false })
 }
 
@@ -233,7 +233,7 @@ export interface ThemesData {
 }
 
 export function useThemes() {
-  return useFetch<ThemesData>('/api/themes')
+  return useFetch<ThemesData>('/api/cms/themes')
 }
 
 // Helper to clear cache (useful for admin refresh)

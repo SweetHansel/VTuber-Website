@@ -64,15 +64,9 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                 <InteractiveMediaFromCMS
                   location="landing-left"
                   className="h-full w-full object-contain absolute bottom-0"
-                  fallback={{
-                    defaultMedia: {
-                      src: "/placeholder-flipphone.png",
-                      alt: "Phone decoration",
-                    },
-                  }}
                 />
                 <div
-                  className="bg-blue-900/80 absolute top-[11.4%] left-[10%] h-[62%] w-[80.3%]"
+                  className="bg-blue-900 absolute top-[11.4%] left-[10%] h-[62%] w-[80.3%]"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <UpdatesPage />
@@ -107,20 +101,6 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                   <InteractiveMediaFromCMS
                     location="landing-character"
                     className="h-full w-full"
-                    fallback={{
-                      defaultMedia: {
-                        src: "/placeholder-idle.gif",
-                        alt: "Character idle",
-                      },
-                      hoverMedia: {
-                        src: "/placeholder-hover.gif",
-                        alt: "Character hover",
-                      },
-                      clickMedia: {
-                        src: "/placeholder-click.gif",
-                        alt: "Character click",
-                      },
-                    }}
                   />
                 </div>
               </AspectLock>

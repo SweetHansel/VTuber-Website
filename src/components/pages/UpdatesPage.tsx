@@ -8,37 +8,6 @@ import { cn } from '@/lib/utils'
 
 type FilterType = 'all' | 'announcements' | 'blogs'
 
-// Fallback mock data
-const mockContent: ContentCardProps[] = [
-  {
-    id: '1',
-    type: 'announcement',
-    title: 'New Year Stream 2026!',
-    excerpt: 'Join me for a special countdown stream!',
-    image: '/placeholder-stream.jpg',
-    eventDate: '2026-01-01T23:00:00',
-    location: 'YouTube Live',
-    announcementType: 'stream',
-    isPinned: true,
-  },
-  {
-    id: '2',
-    type: 'announcement',
-    title: 'New Original Song Release',
-    announcementType: 'release',
-    excerpt: 'My first original song is finally here!',
-    date: '2026-01-15',
-  },
-  {
-    id: '3',
-    type: 'blog-post',
-    title: 'My Journey as a VTuber',
-    excerpt: 'Reflecting on an amazing year of streaming and growth...',
-    image: '/placeholder-blog.jpg',
-    date: '2026-01-10',
-  },
-]
-
 function transformUpdate(update: UpdateItem): ContentCardProps {
   return {
     id: update.id,
@@ -62,7 +31,7 @@ export function UpdatesPage() {
   // Transform CMS data or use fallback
   const content: ContentCardProps[] = cmsUpdates && cmsUpdates.length > 0
     ? cmsUpdates.map(transformUpdate)
-    : mockContent
+    : []
 
   // Apply filter for fallback data (CMS data is already filtered)
   const filteredContent = cmsUpdates && cmsUpdates.length > 0

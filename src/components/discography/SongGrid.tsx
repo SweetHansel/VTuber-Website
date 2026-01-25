@@ -5,67 +5,6 @@ import { Loader2 } from 'lucide-react'
 import { SongCard, type SongCardProps } from './SongCard'
 import { useMusicTracks, type MusicTrack } from '@/hooks/useCMS'
 
-// Fallback mock data
-const mockSongs: SongCardProps[] = [
-  {
-    id: '1',
-    title: 'First Original Song',
-    trackType: 'original',
-    coverArt: '/placeholder-cover-1.jpg',
-    audioUrl: '/sample-audio.mp3',
-    duration: 234,
-    streamingLinks: [
-      { platform: 'youtube', url: 'https://youtube.com' },
-      { platform: 'spotify', url: 'https://spotify.com' },
-    ],
-  },
-  {
-    id: '2',
-    title: 'Popular Song Cover',
-    trackType: 'cover',
-    coverArt: '/placeholder-cover-2.jpg',
-    audioUrl: '/sample-audio-2.mp3',
-    duration: 198,
-    originalArtist: 'Famous Artist',
-    streamingLinks: [
-      { platform: 'youtube', url: 'https://youtube.com' },
-    ],
-  },
-  {
-    id: '3',
-    title: 'Acoustic Cover Version',
-    trackType: 'cover',
-    coverArt: '/placeholder-cover-3.jpg',
-    duration: 256,
-    originalArtist: 'Another Artist',
-  },
-  {
-    id: '4',
-    title: 'Second Original',
-    trackType: 'original',
-    coverArt: '/placeholder-cover-4.jpg',
-    audioUrl: '/sample-audio-3.mp3',
-    duration: 312,
-  },
-  {
-    id: '5',
-    title: 'EDM Remix',
-    trackType: 'remix',
-    coverArt: '/placeholder-cover-5.jpg',
-    audioUrl: '/sample-audio-4.mp3',
-    duration: 187,
-    originalArtist: 'Original Producer',
-  },
-  {
-    id: '6',
-    title: 'Emotional Ballad Cover',
-    trackType: 'cover',
-    coverArt: '/placeholder-cover-6.jpg',
-    duration: 298,
-    originalArtist: 'Ballad Singer',
-  },
-]
-
 interface SongGridProps {
   filter?: 'all' | 'covers' | 'originals'
 }
@@ -89,7 +28,7 @@ export function SongGrid({ filter = 'all' }: SongGridProps) {
   // Use CMS data if available, otherwise use mock data
   const songs: SongCardProps[] = tracks && tracks.length > 0
     ? tracks.map(transformTrack)
-    : mockSongs
+    : []
 
   // Apply filter for fallback data (CMS data is already filtered)
   const filteredSongs = tracks && tracks.length > 0

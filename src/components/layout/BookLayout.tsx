@@ -173,6 +173,19 @@ export function BookLayout() {
           <ChevronRight className="absolute bottom-[-50px] right-[5px] w-4 h-4 text-white/60" />
         </button>
       )}
+      
+      {index >=2 && (
+        <button
+          onClick={()=>setIndex(1)}
+          className="absolute top-0 left-0 w-0 h-0 z-50 cursor-pointer
+            border-t-[60px] border-t-white/20
+            border-r-[60px] border-r-transparent
+            hover:border-t-white/40 transition-colors"
+          aria-label="ToC"
+        >
+          <ChevronLeft className="absolute top-[-50px] left-[5px] w-4 h-4 text-white/60" />
+        </button>
+      )}
     </div>
   );
 }

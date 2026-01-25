@@ -11,40 +11,6 @@ import { useModels, type Live2DModel, type ThreeDModel } from '@/hooks/useCMS'
 
 type ModelTab = 'live2d' | '3d'
 
-// Fallback mock data
-const mockModels = {
-  live2d: [
-    {
-      id: '1',
-      name: 'Default Model',
-      version: '2.0',
-      thumbnail: '/placeholder-live2d.png',
-      isActive: true,
-      debutDate: '2025-01-01',
-    },
-    {
-      id: '2',
-      name: 'Summer Outfit',
-      version: '2.0 Summer',
-      thumbnail: '/placeholder-live2d-summer.png',
-      isActive: false,
-      debutDate: '2025-07-01',
-    },
-  ],
-  '3d': [
-    {
-      id: '1',
-      name: 'VRM Model',
-      thumbnail: '/placeholder-vrm.png',
-      isActive: true,
-      specs: {
-        polyCount: 50000,
-        blendshapes: 52,
-      },
-    },
-  ],
-}
-
 interface ModelCardData {
   id: string
   name: string
@@ -100,9 +66,9 @@ function VTuberModelsRight() {
   // Transform CMS data or use fallback
   const models: ModelCardData[] = cmsModels
     ? activeTab === 'live2d'
-      ? (cmsModels.live2d?.length > 0 ? cmsModels.live2d.map(transformLive2D) : mockModels.live2d)
-      : (cmsModels['3d']?.length > 0 ? cmsModels['3d'].map(transform3D) : mockModels['3d'])
-    : mockModels[activeTab]
+      ? (cmsModels.live2d?.length > 0 ? cmsModels.live2d.map(transformLive2D) : [])
+      : (cmsModels['3d']?.length > 0 ? cmsModels['3d'].map(transform3D) : [])
+    : []
 
   if (error) {
     console.warn('Failed to fetch models, using fallback data:', error)

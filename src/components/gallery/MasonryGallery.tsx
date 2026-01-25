@@ -17,48 +17,6 @@ interface Artwork {
   isFeatured?: boolean
 }
 
-// Fallback mock data
-const mockArtworks: Artwork[] = [
-  {
-    id: '1',
-    image: '/placeholder-art-1.jpg',
-    artworkType: 'fanart',
-    artistName: '@artist1',
-    sourceUrl: 'https://twitter.com/artist1',
-  },
-  {
-    id: '2',
-    image: '/placeholder-art-2.jpg',
-    artworkType: 'official',
-    title: 'Official Key Visual',
-    isFeatured: true,
-  },
-  {
-    id: '3',
-    image: '/placeholder-art-3.jpg',
-    artworkType: 'fanart',
-    artistName: '@artist2',
-  },
-  {
-    id: '4',
-    image: '/placeholder-art-4.jpg',
-    artworkType: 'meme',
-    title: 'Funny moment',
-  },
-  {
-    id: '5',
-    image: '/placeholder-art-5.jpg',
-    artworkType: 'fanart',
-    artistName: '@artist3',
-  },
-  {
-    id: '6',
-    image: '/placeholder-art-6.jpg',
-    artworkType: 'official',
-    title: 'Anniversary Art',
-  },
-]
-
 function transformArtwork(art: CMSArtwork): Artwork {
   // Get artist name from credits array
   const artistCredit = art.credits?.find(c => c.role === 'artist' || c.role === 'illustrator')
@@ -86,7 +44,7 @@ export function MasonryGallery({ filter = 'all' }: MasonryGalleryProps) {
   // Transform CMS data or use fallback
   const artworks: Artwork[] = cmsArtworks && cmsArtworks.length > 0
     ? cmsArtworks.map(transformArtwork)
-    : mockArtworks
+    : []
 
   // Apply filter for fallback data (CMS data is already filtered)
   const filteredArtworks = cmsArtworks && cmsArtworks.length > 0

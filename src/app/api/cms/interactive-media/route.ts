@@ -10,14 +10,37 @@ export async function GET(request: Request) {
     const payload = await getPayload({ config })
 
     if (location) {
-      // Fetch by location (unique key)
+      // First, check if there's a slot assignment in Themes global
+      const themes = await payload.findGlobal({
+        slug: 'themes',
+        depth: 3, // Resolve nested interactive-media relationships
+      })
+
+      // Look for a matching slot in Themes
+      const themesData = themes as {
+        interactiveMedia?: Array<{
+          slot: string
+          configuration?: unknown
+        }>
+      }
+
+      const slotAssignment = themesData.interactiveMedia?.find(
+        (item) => item.slot === location
+      )
+
+      if (slotAssignment?.configuration) {
+        // Found in Themes - return the configuration
+        return NextResponse.json({ data: slotAssignment.configuration })
+      }
+
+      // Fallback: check the interactive-media collection's location field
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { docs } = await (payload as any).find({
         collection: 'interactive-media',
         where: {
           location: { equals: location },
         },
-        depth: 2, // Resolve media relationships
+        depth: 2,
         limit: 1,
       })
 
@@ -28,7 +51,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ data: docs[0] })
     }
 
-    // Fetch all
+    // Fetch all from collection
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { docs } = await (payload as any).find({
       collection: 'interactive-media',

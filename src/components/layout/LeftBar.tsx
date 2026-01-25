@@ -21,14 +21,6 @@ interface SocialLink {
   icon: LucideIcon;
 }
 
-// Fallback social links
-const fallbackLinks: SocialLink[] = [
-  { name: "Twitter", url: "https://twitter.com/vtuber", icon: Twitter },
-  { name: "YouTube", url: "https://youtube.com/@vtuber", icon: Youtube },
-  { name: "Twitch", url: "https://twitch.tv/vtuber", icon: Twitch },
-  { name: "Discord", url: "https://discord.gg/vtuber", icon: MessageCircle },
-];
-
 export function LeftBar() {
   const { data: profile, loading, error } = useProfile();
 
@@ -39,7 +31,7 @@ export function LeftBar() {
         url: link.url,
         icon: platformIcons[link.platform] || ExternalLink,
       }))
-    : fallbackLinks;
+    : [];
 
   if (error) {
     console.warn("Failed to fetch profile for social links, using fallback:", error);

@@ -20,27 +20,6 @@ const iconMap: Record<string, LucideIcon> = {
   Hash,
 }
 
-// Fallback profile data
-const fallbackProfile: ProfileData = {
-  name: 'VTuber Name',
-  japaneseName: 'ブイチューバー',
-  tagline: 'Virtual Singer & Streamer',
-  shortBio: 'A cheerful virtual streamer who loves singing, gaming, and chatting with fans!',
-  birthday: '2025-03-15',
-  height: '158cm',
-  traits: [
-    { category: 'Hobbies', icon: 'Gamepad', color: '#3b82f6', items: [{ value: 'Singing' }, { value: 'Gaming' }, { value: 'Drawing' }, { value: 'Cooking' }] },
-    { category: 'Likes', icon: 'Heart', color: '#ec4899', items: [{ value: 'Music' }, { value: 'Cats' }, { value: 'Strawberries' }, { value: 'Anime' }] },
-    { category: 'Dislikes', icon: 'ThumbsDown', color: '#ef4444', items: [{ value: 'Spicy food' }, { value: 'Bugs' }, { value: 'Early mornings' }] },
-  ],
-  hashtags: {
-    general: '#VTuberName',
-    fanart: '#VTuberArt',
-    stream: '#VTuberLive',
-    fanName: 'VTuFans',
-  },
-}
-
 function LoadingSkeleton() {
   return (
     <div className="flex h-full items-center justify-center">
@@ -51,7 +30,7 @@ function LoadingSkeleton() {
 
 function AboutLeft() {
   const { data: profile, loading } = useProfile()
-  const profileData = profile || fallbackProfile
+  const profileData = profile || {}
 
   if (loading) {
     return <LoadingSkeleton />
@@ -68,13 +47,19 @@ function AboutLeft() {
         variants={staggerItemVariants}
         className="relative aspect-[3/4] w-48 overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20"
       >
-        <Image
-          src={profileData.avatar?.url || '/placeholder-avatar.png'}
-          alt={profileData.name || 'Avatar'}
-          fill
-          className="object-cover"
-          priority
-        />
+        {profileData.avatar?.url ? (
+          <Image
+            src={profileData.avatar.url}
+            alt={profileData.name || 'Avatar'}
+            fill
+            className="object-cover"
+            priority
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-white/20">
+            <span className="text-4xl">?</span>
+          </div>
+        )}
       </motion.div>
       <motion.button
         variants={staggerItemVariants}
@@ -88,7 +73,7 @@ function AboutLeft() {
 
 function AboutRight() {
   const { data: profile, loading } = useProfile()
-  const profileData = profile || fallbackProfile
+  const profileData = profile || {}
 
   if (loading) {
     return <LoadingSkeleton />

@@ -23,12 +23,6 @@ function DiscographyRight() {
         location="page-discography"
         className="w-[280px] h-[350px]"
         depth={-40}
-        fallback={{
-          defaultMedia: {
-            src: '/placeholder-artwork.png',
-            alt: 'Discography background',
-          },
-        }}
       />
     </div>
   )

@@ -11,12 +11,44 @@ import {
   motion,
   useMotionValue,
   useTransform,
+  type MotionValue,
 } from "framer-motion";
 
 // Page content type
 export interface PageContent {
   Left: React.ComponentType;
   Right: React.ComponentType;
+}
+
+// Separate component to properly use hooks
+interface PageSpreadProps {
+  index: MotionValue<number>;
+  pageIndex: number;
+  Page: PageContent;
+}
+
+function PageSpread({ index, pageIndex, Page }: PageSpreadProps) {
+  const left = useTransform(index, (v) => 180 - clamp(v - pageIndex, 0, 1) * 180);
+  const right = useTransform(index, (v) => clamp(v - pageIndex - 1, 0, 1) * -180);
+  const zLeft = useTransform(index, (v) => clamp(v - pageIndex, 0, 1) < 0.5 ? 2 : 0);
+  const zRight = useTransform(index, (v) => clamp(v - pageIndex - 1, 0, 1) < 0.5 ? 10 - pageIndex : 0);
+
+  return (
+    <>
+      <motion.div
+        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden"
+        style={{ rotateY: left, zIndex: zLeft }}
+      >
+        <Page.Left />
+      </motion.div>
+      <motion.div
+        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden"
+        style={{ rotateY: right, zIndex: zRight }}
+      >
+        <Page.Right />
+      </motion.div>
+    </>
+  );
 }
 
 // Utility
@@ -167,40 +199,14 @@ export function BookLayout() {
         style={{ rotateY: right, zIndex: zRight }}
       />
 
-      {sections.map((section, i) => {
-        const Page = pages[section];
-
-        const left = useTransform(index, (index) => {
-          return 180 - clamp(index - i, 0, 1) * 180;
-        });
-        const right = useTransform(index, (index) => {
-          return clamp(index - i - 1, 0, 1) * -180;
-        });
-
-        const zLeft = useTransform(index, (index) => {
-          return clamp(index - i, 0, 1) < 0.5 ? 2 : 0;
-        });
-
-        const zRight = useTransform(index, (index) => {
-          return clamp(index - i - 1, 0, 1) < 0.5 ? 10 - i : 0;
-        });
-        return (
-          <>
-            <motion.div
-              className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden"
-              style={{ rotateY: left, zIndex: zLeft }}
-            >
-              <Page.Left />
-            </motion.div>
-            <motion.div
-              className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden"
-              style={{ rotateY: right, zIndex: zRight }}
-            >
-              <Page.Right />
-            </motion.div>
-          </>
-        );
-      })}
+      {sections.map((section, i) => (
+        <PageSpread
+          key={section}
+          index={index}
+          pageIndex={i}
+          Page={pages[section]}
+        />
+      ))}
 
       <motion.div
         className="absolute h-full w-full"

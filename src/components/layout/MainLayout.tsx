@@ -30,7 +30,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
     <div className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
       {/* Main Layout Container */}
       <AspectLock
-        aspectRatio={4 / 3}
+        aspectRatio={16/9}
         off={focusState != "default"}
         anchorX="center"
         anchorY="center"
@@ -48,12 +48,12 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
             }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <AspectLock aspectRatio={7 / 11} anchorX="right" anchorY="bottom">
+            <AspectLock aspectRatio={1/2} anchorX="right" anchorY="bottom">
               <div
                 className={cn(
-                  "h-full w-full overflow-hidden z-10",
+                  "h-full w-full overflow-hidden z-10  bg-blue-950/80 backdrop-blur-lg",
                   focusState == "default"
-                    ? "transform-3d  rotate-x-18 rotate-z-5"
+                    ? "transform-3d  rotate-x-11 rotate-z-5"
                     : "",
                 )}
                 onClick={(e) => {
@@ -66,7 +66,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                   className="h-full w-full object-contain absolute bottom-0"
                 />
                 <div
-                  className="bg-blue-900 absolute top-[11.4%] left-[10%] h-[62%] w-[80.3%]"
+                  className="bg-blue-900 absolute top-[5%] left-[5%] h-[70%] w-[90%]"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <UpdatesPage />
@@ -95,12 +95,12 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
             >
               <AspectLock aspectRatio={1} anchorX="left" anchorY="bottom">
                 <div
-                  className="h-full w-full"
+                  className="absolute h-full w-full left-1/3  bg-blue-950/80 backdrop-blur-lg"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <InteractiveMediaFromCMS
                     location="landing-character"
-                    className="h-full w-full"
+                    className="absolute h-[120%] w-[120%] top-0 right-0"
                   />
                 </div>
               </AspectLock>

@@ -8,7 +8,8 @@ import { DiscographyPage } from "@/components/pages/DiscographyPage";
 import { VTuberModelsPage } from "@/components/pages/VTuberModelsPage";
 import { useBookStore, sections, type Section } from "@/stores/bookStore";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ListTree } from "lucide-react";
+import { motion } from "framer-motion";
 
 // Page content type
 export interface PageContent {
@@ -123,7 +124,7 @@ export function BookLayout() {
 
         return (
           <div key={section} className="contents">
-            <div
+            <motion.div
               className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden overflow-hidden"
               style={{
                 transform: `rotateY(${offsetLeft}deg)`,
@@ -131,8 +132,8 @@ export function BookLayout() {
               }}
             >
               <Page.Left />
-            </div>
-            <div
+            </motion.div>
+            <motion.div
               className={cn(
                 "absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden overflow-hidden",
                 offsetLeft === 180 && "hidden"
@@ -143,13 +144,13 @@ export function BookLayout() {
               }}
             >
               <Page.Right />
-            </div>
+            </motion.div>
           </div>
         );
       })}
 
       {/* Triangle navigation overlays */}
-      {canGoPrev && (
+      {Number.isInteger(index) &&  canGoPrev && (
         <button
           onClick={prevPage}
           className="absolute bottom-0 left-0 w-0 h-0 z-50 cursor-pointer
@@ -161,7 +162,7 @@ export function BookLayout() {
           <ChevronLeft className="absolute bottom-[-50px] left-[5px] w-4 h-4 text-white/60" />
         </button>
       )}
-      {canGoNext && (
+      { Number.isInteger(index) &&  canGoNext && (
         <button
           onClick={nextPage}
           className="absolute bottom-0 right-0 w-0 h-0 z-50 cursor-pointer
@@ -174,7 +175,7 @@ export function BookLayout() {
         </button>
       )}
       
-      {index >=2 && (
+      {Number.isInteger(index) && index >=2 && (
         <button
           onClick={()=>setIndex(1)}
           className="absolute top-0 left-0 w-0 h-0 z-50 cursor-pointer
@@ -183,7 +184,7 @@ export function BookLayout() {
             hover:border-t-white/40 transition-colors"
           aria-label="ToC"
         >
-          <ChevronLeft className="absolute top-[-50px] left-[5px] w-4 h-4 text-white/60" />
+          <ListTree className="absolute top-[-50px] left-[5px] w-4 h-4 text-white/60" />
         </button>
       )}
     </div>

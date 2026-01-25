@@ -7,6 +7,20 @@ export const Users: CollectionConfig = {
     useAsTitle: 'email',
     group: 'Admin',
   },
+  access: {
+    // Allow first user creation, then require auth
+    create: async ({ req }) => {
+      // If no users exist yet, allow creation (first admin setup)
+      if (!req.user) {
+        const { totalDocs } = await req.payload.count({ collection: 'users' })
+        return totalDocs === 0
+      }
+      return true
+    },
+    read: ({ req: { user } }) => !!user,
+    update: ({ req: { user } }) => !!user,
+    delete: ({ req: { user } }) => !!user,
+  },
   fields: [
     {
       name: 'role',

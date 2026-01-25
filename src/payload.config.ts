@@ -34,6 +34,16 @@ const dirname = path.dirname(filename)
 
 export default buildConfig({
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'https://localhost:3000',
+  cors: [
+    process.env.NEXT_PUBLIC_SERVER_URL || 'https://localhost:3000',
+    'https://sweethansel.com',
+    'https://www.sweethansel.com',
+  ].filter(Boolean),
+  csrf: [
+    process.env.NEXT_PUBLIC_SERVER_URL || 'https://localhost:3000',
+    'https://sweethansel.com',
+    'https://www.sweethansel.com',
+  ].filter(Boolean),
   admin: {
     user: Users.slug,
     importMap: {

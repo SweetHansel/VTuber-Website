@@ -1,63 +1,37 @@
 'use client'
 
-import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import { Loader2, ExternalLink } from 'lucide-react'
 import { useModalStore } from '@/stores/modalStore'
+import { useArtworks, type Artwork as CMSArtwork } from '@/hooks/useCMS'
 import { cn } from '@/lib/utils'
-import { ExternalLink, Heart } from 'lucide-react'
 
 interface Artwork {
   id: string
   title?: string
   image: string
-  artworkType: 'fanart' | 'official' | 'meme' | 'commissioned'
+  artworkType: 'fanart' | 'official' | 'meme' | 'commissioned' | 'other'
   artistName?: string
   sourceUrl?: string
   isFeatured?: boolean
 }
 
-// Mock data - will be replaced with CMS data
-const mockArtworks: Artwork[] = [
-  {
-    id: '1',
-    image: '/placeholder-art-1.jpg',
-    artworkType: 'fanart',
-    artistName: '@artist1',
-    sourceUrl: 'https://twitter.com/artist1',
-  },
-  {
-    id: '2',
-    image: '/placeholder-art-2.jpg',
-    artworkType: 'official',
-    title: 'Official Key Visual',
-    isFeatured: true,
-  },
-  {
-    id: '3',
-    image: '/placeholder-art-3.jpg',
-    artworkType: 'fanart',
-    artistName: '@artist2',
-  },
-  {
-    id: '4',
-    image: '/placeholder-art-4.jpg',
-    artworkType: 'meme',
-    title: 'Funny moment',
-  },
-  {
-    id: '5',
-    image: '/placeholder-art-5.jpg',
-    artworkType: 'fanart',
-    artistName: '@artist3',
-  },
-  {
-    id: '6',
-    image: '/placeholder-art-6.jpg',
-    artworkType: 'official',
-    title: 'Anniversary Art',
-  },
-]
+function transformArtwork(art: CMSArtwork): Artwork {
+  // Get artist name from credits array
+  const artistCredit = art.credits?.find(c => c.role === 'artist' || c.role === 'illustrator')
+  const artistName = artistCredit?.person?.name || artistCredit?.name
+
+  return {
+    id: art.id,
+    title: art.title,
+    image: art.image?.url || '/placeholder-art-1.jpg',
+    artworkType: art.artworkType === 'other' ? 'other' : art.artworkType,
+    artistName: artistName ? `@${artistName.replace('@', '')}` : undefined,
+    sourceUrl: art.sourceUrl,
+    isFeatured: art.isFeatured,
+  }
+}
 
 interface MasonryGalleryProps {
   filter?: 'all' | 'fanart' | 'official' | 'meme'
@@ -65,14 +39,35 @@ interface MasonryGalleryProps {
 
 export function MasonryGallery({ filter = 'all' }: MasonryGalleryProps) {
   const openModal = useModalStore((state) => state.openModal)
+  const { data: cmsArtworks, loading, error } = useArtworks(filter)
 
-  const filteredArtworks = mockArtworks.filter((art) => {
-    if (filter === 'all') return true
-    return art.artworkType === filter
-  })
+  // Transform CMS data or use fallback
+  const artworks: Artwork[] = cmsArtworks && cmsArtworks.length > 0
+    ? cmsArtworks.map(transformArtwork)
+    : []
+
+  // Apply filter for fallback data (CMS data is already filtered)
+  const filteredArtworks = cmsArtworks && cmsArtworks.length > 0
+    ? artworks
+    : artworks.filter((art) => {
+        if (filter === 'all') return true
+        return art.artworkType === filter
+      })
 
   const handleClick = (artwork: Artwork) => {
     openModal('artwork', artwork.id, artwork as unknown as Record<string, unknown>)
+  }
+
+  if (loading) {
+    return (
+      <div className="flex h-40 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-white/40" />
+      </div>
+    )
+  }
+
+  if (error) {
+    console.warn('Failed to fetch artworks, using fallback data:', error)
   }
 
   return (

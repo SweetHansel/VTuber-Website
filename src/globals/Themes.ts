@@ -40,28 +40,39 @@ export const Themes: GlobalConfig = {
       },
     },
     {
-      name: 'landingPageMedia',
-      type: 'upload',
-      relationTo: 'media',
+      name: 'interactiveMedia',
+      type: 'array',
       admin: {
-        description: 'Media displayed on the landing page',
+        description: 'Assign interactive media configurations to layout slots',
       },
-    },
-    {
-      name: 'artworkPageMedia',
-      type: 'upload',
-      relationTo: 'media',
-      admin: {
-        description: 'Media displayed on the artwork page',
-      },
-    },
-    {
-      name: 'musicPageMedia',
-      type: 'upload',
-      relationTo: 'media',
-      admin: {
-        description: 'Media displayed on the music page',
-      },
+      fields: [
+        {
+          name: 'slot',
+          type: 'select',
+          required: true,
+          options: [
+            { label: 'Landing - Main Character', value: 'landing-character' },
+            { label: 'Landing - Left Panel', value: 'landing-left' },
+            { label: 'Page - Artworks', value: 'page-artworks' },
+            { label: 'Page - Discography', value: 'page-discography' },
+            { label: 'Page - About', value: 'page-about' },
+            { label: 'Page - Models', value: 'page-models' },
+          ],
+          admin: {
+            description: 'Which layout slot this media appears in',
+          },
+        },
+        {
+          name: 'configuration',
+          type: 'relationship',
+          // Note: 'interactive-media' will be available after running payload generate:importmap
+          relationTo: 'interactive-media' as 'media',
+          required: true,
+          admin: {
+            description: 'Interactive media configuration to use',
+          },
+        },
+      ],
     },
   ],
 }

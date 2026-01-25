@@ -1,3 +1,5 @@
 export { MainLayout } from './MainLayout'
 export { LeftBar } from './LeftBar'
-export { AnimatedArtwork } from './AnimatedArtwork'
+export { InteractiveMedia } from './InteractiveMedia'
+export { AspectLock } from './AspectLock'
+export { BookLayout as PageTransition } from './BookLayout'

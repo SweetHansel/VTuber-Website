@@ -2,12 +2,10 @@
 
 import { useRef, useEffect, Suspense } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { OrbitControls, Environment, useGLTF } from '@react-three/drei'
+import { OrbitControls, Environment } from '@react-three/drei'
 import { VRM, VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import * as THREE from 'three'
 import { cn } from '@/lib/utils'
-import { Loader2 } from 'lucide-react'
 
 interface VRMViewerProps {
   modelUrl: string

@@ -30,7 +30,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
     <div className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
       {/* Main Layout Container */}
       <AspectLock
-        aspectRatio={16/9}
+        aspectRatio={16 / 9}
         off={focusState != "default"}
         anchorX="center"
         anchorY="center"
@@ -48,7 +48,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
             }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <AspectLock aspectRatio={1/2} anchorX="right" anchorY="bottom">
+            <AspectLock aspectRatio={1 / 2} anchorX="right" anchorY="bottom">
               <div
                 className={cn(
                   "h-full w-full overflow-hidden z-10  bg-blue-950/80 backdrop-blur-lg",

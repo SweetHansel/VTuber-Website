@@ -60,9 +60,6 @@ export function UpdatesPage() {
 
   return (
     <div className="flex h-full flex-col p-4">
-      {/* Header */}
-      <h2 className="mb-4 text-lg font-semibold text-white">Updates</h2>
-
       {/* Filter tabs */}
       <div className="mb-3 flex gap-1 rounded-lg bg-white/5 p-1">
         {(['all', 'announcements', 'blogs'] as FilterType[]).map((type) => (

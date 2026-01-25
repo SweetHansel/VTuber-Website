@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { ToCPage } from "@/components/pages/ToCPage";
+import { useRef } from "react";
 import { AboutPage } from "@/components/pages/AboutPage";
 import { ArtworksPage } from "@/components/pages/ArtworksPage";
 import { DiscographyPage } from "@/components/pages/DiscographyPage";
 import { VTuberModelsPage } from "@/components/pages/VTuberModelsPage";
-import { useBookStore, sections, type Section } from "@/stores/bookStore";
-import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, ListTree } from "lucide-react";
-import { motion } from "framer-motion";
+import {
+  animate,
+  motion,
+  useMotionValue,
+  useTransform,
+} from "framer-motion";
 
 // Page content type
 export interface PageContent {
@@ -21,9 +23,17 @@ export interface PageContent {
 const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(value, max));
 
+const sections = ["about", "artworks", "discography", "vtuber-models"];
+
+const sectionLabel: Record<string, string> = {
+  about: "About Me",
+  artworks: "Artworks",
+  discography: "Discography",
+  "vtuber-models": "VTuber Models",
+};
+
 // Page mapping
-const pages: Record<Section, PageContent> = {
-  toc: ToCPage,
+const pages: Record<string, PageContent> = {
   about: AboutPage,
   artworks: ArtworksPage,
   discography: DiscographyPage,
@@ -31,38 +41,30 @@ const pages: Record<Section, PageContent> = {
 };
 
 export function BookLayout() {
-  const { index, setIndex, nextPage, prevPage } = useBookStore();
+  const index = useMotionValue(0);
+
   const isScrollingRef = useRef(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const touchStartRef = useRef<number | null>(null);
 
-  // Decay toward nearest whole number when not scrolling
-  useEffect(() => {
-    let animationId: number;
+  const setIndexAnimated = (val: number) => {
+    animate(index, val, { duration: 0.5 });
+  };
 
-    const decay = () => {
-      if (!isScrollingRef.current) {
-        setIndex((prev) => {
-          const target = Math.round(prev);
-          const diff = target - prev;
+  // Controls prev/ToC buttons (visible when index >= 1)
+  const showPrevButtons = useTransform(index, (v) =>
+    Number.isInteger(v) && v >= 1 ? "visible" : "hidden",
+  );
 
-          // If close enough, snap to target
-          if (Math.abs(diff) < 0.01) return target;
+  // Controls next button (visible when index < sections.length)
+  const showNextButton = useTransform(index, (v) =>
+    Number.isInteger(v) && v < sections.length ? "visible" : "hidden",
+  );
 
-          // Move toward target with decay factor
-          return prev + diff * 0.15;
-        });
-      }
-      animationId = requestAnimationFrame(decay);
-    };
-
-    animationId = requestAnimationFrame(decay);
-    return () => cancelAnimationFrame(animationId);
-  }, [setIndex]);
 
   const handleWheel = (e: React.WheelEvent) => {
     const direction = e.deltaY > 0 ? 1 : -1;
-    setIndex((prev) => clamp(prev + direction * 0.1, 1, sections.length));
+    index.set(clamp(index.get() + direction * 0.2, 0, sections.length));
 
     isScrollingRef.current = true;
 
@@ -72,7 +74,14 @@ export function BookLayout() {
 
     scrollTimeoutRef.current = setTimeout(() => {
       isScrollingRef.current = false;
-    }, 100);
+
+      // Decay to nearest page when scrolling stops
+      const current = index.get();
+      const target = Math.round(current);
+      if (!Number.isInteger(current)) {
+        animate(index, target, { type: "spring", stiffness: 300, damping: 30 });
+      }
+    }, 250);
   };
 
   // Touch/swipe handlers
@@ -84,7 +93,7 @@ export function BookLayout() {
     if (touchStartRef.current === null) return;
 
     const diff = touchStartRef.current - e.touches[0].clientX;
-    setIndex((prev) => clamp(prev + diff * 0.005, 1, sections.length));
+    index.set(clamp(index.get() + diff * 0.01, 0, sections.length));
     touchStartRef.current = e.touches[0].clientX;
 
     isScrollingRef.current = true;
@@ -93,11 +102,38 @@ export function BookLayout() {
   const handleTouchEnd = () => {
     touchStartRef.current = null;
     isScrollingRef.current = false;
+
+    // Decay to nearest page when touch ends
+    const current = index.get();
+    const target = Math.round(current);
+    if (!Number.isInteger(current)) {
+      animate(index, target, { type: "spring", stiffness: 300, damping: 30 });
+    }
   };
 
-  const currentPage = Math.round(index);
-  const canGoPrev = currentPage > 1;
-  const canGoNext = currentPage < sections.length;
+  const left = useTransform(index, (index) => {
+    return 180 - clamp(index + 1, 0, 1) * 180;
+  });
+
+  const right = useTransform(index, (index) => {
+    return clamp(index, 0, 1) * -180;
+  });
+
+  const zLeft = useTransform(index, (index) => {
+    return index < 0.5 ? 2 : 0;
+  });
+
+  const zRight = useTransform(index, (index) => {
+    return index < 1.5 ? 11 : 0;
+  });
+
+  const nextPage = () => {
+    setIndexAnimated(Math.round(index.get()) + 1);
+  };
+
+  const prevPage = () => {
+    setIndexAnimated(Math.round(index.get()) - 1);
+  };
 
   return (
     <div
@@ -108,49 +144,68 @@ export function BookLayout() {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+      <motion.div
+        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden justify-center p-8"
+        style={{ rotateY: left, zIndex: zLeft }}
+      >
+        <ul className="space-y-2">
+          {sections.map((section, i) => (
+            <li
+              key={section}
+              onClick={() => setIndexAnimated(i + 1)}
+            >
+              <button className="text-white/70 hover:text-white transition-colors text-left">
+                {sectionLabel[section]}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </motion.div>
+
+      <motion.div
+        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden "
+        style={{ rotateY: right, zIndex: zRight }}
+      />
+
       {sections.map((section, i) => {
         const Page = pages[section];
-        const offsetLeft = 180 - clamp(index - i, 0, 1) * 180;
-        const offsetRight = clamp(index - i - 1, 0, 1) * -180;
 
-        // Z-index logic: pages swap z-order at 90 degrees
-        const zLeft = offsetLeft < 90
-          ? sections.length * 2 + i
-          : sections.length - i;
+        const left = useTransform(index, (index) => {
+          return 180 - clamp(index - i, 0, 1) * 180;
+        });
+        const right = useTransform(index, (index) => {
+          return clamp(index - i - 1, 0, 1) * -180;
+        });
 
-        const zRight = offsetRight > -90
-          ? sections.length * 2 + (sections.length - i)
-          : i;
+        const zLeft = useTransform(index, (index) => {
+          return clamp(index - i, 0, 1) < 0.5 ? 2 : 0;
+        });
 
+        const zRight = useTransform(index, (index) => {
+          return clamp(index - i - 1, 0, 1) < 0.5 ? 10 - i : 0;
+        });
         return (
-          <div key={section} className="contents">
+          <>
             <motion.div
-              className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden overflow-hidden"
-              style={{
-                transform: `rotateY(${offsetLeft}deg)`,
-                zIndex: zLeft,
-              }}
+              className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden"
+              style={{ rotateY: left, zIndex: zLeft }}
             >
               <Page.Left />
             </motion.div>
             <motion.div
-              className={cn(
-                "absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden overflow-hidden",
-                offsetLeft === 180 && "hidden"
-              )}
-              style={{
-                transform: `rotateY(${offsetRight}deg)`,
-                zIndex: zRight,
-              }}
+              className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden"
+              style={{ rotateY: right, zIndex: zRight }}
             >
               <Page.Right />
             </motion.div>
-          </div>
+          </>
         );
       })}
 
-      {/* Triangle navigation overlays */}
-      {Number.isInteger(index) &&  canGoPrev && (
+      <motion.div
+        className="absolute h-full w-full"
+        style={{ visibility: showPrevButtons }}
+      >
         <button
           onClick={prevPage}
           className="absolute bottom-0 left-0 w-0 h-0 z-50 cursor-pointer
@@ -161,8 +216,23 @@ export function BookLayout() {
         >
           <ChevronLeft className="absolute bottom-[-50px] left-[5px] w-4 h-4 text-white/60" />
         </button>
-      )}
-      { Number.isInteger(index) &&  canGoNext && (
+
+        <button
+          onClick={() => setIndexAnimated(0)}
+          className="absolute top-0 left-0 w-0 h-0 z-50 cursor-pointer
+            border-t-[60px] border-t-white/20
+            border-r-[60px] border-r-transparent
+            hover:border-t-white/40 transition-colors"
+          aria-label="ToC"
+        >
+          <ListTree className="absolute top-[-50px] left-[5px] w-4 h-4 text-white/60" />
+        </button>
+      </motion.div>
+
+      <motion.div
+        className="absolute h-full w-full"
+        style={{ visibility: showNextButton }}
+      >
         <button
           onClick={nextPage}
           className="absolute bottom-0 right-0 w-0 h-0 z-50 cursor-pointer
@@ -173,20 +243,7 @@ export function BookLayout() {
         >
           <ChevronRight className="absolute bottom-[-50px] right-[5px] w-4 h-4 text-white/60" />
         </button>
-      )}
-      
-      {Number.isInteger(index) && index >=2 && (
-        <button
-          onClick={()=>setIndex(1)}
-          className="absolute top-0 left-0 w-0 h-0 z-50 cursor-pointer
-            border-t-[60px] border-t-white/20
-            border-r-[60px] border-r-transparent
-            hover:border-t-white/40 transition-colors"
-          aria-label="ToC"
-        >
-          <ListTree className="absolute top-[-50px] left-[5px] w-4 h-4 text-white/60" />
-        </button>
-      )}
+      </motion.div>
     </div>
   );
 }

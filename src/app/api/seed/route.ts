@@ -216,7 +216,7 @@ export async function POST(request: Request) {
                 version: 1,
               },
             ],
-            direction: 'ltr',
+            direction: 'ltr' as const,
             format: '',
             indent: 0,
             version: 1,
@@ -244,7 +244,7 @@ export async function POST(request: Request) {
                 version: 1,
               },
             ],
-            direction: 'ltr',
+            direction: 'ltr' as const,
             format: '',
             indent: 0,
             version: 1,
@@ -267,7 +267,7 @@ export async function POST(request: Request) {
                 version: 1,
               },
             ],
-            direction: 'ltr',
+            direction: 'ltr' as const,
             format: '',
             indent: 0,
             version: 1,
@@ -290,7 +290,7 @@ export async function POST(request: Request) {
                 version: 1,
               },
             ],
-            direction: 'ltr',
+            direction: 'ltr' as const,
             format: '',
             indent: 0,
             version: 1,
@@ -303,7 +303,8 @@ export async function POST(request: Request) {
 
     for (const post of blogPosts) {
       try {
-        await payload.create({ collection: 'blog-posts', data: post })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await payload.create({ collection: 'blog-posts', data: post as any })
       } catch {
         // Skip duplicates
       }

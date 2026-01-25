@@ -7,6 +7,7 @@ export const Profile: GlobalConfig = {
   },
   access: {
     read: () => true,
+    update: ({ req: { user } }) => !!user,
   },
   fields: [
     {

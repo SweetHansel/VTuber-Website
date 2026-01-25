@@ -7,6 +7,7 @@ export const SiteSettings: GlobalConfig = {
   },
   access: {
     read: () => true,
+    update: ({ req: { user } }) => !!user,
   },
   fields: [
     {

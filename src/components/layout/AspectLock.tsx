@@ -63,8 +63,6 @@ export function AspectLock({
           Math.abs(width - lastDimensionsRef.current.width) > 1 ||
           Math.abs(height - lastDimensionsRef.current.height) > 1
         ) {
-          console.log("width:", width);
-          console.log("height:", height);
           lastDimensionsRef.current = { width, height };
           setDimensions({ width, height });
         }

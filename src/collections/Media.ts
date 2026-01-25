@@ -13,6 +13,8 @@ export const Media: CollectionConfig = {
   },
   upload: {
     staticDir: '../media',
+    // Disable local storage when using Vercel Blob in production
+    disableLocalStorage: !!process.env.BLOB_READ_WRITE_TOKEN,
     mimeTypes: ['image/*', 'audio/*', 'video/*'],
     imageSizes: [
       {

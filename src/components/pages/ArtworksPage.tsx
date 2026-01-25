@@ -3,10 +3,10 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { MasonryGallery } from '@/components/gallery/MasonryGallery'
-import { InteractiveMedia } from '@/components/layout/InteractiveMedia'
 import { staggerContainerVariants, staggerItemVariants } from '@/animations'
 import { cn } from '@/lib/utils'
 import type { PageContent } from '@/components/layout/BookLayout'
+import { InteractiveMediaFromCMS } from '../layout/InteractiveMediaFromCMS'
 
 type ArtworkFilter = 'all' | 'fanart' | 'official' | 'meme'
 
@@ -19,14 +19,11 @@ const filters: { label: string; value: ArtworkFilter }[] = [
 
 function ArtworksLeft() {
   return (
-    <div className="flex h-full items-center justify-center">
-      <InteractiveMedia
-        className="w-[280px] h-[350px]"
+    <div className="absolute h-full w-full">
+      <InteractiveMediaFromCMS
+        location="page-artworks"
+        className="absolute h-full w-full"
         depth={-50}
-        defaultMedia={{
-          src: '/placeholder-artwork.png',
-          alt: 'Artworks background',
-        }}
       />
     </div>
   )

@@ -18,10 +18,10 @@ const filters: { label: string; value: MusicFilter }[] = [
 
 function DiscographyRight() {
   return (
-    <div className="flex h-full items-center justify-center">
+    <div className="absolute h-full w-full">
       <InteractiveMediaFromCMS
         location="page-discography"
-        className="w-[280px] h-[350px]"
+        className="absolute h-full w-full"
         depth={-40}
       />
     </div>

@@ -76,14 +76,17 @@ export default buildConfig({
   ],
   editor: lexicalEditor(),
   plugins: [
-    vercelBlobStorage({
-      // Only enable when token is available (Vercel deployment)
-      enabled: !!process.env.BLOB_READ_WRITE_TOKEN,
-      collections: {
-        media: true,
-      },
-      token: process.env.BLOB_READ_WRITE_TOKEN || '',
-    }),
+    // Only include Vercel Blob storage when token is available
+    ...(process.env.BLOB_READ_WRITE_TOKEN
+      ? [
+          vercelBlobStorage({
+            collections: {
+              media: true,
+            },
+            token: process.env.BLOB_READ_WRITE_TOKEN,
+          }),
+        ]
+      : []),
   ],
   secret: process.env.PAYLOAD_SECRET || 'your-secret-key-change-in-production',
   typescript: {

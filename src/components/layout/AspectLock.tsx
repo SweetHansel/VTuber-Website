@@ -45,6 +45,7 @@ export function AspectLock({
   const parentRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [isReady, setIsReady] = useState(false);
+  const [shouldAnimate, setShouldAnimate] = useState(false);
   const lastDimensionsRef = useRef({ width: 0, height: 0 });
 
   // Immediate calculation on mount (before paint)
@@ -62,6 +63,13 @@ export function AspectLock({
     setDimensions(dims);
     setIsReady(true);
   }, [aspectRatio, off]);
+
+  // Enable animations only after initial layout settles
+  useEffect(() => {
+    if (!isReady) return;
+    const timer = setTimeout(() => setShouldAnimate(true), 100);
+    return () => clearTimeout(timer);
+  }, [isReady]);
 
   // ResizeObserver for ongoing updates
   useEffect(() => {
@@ -130,13 +138,15 @@ export function AspectLock({
         style={{
           width: off || !isReady ? "100%" : dimensions.width,
           height: off || !isReady ? "100%" : dimensions.height,
+          opacity: isReady? 1:0,
         }}
         initial={false}
         animate={{
           width: off || !isReady ? "100%" : dimensions.width,
           height: off || !isReady ? "100%" : dimensions.height,
+          opacity: isReady? 1:0,
         }}
-        transition={{ duration: 0.5, ease: "easeInOut" }}
+        transition={{ duration: shouldAnimate ? 0.5 : 0, ease: "easeInOut" }}
       >
         {children}
       </motion.div>

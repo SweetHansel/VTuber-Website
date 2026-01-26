@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { AboutPage } from "@/components/pages/AboutPage";
 import { ArtworksPage } from "@/components/pages/ArtworksPage";
 import { DiscographyPage } from "@/components/pages/DiscographyPage";
@@ -10,14 +10,19 @@ import {
   animate,
   motion,
   useMotionValue,
+  useMotionValueEvent,
   useTransform,
   type MotionValue,
 } from "framer-motion";
 
-// Page content type
+// Page content type - components receive isActive prop
+export interface PageProps {
+  isActive: boolean;
+}
+
 export interface PageContent {
-  Left: React.ComponentType;
-  Right: React.ComponentType;
+  Left: React.ComponentType<PageProps>;
+  Right: React.ComponentType<PageProps>;
 }
 
 // Separate component to properly use hooks
@@ -28,6 +33,14 @@ interface PageSpreadProps {
 }
 
 function PageSpread({ index, pageIndex, Page }: PageSpreadProps) {
+  const [isActive, setIsActive] = useState(false);
+
+  // Track when this page becomes active (index rounds to pageIndex + 1)
+  useMotionValueEvent(index, "change", (v) => {
+    const active = Math.round(v) === pageIndex + 1;
+    setIsActive(active);
+  });
+
   const left = useTransform(
     index,
     (v) => 180 - clamp(v - pageIndex, 0, 1) * 180,
@@ -37,25 +50,25 @@ function PageSpread({ index, pageIndex, Page }: PageSpreadProps) {
     (v) => clamp(v - pageIndex - 1, 0, 1) * -180,
   );
   const zLeft = useTransform(index, (v) =>
-    clamp(v - pageIndex, 0, 1) < 0.5 ? 2 : 0,
+    clamp(v - pageIndex -1, 0, 1.1) < 0.2 ? (10 - pageIndex)*3 : (10 - pageIndex-v)*3,
   );
   const zRight = useTransform(index, (v) =>
-    clamp(v - pageIndex - 1, 0, 1.1) < 1 ? (10 - pageIndex)*3 : 0,
+    clamp(v - pageIndex - 1, 0, 1.1) < 1 ? (10 - pageIndex)*3 : (10 - pageIndex-v)*3,
   );
 
   return (
     <>
       <motion.div
-        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden overflow-auto overscroll-contain"
+        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden overflow-y-clip overflow-x-visible overscroll-contain"
         style={{ rotateY: left, zIndex: zLeft }}
       >
-        <Page.Left />
+        <Page.Left isActive={isActive} />
       </motion.div>
       <motion.div
-        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden overflow-auto overscroll-contain"
+        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden overflow-y-clip overflow-x-visible overscroll-contain"
         style={{ rotateY: right, zIndex: zRight }}
       >
-        <Page.Right />
+        <Page.Right isActive={isActive} />
       </motion.div>
     </>
   );
@@ -90,7 +103,7 @@ export function BookLayout() {
   const touchStartRef = useRef<number | null>(null);
 
   const setIndexAnimated = (val: number) => {
-    animate(index, val, { duration: 0.5 });
+    animate(index, val, { duration: 0.2, bounce:0 });
   };
 
   // Controls prev/ToC buttons (visible when index >= 1)
@@ -105,7 +118,7 @@ export function BookLayout() {
 
   const handleWheel = (e: React.WheelEvent) => {
     const direction = e.deltaY > 0 ? 1 : -1;
-    index.set(clamp(index.get() + direction * 0.15, 0, sections.length));
+    index.set(clamp(index.get() + direction * 0.3, 0, sections.length));
 
     isScrollingRef.current = true;
 
@@ -121,7 +134,7 @@ export function BookLayout() {
       const target = Math.round(current);
       if (!Number.isInteger(current)) {
         animate(index, target, { type: "spring",
-    duration: 0.2, stiffness: 300, damping: 10 });
+    duration: 0.1, bounce: 0 });
       }
     }, 250);
   };
@@ -153,7 +166,7 @@ export function BookLayout() {
         type: "spring",
         stiffness: 300,
         visualDuration: 0.5,
-        damping: 30,
+        damping: 60,
       });
     }
   };
@@ -167,7 +180,7 @@ export function BookLayout() {
   });
 
   const zLeft = useTransform(index, (index) => {
-    return index < 0.5 ? 2 : 0;
+    return index < 0.5 ? 33 : 0;
   });
 
   const zRight = useTransform(index, (index) => {

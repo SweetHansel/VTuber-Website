@@ -115,7 +115,7 @@ export function useMusicTracks(filter?: 'all' | 'covers' | 'originals') {
 export interface Artwork {
   id: string
   title?: string
-  image?: { url?: string }
+  image?: { url?: string; width?: number; height?: number }
   artworkType: 'fanart' | 'official' | 'commissioned' | 'other'
   credits?: Array<{
     role: string

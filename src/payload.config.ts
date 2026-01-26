@@ -81,7 +81,11 @@ export default buildConfig({
       ? [
           vercelBlobStorage({
             collections: {
-              media: true,
+              media: {
+                // Required for generateURL to be called on read
+                // This lets the adapter generate the correct Vercel Blob URL
+                disablePayloadAccessControl: true,
+              },
             },
             token: process.env.BLOB_READ_WRITE_TOKEN,
           }),

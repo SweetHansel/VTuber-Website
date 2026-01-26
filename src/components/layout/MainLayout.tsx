@@ -45,14 +45,19 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
             initial={false}
             animate={{
               width: `${leftWidth}%`,
-              opacity: leftWidth === 0.1 ? 0 : 1,
+              opacity: leftWidth === 0 ? 0 : 1,
             }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <AspectLock aspectRatio={1 / 2} anchorX="right" anchorY="bottom" className="absolute perspective-1000">
+            <AspectLock
+              aspectRatio={1 / 2}
+              anchorX="right"
+              anchorY="bottom"
+              className="absolute perspective-1000"
+            >
               <div
                 className={cn(
-                  "h-full w-full overflow-hidden z-10  bg-blue-950/80 backdrop-blur-lg",
+                  "h-full w-full overflow-hidden z-10",
                   focusState == "default"
                     ? "transform-3d  rotate-x-11 rotate-z-5"
                     : "",
@@ -63,6 +68,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                 }}
               >
                 <InteractiveMediaFromCMS
+                  showEmpty
                   location="landing-left"
                   className="h-full w-full object-contain absolute bottom-0"
                 />
@@ -87,7 +93,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
               width: `${rightWidth}%`,
               opacity: rightWidth === 0 ? 0 : 1,
             }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             {/* Top Right */}
             <motion.div
@@ -97,9 +103,14 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                 height: `${topRightHeight}%`,
                 opacity: rightWidth === 0.1 || topRightHeight === 0.1 ? 0 : 1,
               }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <AspectLock aspectRatio={1} anchorX="left" anchorY="bottom" className="absolute">
+              <AspectLock
+                aspectRatio={1}
+                anchorX="left"
+                anchorY="bottom"
+                className="absolute"
+              >
                 <InteractiveMediaFromCMS
                   location="main-character"
                   className="absolute h-[120%] w-[120%] top-0 right-0"
@@ -117,14 +128,19 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
               initial={false}
               animate={{
                 height: `${bottomRightHeight}%`,
-                opacity: rightWidth === 0.1 ? 0 : 1,
+                opacity: rightWidth === 0? 0 : 1,
               }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <AspectLock aspectRatio={16 / 9} anchorX="left" anchorY="top" className="absolute  perspective-1000">
+              <AspectLock
+                aspectRatio={16 / 9}
+                anchorX="left"
+                anchorY="top"
+                className="absolute perspective-1000"
+              >
                 <div
                   className={cn(
-                    "h-full w-full bg-blue-950/80 backdrop-blur-lg",
+                    "h-full w-full",
                     focusState == "default"
                       ? "transform-3d  rotate-x-12 -rotate-z-5 -translate-z-1"
                       : "",
@@ -133,8 +149,15 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                     if (focusState == "default") setFocus("bottom-right");
                     e.stopPropagation();
                   }}
-                >
-                  <BookLayout />
+                > 
+                <InteractiveMediaFromCMS
+                  showEmpty
+                  location="landing-bottom-right"
+                  className="h-[110%] w-[110%] top-[-5%] left-[-5%] object-contain absolute bottom-0"
+                />
+                  <div className="absolute h-full w-full">
+                    <BookLayout />
+                  </div>
                 </div>
               </AspectLock>
             </motion.div>

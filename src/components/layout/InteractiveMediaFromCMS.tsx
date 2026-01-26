@@ -13,6 +13,7 @@ interface InteractiveMediaFromCMSProps {
     clickMedia?: MediaState
   }
   depth?: number
+  showEmpty?: boolean
   onClick?: () => void
   onHoverStart?: () => void
   onHoverEnd?: () => void
@@ -22,6 +23,14 @@ function LoadingSkeleton({ className }: { className?: string }) {
   return (
     <div className={cn('relative animate-pulse', className)}>
       <div className="h-full w-full rounded-lg bg-white/10" />
+    </div>
+  )
+}
+
+function EmptySkeleton({ className }: { className?: string }) {
+  return (
+    <div className={cn('relative', className)}>
+      <div className="h-full w-full rounded-lg bg-blue-950/60" />
     </div>
   )
 }
@@ -85,6 +94,7 @@ export function InteractiveMediaFromCMS({
   className,
   fallback,
   depth,
+  showEmpty,
   onClick,
   onHoverStart,
   onHoverEnd,
@@ -112,7 +122,8 @@ export function InteractiveMediaFromCMS({
         />
       )
     }
-    return null
+    if (showEmpty) return <EmptySkeleton className={className}/>
+    return
   }
 
   const transformed = transformCMSData(data)

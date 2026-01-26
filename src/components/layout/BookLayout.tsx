@@ -184,7 +184,7 @@ export function BookLayout() {
 
   return (
     <div
-      className="absolute h-[90%] w-[90%] top-[5%] left-[5%] perspective-[1000px]"
+      className="absolute h-full w-full perspective-[1000px]"
       onClick={(e) => e.stopPropagation()}
       onWheel={handleWheel}
       onTouchStart={handleTouchStart}

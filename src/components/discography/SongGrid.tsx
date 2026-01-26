@@ -1,9 +1,11 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 import { SongCard, type SongCardProps } from './SongCard'
 import { useMusicTracks, type MusicTrack } from '@/hooks/useCMS'
+import { useAudioStore, type Track } from '@/stores/audioStore'
 
 interface SongGridProps {
   filter?: 'all' | 'covers' | 'originals'
@@ -24,6 +26,8 @@ function transformTrack(track: MusicTrack): SongCardProps {
 
 export function SongGrid({ filter = 'all' }: SongGridProps) {
   const { data: tracks, loading, error } = useMusicTracks(filter)
+  const { currentTrack, setTrack } = useAudioStore()
+  const hasAutoSelected = useRef(false)
 
   // Use CMS data if available, otherwise use mock data
   const songs: SongCardProps[] = tracks && tracks.length > 0
@@ -39,6 +43,31 @@ export function SongGrid({ filter = 'all' }: SongGridProps) {
         if (filter === 'originals') return song.trackType === 'original' || song.trackType === 'remix'
         return true
       })
+
+  // Auto-select a random track if no music is playing
+  useEffect(() => {
+    if (hasAutoSelected.current || currentTrack || loading || filteredSongs.length === 0) return
+
+    // Find songs with audio URLs
+    const playableSongs = filteredSongs.filter(song => song.audioUrl)
+    if (playableSongs.length === 0) return
+
+    // Select a random song
+    const randomIndex = Math.floor(Math.random() * playableSongs.length)
+    const randomSong = playableSongs[randomIndex]
+
+    const track: Track = {
+      id: randomSong.id,
+      title: randomSong.title,
+      coverArt: randomSong.coverArt,
+      audioUrl: randomSong.audioUrl!,
+      duration: randomSong.duration || 0,
+      artist: randomSong.originalArtist,
+    }
+
+    setTrack(track)
+    hasAutoSelected.current = true
+  }, [loading, filteredSongs, currentTrack, setTrack])
 
   if (loading) {
     return (

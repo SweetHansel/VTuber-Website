@@ -2,9 +2,13 @@
 
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
 import { useModalStore, type ModalType } from '@/stores/modalStore'
-import { X } from 'lucide-react'
+import { useAudioStore, type Track } from '@/stores/audioStore'
+import { X, Play, Pause, ExternalLink, Calendar, MapPin } from 'lucide-react'
 import { scaleFadeVariants } from '@/animations'
+import { formatDuration, formatDate } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 
 export function Modal() {
   const { isOpen, modalType, contentId, contentData, closeModal } = useModalStore()
@@ -80,7 +84,7 @@ interface ModalContentProps {
   data: Record<string, unknown> | null
 }
 
-function ModalContent({ type, data }: ModalContentProps) {
+function ModalContent({ type, id, data }: ModalContentProps) {
   if (!data) {
     return (
       <div className="py-8 text-center text-white/60">Loading...</div>
@@ -90,33 +94,13 @@ function ModalContent({ type, data }: ModalContentProps) {
   switch (type) {
     case 'announcement':
     case 'blog-post':
-      return (
-        <div>
-          <h2 className="mb-4 text-2xl font-bold text-white">
-            {String(data.title || '')}
-          </h2>
-          {data.excerpt ? (
-            <p className="text-white/70">{String(data.excerpt)}</p>
-          ) : null}
-          {/* Add more content rendering */}
-        </div>
-      )
+      return <ContentModalContent type={type} data={data} />
 
     case 'artwork':
-      return (
-        <div>
-          <h2 className="mb-4 text-xl font-bold text-white">Artwork Details</h2>
-          {/* Artwork modal content */}
-        </div>
-      )
+      return <ArtworkModalContent data={data} />
 
     case 'song':
-      return (
-        <div>
-          <h2 className="mb-4 text-xl font-bold text-white">Song Details</h2>
-          {/* Song modal content */}
-        </div>
-      )
+      return <SongModalContent id={id} data={data} />
 
     default:
       return (
@@ -125,4 +109,256 @@ function ModalContent({ type, data }: ModalContentProps) {
         </div>
       )
   }
+}
+
+const typeColors: Record<string, string> = {
+  stream: 'bg-purple-500/20 text-purple-300',
+  event: 'bg-blue-500/20 text-blue-300',
+  release: 'bg-green-500/20 text-green-300',
+  collab: 'bg-pink-500/20 text-pink-300',
+  general: 'bg-gray-500/20 text-gray-300',
+}
+
+function ContentModalContent({ type, data }: { type: 'announcement' | 'blog-post'; data: Record<string, unknown> }) {
+  const title = String(data.title || '')
+  const excerpt = data.excerpt ? String(data.excerpt) : undefined
+  const image = data.image ? String(data.image) : undefined
+  const date = data.date ? String(data.date) : undefined
+  const eventDate = data.eventDate ? String(data.eventDate) : undefined
+  const location = data.location ? String(data.location) : undefined
+  const announcementType = data.announcementType ? String(data.announcementType) : undefined
+
+  return (
+    <div>
+      {/* Image */}
+      {image && (
+        <div className="relative -mx-6 -mt-6 mb-6 aspect-video overflow-hidden rounded-t-2xl">
+          <Image
+            src={image}
+            alt={title}
+            fill
+            className="object-cover"
+          />
+        </div>
+      )}
+
+      {/* Type badge */}
+      {type === 'announcement' && announcementType && (
+        <span
+          className={cn(
+            'mb-3 inline-block rounded-full px-3 py-1 text-sm font-medium capitalize',
+            typeColors[announcementType] || typeColors.general
+          )}
+        >
+          {announcementType}
+        </span>
+      )}
+
+      {type === 'blog-post' && (
+        <span className="mb-3 inline-block rounded-full bg-indigo-500/20 px-3 py-1 text-sm font-medium text-indigo-300">
+          Blog Post
+        </span>
+      )}
+
+      {/* Title */}
+      <h2 className="mb-3 text-2xl font-bold text-white">{title}</h2>
+
+      {/* Meta info */}
+      <div className="mb-4 flex flex-wrap items-center gap-4 text-sm text-white/60">
+        {eventDate && (
+          <span className="flex items-center gap-1.5">
+            <Calendar className="h-4 w-4" />
+            {formatDate(eventDate, { month: 'long', day: 'numeric', year: 'numeric' })}
+          </span>
+        )}
+        {location && (
+          <span className="flex items-center gap-1.5">
+            <MapPin className="h-4 w-4" />
+            {location}
+          </span>
+        )}
+        {date && !eventDate && (
+          <span className="flex items-center gap-1.5">
+            <Calendar className="h-4 w-4" />
+            {formatDate(date, { month: 'long', day: 'numeric', year: 'numeric' })}
+          </span>
+        )}
+      </div>
+
+      {/* Content */}
+      {excerpt && (
+        <p className="text-white/70 leading-relaxed">{excerpt}</p>
+      )}
+    </div>
+  )
+}
+
+function ArtworkModalContent({ data }: { data: Record<string, unknown> }) {
+  const title = data.title ? String(data.title) : undefined
+  const image = String(data.image || '/placeholder-art.jpg')
+  const artworkType = String(data.artworkType || 'fanart')
+  const artistName = data.artistName ? String(data.artistName) : undefined
+  const sourceUrl = data.sourceUrl ? String(data.sourceUrl) : undefined
+
+  return (
+    <div>
+      {/* Image */}
+      <div className="relative -mx-6 -mt-6 mb-6 overflow-hidden rounded-t-2xl">
+        <div className="relative aspect-[4/3] w-full">
+          <Image
+            src={image}
+            alt={title || 'Artwork'}
+            fill
+            className="object-contain bg-black/50"
+          />
+        </div>
+      </div>
+
+      {/* Type badge */}
+      <span
+        className={cn(
+          'mb-3 inline-block rounded-full px-3 py-1 text-sm font-medium capitalize',
+          artworkType === 'official'
+            ? 'bg-blue-500/20 text-blue-300'
+            : artworkType === 'fanart'
+            ? 'bg-cyan-500/20 text-cyan-300'
+            : artworkType === 'commissioned'
+            ? 'bg-purple-500/20 text-purple-300'
+            : 'bg-gray-500/20 text-gray-300'
+        )}
+      >
+        {artworkType}
+      </span>
+
+      {/* Title */}
+      {title && (
+        <h2 className="mb-2 text-2xl font-bold text-white">{title}</h2>
+      )}
+
+      {/* Artist */}
+      {artistName && (
+        <p className="mb-4 text-white/60">by {artistName}</p>
+      )}
+
+      {/* Source link */}
+      {sourceUrl && (
+        <a
+          href={sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm text-white/70 transition-colors hover:bg-white/20 hover:text-white"
+        >
+          View Original
+          <ExternalLink className="h-4 w-4" />
+        </a>
+      )}
+    </div>
+  )
+}
+
+function SongModalContent({ id, data }: { id: string | null; data: Record<string, unknown> }) {
+  const { currentTrack, isPlaying, setTrack, play, pause } = useAudioStore()
+
+  const trackId = id || ''
+  const title = String(data.title || 'Unknown Title')
+  const trackType = String(data.trackType || 'cover')
+  const coverArt = String(data.coverArt || '/placeholder-cover.jpg')
+  const audioUrl = data.audioUrl ? String(data.audioUrl) : undefined
+  const duration = typeof data.duration === 'number' ? data.duration : undefined
+  const originalArtist = data.originalArtist ? String(data.originalArtist) : undefined
+  const streamingLinks = Array.isArray(data.streamingLinks) ? data.streamingLinks : []
+
+  const isCurrentTrack = currentTrack?.id === trackId
+  const isCurrentlyPlaying = isCurrentTrack && isPlaying
+
+  const handlePlayClick = () => {
+    if (!audioUrl) return
+
+    if (isCurrentTrack) {
+      isPlaying ? pause() : play()
+    } else {
+      const track: Track = {
+        id: trackId,
+        title,
+        coverArt,
+        audioUrl,
+        duration: duration || 0,
+        artist: originalArtist,
+      }
+      setTrack(track)
+      play()
+    }
+  }
+
+  return (
+    <div className="flex gap-6">
+      {/* Cover Art */}
+      <div className="relative h-48 w-48 flex-shrink-0 overflow-hidden rounded-xl">
+        <Image
+          src={coverArt}
+          alt={title}
+          fill
+          className="object-cover"
+        />
+      </div>
+
+      {/* Info */}
+      <div className="flex flex-1 flex-col">
+        <span className="mb-2 w-fit rounded-full bg-blue-500/20 px-3 py-1 text-xs font-medium capitalize text-blue-400">
+          {trackType}
+        </span>
+
+        <h2 className="mb-1 text-2xl font-bold text-white">{title}</h2>
+
+        {originalArtist && (
+          <p className="mb-2 text-white/60">Original by {originalArtist}</p>
+        )}
+
+        {duration && (
+          <p className="mb-4 text-sm text-white/40">{formatDuration(duration)}</p>
+        )}
+
+        {/* Play Button */}
+        {audioUrl && (
+          <button
+            onClick={handlePlayClick}
+            className="mb-4 flex w-fit items-center gap-2 rounded-full bg-white px-6 py-3 font-medium text-black transition-transform hover:scale-105"
+          >
+            {isCurrentlyPlaying ? (
+              <>
+                <Pause className="h-5 w-5" fill="currentColor" />
+                Pause
+              </>
+            ) : (
+              <>
+                <Play className="h-5 w-5 translate-x-0.5" fill="currentColor" />
+                Play
+              </>
+            )}
+          </button>
+        )}
+
+        {/* Streaming Links */}
+        {streamingLinks.length > 0 && (
+          <div className="mt-auto">
+            <p className="mb-2 text-sm text-white/40">Listen on</p>
+            <div className="flex flex-wrap gap-2">
+              {streamingLinks.map((link: { platform: string; url: string }) => (
+                <a
+                  key={link.platform}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-sm text-white/70 transition-colors hover:bg-white/20 hover:text-white"
+                >
+                  {link.platform}
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
 }

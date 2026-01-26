@@ -1,12 +1,12 @@
-'use client'
+"use client";
 
-import { useState, useRef, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import Image from 'next/image'
-import { useAudioStore } from '@/stores/audioStore'
-import { seekAudio } from './AudioProvider'
-import { cn } from '@/lib/utils'
-import { formatDuration } from '@/lib/utils'
+import { useState, useRef, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import { useAudioStore } from "@/stores/audioStore";
+import { seekAudio } from "./AudioProvider";
+import { cn } from "@/lib/utils";
+import { formatDuration } from "@/lib/utils";
 import {
   Play,
   Pause,
@@ -18,7 +18,7 @@ import {
   ChevronDown,
   ListMusic,
   X,
-} from 'lucide-react'
+} from "lucide-react";
 
 export function SongSeekbar() {
   const {
@@ -35,182 +35,219 @@ export function SongSeekbar() {
     playPrevious,
     playTrackAt,
     removeFromQueue,
-  } = useAudioStore()
+  } = useAudioStore();
 
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [showQueue, setShowQueue] = useState(false)
-  const [isMuted, setIsMuted] = useState(false)
-  const [prevVolume, setPrevVolume] = useState(volume)
-  const progressRef = useRef<HTMLDivElement>(null)
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showQueue, setShowQueue] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [prevVolume, setPrevVolume] = useState(volume);
+  const progressRef = useRef<HTMLDivElement>(null);
 
   const handleProgressClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!progressRef.current || !duration) return
+      if (!progressRef.current || !duration) return;
 
-      const rect = progressRef.current.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      const percentage = x / rect.width
-      const newTime = percentage * duration
+      const rect = progressRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const percentage = x / rect.width;
+      const newTime = percentage * duration;
 
-      seekAudio(newTime)
+      seekAudio(newTime);
     },
-    [duration]
-  )
+    [duration],
+  );
 
   const handleVolumeToggle = () => {
     if (isMuted) {
-      setVolume(prevVolume)
-      setIsMuted(false)
+      setVolume(prevVolume);
+      setIsMuted(false);
     } else {
-      setPrevVolume(volume)
-      setVolume(0)
-      setIsMuted(true)
+      setPrevVolume(volume);
+      setVolume(0);
+      setIsMuted(true);
     }
-  }
+  };
 
-  const progressPercent = duration > 0 ? (playbackPosition / duration) * 100 : 0
+  const progressPercent =
+    duration > 0 ? (playbackPosition / duration) * 100 : 0;
 
-  if (!currentTrack) return null
+  if (!currentTrack) return null;
 
   return (
     <>
       {/* Seekbar */}
-      <motion.div
-        initial={{ y: 100 }}
-        animate={{ y: 0 }}
-        exit={{ y: 100 }}
-        className="fixed bottom-0 left-16 right-0 z-30 md:left-20"
-      >
-        {/* Progress bar */}
-        <div
-          ref={progressRef}
-          onClick={handleProgressClick}
-          className="group h-1 cursor-pointer bg-white/10"
-        >
-          <motion.div
-            className="h-full bg-blue-500 transition-all group-hover:h-1.5"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
 
-        {/* Controls */}
-        <div
-          className={cn(
-            'flex items-center gap-4 bg-black/80 px-4 backdrop-blur-lg transition-all',
-            isExpanded ? 'py-4' : 'py-2'
+      <AnimatePresence>
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 100, opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed h-15 bottom-0 left-0 right-0 z-10 pointer-events-none"
+        >
+          {/* Minimized: album art square with expand icon */}
+          <AnimatePresence>
+            {!isExpanded && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.2 }}
+                onClick={() => setIsExpanded(true)}
+                className="absolute bottom-4 right-4 z-10 group h-12 w-12 overflow-hidden rounded-lg shadow-lg"
+              >
+                <Image
+                  src={currentTrack.coverArt}
+                  alt={currentTrack.title}
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <ChevronUp className="h-5 w-5 text-white" />
+                </div>
+              </motion.button>
+            )}
+          </AnimatePresence>
+
+          {/* Expanded: full controls bar */}
+          {isExpanded && (
+            <motion.div
+              initial={{ y: 100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 100, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="absolute h-full w-[60%] right-0 bottom-0"
+            >
+              {/* Controls */}
+              <div className="flex items-center gap-4 py-2 px-2">
+                {/* Track info */}
+                <div className="flex flex-1 items-center gap-3">
+                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md">
+                    <Image
+                      src={currentTrack.coverArt}
+                      alt={currentTrack.title}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="truncate text-sm font-medium text-white">
+                      {currentTrack.title}
+                    </h4>
+                    {currentTrack.artist && (
+                      <p className="truncate text-xs text-white/60">
+                        {currentTrack.artist}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Playback controls */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={playPrevious}
+                    className="p-2 text-white/60 hover:text-white"
+                  >
+                    <SkipBack className="h-5 w-5" />
+                  </button>
+
+                  <button
+                    onClick={togglePlay}
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black hover:scale-105"
+                  >
+                    {isPlaying ? (
+                      <Pause className="h-5 w-5" fill="currentColor" />
+                    ) : (
+                      <Play
+                        className="h-5 w-5 translate-x-0.5"
+                        fill="currentColor"
+                      />
+                    )}
+                  </button>
+
+                  <button
+                    onClick={playNext}
+                    className="p-2 text-white/60 hover:text-white"
+                  >
+                    <SkipForward className="h-5 w-5" />
+                  </button>
+                </div>
+
+                {/* Time display */}
+                <div className="hidden w-24 text-center text-xs text-white/60 md:block">
+                  {formatDuration(playbackPosition)} /{" "}
+                  {formatDuration(duration)}
+                </div>
+
+                {/* Volume */}
+                <div className="hidden items-center gap-2 md:flex">
+                  <button
+                    onClick={handleVolumeToggle}
+                    className="p-2 text-white/60 hover:text-white"
+                  >
+                    {isMuted || volume === 0 ? (
+                      <VolumeX className="h-5 w-5" />
+                    ) : (
+                      <Volume2 className="h-5 w-5" />
+                    )}
+                  </button>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={volume}
+                    onChange={(e) => setVolume(parseFloat(e.target.value))}
+                    className="h-1 w-20 appearance-none rounded-full bg-white/20 accent-blue-500"
+                  />
+                </div>
+
+                {/* Queue toggle */}
+                <button
+                  onClick={() => setShowQueue(!showQueue)}
+                  className={cn(
+                    "p-2 transition-colors",
+                    showQueue
+                      ? "text-blue-400"
+                      : "text-white/60 hover:text-white",
+                  )}
+                >
+                  <ListMusic className="h-5 w-5" />
+                </button>
+
+                {/* Collapse toggle */}
+                <button
+                  onClick={() => setIsExpanded(false)}
+                  className="text-white/60 hover:text-white"
+                >
+                  <ChevronDown className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Progress bar */}
+              <div
+                ref={progressRef}
+                onClick={handleProgressClick}
+                className="group h-2 cursor-pointer bg-white/10"
+              >
+                <motion.div
+                  className="h-full bg-blue-500 transition-all group-hover:h-1.5"
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+            </motion.div>
           )}
-        >
-          {/* Expand toggle */}
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="text-white/60 hover:text-white"
-          >
-            {isExpanded ? (
-              <ChevronDown className="h-5 w-5" />
-            ) : (
-              <ChevronUp className="h-5 w-5" />
-            )}
-          </button>
-
-          {/* Track info */}
-          <div className="flex flex-1 items-center gap-3">
-            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md">
-              <Image
-                src={currentTrack.coverArt}
-                alt={currentTrack.title}
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div className="min-w-0">
-              <h4 className="truncate text-sm font-medium text-white">
-                {currentTrack.title}
-              </h4>
-              {currentTrack.artist && (
-                <p className="truncate text-xs text-white/60">
-                  {currentTrack.artist}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Playback controls */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={playPrevious}
-              className="p-2 text-white/60 hover:text-white"
-            >
-              <SkipBack className="h-5 w-5" />
-            </button>
-
-            <button
-              onClick={togglePlay}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black hover:scale-105"
-            >
-              {isPlaying ? (
-                <Pause className="h-5 w-5" fill="currentColor" />
-              ) : (
-                <Play className="h-5 w-5 translate-x-0.5" fill="currentColor" />
-              )}
-            </button>
-
-            <button
-              onClick={playNext}
-              className="p-2 text-white/60 hover:text-white"
-            >
-              <SkipForward className="h-5 w-5" />
-            </button>
-          </div>
-
-          {/* Time display */}
-          <div className="hidden w-24 text-center text-xs text-white/60 md:block">
-            {formatDuration(playbackPosition)} / {formatDuration(duration)}
-          </div>
-
-          {/* Volume */}
-          <div className="hidden items-center gap-2 md:flex">
-            <button
-              onClick={handleVolumeToggle}
-              className="p-2 text-white/60 hover:text-white"
-            >
-              {isMuted || volume === 0 ? (
-                <VolumeX className="h-5 w-5" />
-              ) : (
-                <Volume2 className="h-5 w-5" />
-              )}
-            </button>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={volume}
-              onChange={(e) => setVolume(parseFloat(e.target.value))}
-              className="h-1 w-20 appearance-none rounded-full bg-white/20 accent-blue-500"
-            />
-          </div>
-
-          {/* Queue toggle */}
-          <button
-            onClick={() => setShowQueue(!showQueue)}
-            className={cn(
-              'p-2 transition-colors',
-              showQueue ? 'text-blue-400' : 'text-white/60 hover:text-white'
-            )}
-          >
-            <ListMusic className="h-5 w-5" />
-          </button>
-        </div>
-      </motion.div>
+        </motion.div>
+      </AnimatePresence>
 
       {/* Queue panel */}
       <AnimatePresence>
         {showQueue && (
           <motion.div
-            initial={{ x: '100%' }}
+            initial={{ x: "100%" }}
             animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className="fixed bottom-16 right-0 top-0 z-20 w-80 bg-black/90 backdrop-blur-lg"
           >
             <div className="flex h-full flex-col">
@@ -235,8 +272,8 @@ export function SongSeekbar() {
                       key={`${track.id}-${index}`}
                       onClick={() => playTrackAt(index)}
                       className={cn(
-                        'flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors hover:bg-white/10',
-                        index === queueIndex && 'bg-white/10'
+                        "flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors hover:bg-white/10",
+                        index === queueIndex && "bg-white/10",
                       )}
                     >
                       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded">
@@ -275,8 +312,8 @@ export function SongSeekbar() {
                       </div>
                       <button
                         onClick={(e) => {
-                          e.stopPropagation()
-                          removeFromQueue(index)
+                          e.stopPropagation();
+                          removeFromQueue(index);
                         }}
                         className="p-1 text-white/40 hover:text-white"
                       >
@@ -291,5 +328,5 @@ export function SongSeekbar() {
         )}
       </AnimatePresence>
     </>
-  )
+  );
 }

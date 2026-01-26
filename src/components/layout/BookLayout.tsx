@@ -103,7 +103,7 @@ export function BookLayout() {
   const touchStartRef = useRef<number | null>(null);
 
   const setIndexAnimated = (val: number) => {
-    animate(index, val, { duration: 0.2, bounce:0 });
+    animate(index, val, { duration: 0.3, bounce:0 });
   };
 
   // Controls prev/ToC buttons (visible when index >= 1)
@@ -134,7 +134,7 @@ export function BookLayout() {
       const target = Math.round(current);
       if (!Number.isInteger(current)) {
         animate(index, target, { type: "spring",
-    duration: 0.1, bounce: 0 });
+    duration: 0.3, bounce: 0 });
       }
     }, 250);
   };
@@ -164,10 +164,7 @@ export function BookLayout() {
     if (!Number.isInteger(current)) {
       animate(index, target, {
         type: "spring",
-        stiffness: 300,
-        visualDuration: 0.5,
-        damping: 60,
-      });
+    duration: 0.3, bounce: 0 });
     }
   };
 

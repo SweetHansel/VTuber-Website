@@ -114,10 +114,10 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
               >
                 <InteractiveMediaFromCMS
                   location="main-character"
-                  className="absolute h-[120%] w-[120%] top-0 right-0"
+                  className="absolute h-[120%] w-[120%] left-[20%] top-0"
                 />
                 <div
-                  className="absolute h-full w-full left-1/3  bg-blue-950/80 backdrop-blur-lg -z-10"
+                  className="absolute h-full w-full left-[30%]  bg-blue-950/80 backdrop-blur-lg -z-10"
                   onClick={(e) => e.stopPropagation()}
                 />
               </AspectLock>

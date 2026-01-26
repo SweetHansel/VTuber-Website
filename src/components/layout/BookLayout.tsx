@@ -46,13 +46,13 @@ function PageSpread({ index, pageIndex, Page }: PageSpreadProps) {
   return (
     <>
       <motion.div
-        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden"
+        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden overflow-auto overscroll-contain"
         style={{ rotateY: left, zIndex: zLeft }}
       >
         <Page.Left />
       </motion.div>
       <motion.div
-        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden"
+        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden overflow-auto overscroll-contain"
         style={{ rotateY: right, zIndex: zRight }}
       >
         <Page.Right />

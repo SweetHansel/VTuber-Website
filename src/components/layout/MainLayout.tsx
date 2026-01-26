@@ -1,7 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useLayoutStore, layoutConfig } from "@/stores/layoutStore";
+import { X } from "lucide-react";
 import { SongSeekbar } from "@/components/audio/SongSeekbar";
 import { LivestreamAlert } from "@/components/ui/LivestreamAlert";
 import { Modal } from "@/components/content/Modal";
@@ -36,7 +37,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
         off={focusState != "default"}
       >
         <main
-          className="flex h-full w-full gap-4 pt-4 px-4"
+          className="flex h-full w-full"
           onClick={() => setFocus("default")}
         >
           {/* Left Section */}
@@ -87,7 +88,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
 
           {/* Right Section (container for top-right and bottom-right) */}
           <motion.div
-            className="flex h-full flex-col gap-4 z-0"
+            className="flex h-full flex-col z-0"
             initial={false}
             animate={{
               width: `${rightWidth}%`,
@@ -101,7 +102,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
               initial={false}
               animate={{
                 height: `${topRightHeight}%`,
-                opacity: rightWidth === 0.1 || topRightHeight === 0.1 ? 0 : 1,
+                opacity: rightWidth === 0 || topRightHeight === 0 ? 0 : 1,
               }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
@@ -128,7 +129,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
               initial={false}
               animate={{
                 height: `${bottomRightHeight}%`,
-                opacity: rightWidth === 0? 0 : 1,
+                opacity: rightWidth === 0 ? 0 : 1,
               }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
@@ -149,13 +150,13 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                     if (focusState == "default") setFocus("bottom-right");
                     e.stopPropagation();
                   }}
-                > 
-                <InteractiveMediaFromCMS
-                  showEmpty
-                  location="landing-bottom-right"
-                  className="h-[110%] w-[110%] top-[-5%] left-[-5%] object-contain absolute bottom-0"
-                />
-                  <div className="absolute h-full w-full">
+                >
+                  <InteractiveMediaFromCMS
+                    showEmpty
+                    location="landing-bottom-right"
+                    className="h-[105%] w-[105%] top-[-2.5%] left-[-5%] object-contain absolute bottom-0"
+                  />
+                  <div className="absolute h-[95%] w-[95%] top-[2.5%] left-0 ">
                     <BookLayout />
                   </div>
                 </div>
@@ -166,6 +167,23 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
       </AspectLock>
 
       <LeftBar />
+
+      {/* Back to default button */}
+      <AnimatePresence>
+        {focusState !== "default" && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setFocus("default")}
+            className="fixed top-4 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm text-white/70 hover:bg-white/20 hover:text-white transition-colors"
+            aria-label="Back to overview"
+          >
+            <X className="h-5 w-5" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Livestream Alert */}
       <LivestreamAlert />

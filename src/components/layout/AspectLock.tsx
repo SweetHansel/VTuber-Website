@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useRef, useState, useEffect } from "react";
+import { ReactNode, useRef, useState, useEffect, useLayoutEffect } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +16,24 @@ interface AspectLockProps {
   className?: string;
 }
 
+// Calculate dimensions that fit aspect ratio within given bounds
+function calculateDimensions(
+  parentWidth: number,
+  parentHeight: number,
+  aspectRatio: number
+) {
+  const parentRatio = parentWidth / parentHeight;
+  if (parentRatio > aspectRatio) {
+    const height = parentHeight;
+    const width = height * aspectRatio;
+    return { width, height };
+  } else {
+    const width = parentWidth;
+    const height = width / aspectRatio;
+    return { width, height };
+  }
+}
+
 export function AspectLock({
   children,
   aspectRatio,
@@ -26,112 +44,97 @@ export function AspectLock({
 }: AspectLockProps) {
   const parentRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [isReady, setIsReady] = useState(false);
   const lastDimensionsRef = useRef({ width: 0, height: 0 });
 
-  useEffect(() => {
-    if (!off) {
-      const parent = parentRef.current?.parentElement;
-      if (!parent) return;
+  // Immediate calculation on mount (before paint)
+  useLayoutEffect(() => {
+    if (off) return;
+    const parent = parentRef.current?.parentElement;
+    if (!parent) return;
 
-      let debounceTimer: NodeJS.Timeout | null = null;
+    const parentWidth = parent.clientWidth;
+    const parentHeight = parent.clientHeight;
+    if (parentWidth < 100 || parentHeight < 100) return;
 
-      const updateDimensions = () => {
-        const parentWidth = parent.clientWidth;
-        const parentHeight = parent.clientHeight;
-
-        // Don't resize if parent is collapsed or too small
-        const minSize = 100;
-        if (parentWidth < minSize || parentHeight < minSize) return;
-
-        const parentRatio = parentWidth / parentHeight;
-
-        let width: number;
-        let height: number;
-
-        if (parentRatio > aspectRatio) {
-          // Parent is wider than aspect ratio - constrain by height
-          height = parentHeight;
-          width = height * aspectRatio;
-        } else {
-          // Parent is taller than aspect ratio - constrain by width
-          width = parentWidth;
-          height = width / aspectRatio;
-        }
-
-        // Only update if dimensions actually changed
-        if (
-          Math.abs(width - lastDimensionsRef.current.width) > 1 ||
-          Math.abs(height - lastDimensionsRef.current.height) > 1
-        ) {
-          lastDimensionsRef.current = { width, height };
-          setDimensions({ width, height });
-        }
-      };
-
-      const debouncedUpdate = () => {
-        if (debounceTimer) clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(updateDimensions, 100);
-      };
-
-      // Initial calculation (debounced)
-      debouncedUpdate();
-
-      // Use ResizeObserver for parent size changes
-      const resizeObserver = new ResizeObserver(debouncedUpdate);
-      resizeObserver.observe(parent);
-
-      return () => {
-        if (debounceTimer) clearTimeout(debounceTimer);
-        resizeObserver.disconnect();
-      };
-    }
+    const dims = calculateDimensions(parentWidth, parentHeight, aspectRatio);
+    lastDimensionsRef.current = dims;
+    setDimensions(dims);
+    setIsReady(true);
   }, [aspectRatio, off]);
 
-  // Calculate position styles based on anchor
-  const positionStyles: React.CSSProperties = {
-    position: "absolute",
+  // ResizeObserver for ongoing updates
+  useEffect(() => {
+    if (off) return;
+    const parent = parentRef.current?.parentElement;
+    if (!parent) return;
+
+    let debounceTimer: NodeJS.Timeout | null = null;
+
+    const updateDimensions = () => {
+      const parentWidth = parent.clientWidth;
+      const parentHeight = parent.clientHeight;
+
+      const minSize = 100;
+      if (parentWidth < minSize || parentHeight < minSize) return;
+
+      const { width, height } = calculateDimensions(parentWidth, parentHeight, aspectRatio);
+
+      if (
+        Math.abs(width - lastDimensionsRef.current.width) > 1 ||
+        Math.abs(height - lastDimensionsRef.current.height) > 1
+      ) {
+        lastDimensionsRef.current = { width, height };
+        setDimensions({ width, height });
+      }
+    };
+
+    const debouncedUpdate = () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(updateDimensions, 50);
+    };
+
+    const resizeObserver = new ResizeObserver(debouncedUpdate);
+    resizeObserver.observe(parent);
+
+    return () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      resizeObserver.disconnect();
+    };
+  }, [aspectRatio, off]);
+
+  // Map anchors to flexbox alignment
+  const justifyMap: Record<AnchorX, string> = {
+    left: "justify-start",
+    center: "justify-center",
+    right: "justify-end",
   };
 
-  // Build transform parts
-  const transforms: string[] = [];
-
-  // X positioning
-  if (anchorX === "left") {
-    positionStyles.left = 0;
-  } else if (anchorX === "right") {
-    positionStyles.right = 0;
-  } else {
-    positionStyles.left = "50%";
-    transforms.push("translateX(-50%)");
-  }
-
-  // Y positioning
-  if (anchorY === "top") {
-    positionStyles.top = 0;
-  } else if (anchorY === "bottom") {
-    positionStyles.bottom = 0;
-  } else {
-    positionStyles.top = "50%";
-    transforms.push("translateY(-50%)");
-  }
-
-  // Apply transform if needed
-  if (transforms.length > 0) {
-    positionStyles.transform = transforms.join(" ");
-  }
+  const alignMap: Record<AnchorY, string> = {
+    top: "items-start",
+    center: "items-center",
+    bottom: "items-end",
+  };
 
   return (
-    <div ref={parentRef} className="pointer-events-none absolute inset-0">
+    <div
+      ref={parentRef}
+      className={cn(
+        "pointer-events-none absolute inset-0 flex",
+        justifyMap[anchorX],
+        alignMap[anchorY]
+      )}
+    >
       <motion.div
-        className={cn("pointer-events-auto perspective-1000", className)}
+        className={cn("pointer-events-auto", className)}
         style={{
-          ...positionStyles,
-          width: off ? "100%" : dimensions.width,
-          height: off ? "100%" : dimensions.height,
+          width: off || !isReady ? "100%" : dimensions.width,
+          height: off || !isReady ? "100%" : dimensions.height,
         }}
+        initial={false}
         animate={{
-          width: off ? "100%" : dimensions.width,
-          height: off ? "100%" : dimensions.height,
+          width: off || !isReady ? "100%" : dimensions.width,
+          height: off || !isReady ? "100%" : dimensions.height,
         }}
         transition={{ duration: 0.5, ease: "easeInOut" }}
       >

@@ -83,8 +83,6 @@ export function SongSeekbar() {
         className="fixed h-15 bottom-0 left-0 right-0 z-10  -bg-linear-0 from-black px-4"
       >
         <div className="absolute h-full w-[60%] right-0 bottom-0">
-          
-
           {/* Controls */}
           <div
             className={cn(

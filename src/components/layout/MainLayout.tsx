@@ -31,6 +31,8 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
       {/* Main Layout Container */}
       <AspectLock
         aspectRatio={16 / 9}
+        anchorX="center"
+        anchorY="center"
         off={focusState != "default"}
       >
         <main
@@ -40,13 +42,14 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
           {/* Left Section */}
           <motion.div
             className="relative h-full overflow-visible z-30"
+            initial={false}
             animate={{
               width: `${leftWidth}%`,
-              opacity: leftWidth === 0 ? 0 : 1,
+              opacity: leftWidth === 0.1 ? 0 : 1,
             }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
           >
-            <AspectLock aspectRatio={1 / 2} anchorX="right" anchorY="bottom">
+            <AspectLock aspectRatio={1 / 2} anchorX="right" anchorY="bottom" className="absolute perspective-1000">
               <div
                 className={cn(
                   "h-full w-full overflow-hidden z-10  bg-blue-950/80 backdrop-blur-lg",
@@ -79,6 +82,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
           {/* Right Section (container for top-right and bottom-right) */}
           <motion.div
             className="flex h-full flex-col gap-4 z-0"
+            initial={false}
             animate={{
               width: `${rightWidth}%`,
               opacity: rightWidth === 0 ? 0 : 1,
@@ -88,15 +92,16 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
             {/* Top Right */}
             <motion.div
               className="relative w-full overflow-visible"
+              initial={false}
               animate={{
                 height: `${topRightHeight}%`,
-                opacity: topRightHeight === 0 ? 0 : 1,
+                opacity: rightWidth === 0.1 || topRightHeight === 0.1 ? 0 : 1,
               }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
             >
-              <AspectLock aspectRatio={1} anchorX="left" anchorY="bottom">
+              <AspectLock aspectRatio={1} anchorX="left" anchorY="bottom" className="absolute">
                 <InteractiveMediaFromCMS
-                  location="landing-character"
+                  location="main-character"
                   className="absolute h-[120%] w-[120%] top-0 right-0"
                 />
                 <div
@@ -109,13 +114,14 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
             {/* Bottom Right - Main Content */}
             <motion.div
               className="relative w-full overflow-visible"
+              initial={false}
               animate={{
                 height: `${bottomRightHeight}%`,
-                opacity: rightWidth === 0 ? 0 : 1,
+                opacity: rightWidth === 0.1 ? 0 : 1,
               }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
             >
-              <AspectLock aspectRatio={16 / 9} anchorX="left" anchorY="top">
+              <AspectLock aspectRatio={16 / 9} anchorX="left" anchorY="top" className="absolute  perspective-1000">
                 <div
                   className={cn(
                     "h-full w-full bg-blue-950/80 backdrop-blur-lg",

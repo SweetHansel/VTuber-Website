@@ -89,7 +89,7 @@ export function UpdatesPage() {
       {!loading && (
         <div className="flex-1 space-y-3 overflow-y-auto pr-1 scrollbar-thin scrollbar-track-white/5 scrollbar-thumb-white/20">
           {sortedContent.map((item) => (
-            <ContentCard key={item.id} {...item} />
+            <ContentCard key={`${item.type}-${item.id}`} {...item} />
           ))}
           {sortedContent.length === 0 && (
             <p className="py-8 text-center text-sm text-white/40">

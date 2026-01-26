@@ -32,8 +32,6 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
       <AspectLock
         aspectRatio={16 / 9}
         off={focusState != "default"}
-        anchorX="center"
-        anchorY="center"
       >
         <main
           className="flex h-full w-full gap-4 pt-4 px-4"
@@ -41,7 +39,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
         >
           {/* Left Section */}
           <motion.div
-            className="relative h-full overflow-visible "
+            className="relative h-full overflow-visible z-30"
             animate={{
               width: `${leftWidth}%`,
               opacity: leftWidth === 0 ? 0 : 1,
@@ -75,9 +73,12 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
             </AspectLock>
           </motion.div>
 
+          {/* Global Audio Player */}
+          <SongSeekbar />
+
           {/* Right Section (container for top-right and bottom-right) */}
           <motion.div
-            className="flex h-full flex-col gap-4"
+            className="flex h-full flex-col gap-4 z-0"
             animate={{
               width: `${rightWidth}%`,
               opacity: rightWidth === 0 ? 0 : 1,
@@ -94,15 +95,14 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
               transition={{ duration: 0.5, ease: "easeInOut" }}
             >
               <AspectLock aspectRatio={1} anchorX="left" anchorY="bottom">
+                <InteractiveMediaFromCMS
+                  location="landing-character"
+                  className="absolute h-[120%] w-[120%] top-0 right-0"
+                />
                 <div
                   className="absolute h-full w-full left-1/3  bg-blue-950/80 backdrop-blur-lg"
                   onClick={(e) => e.stopPropagation()}
-                >
-                  <InteractiveMediaFromCMS
-                    location="landing-character"
-                    className="absolute h-[120%] w-[120%] top-0 right-0"
-                  />
-                </div>
+                />
               </AspectLock>
             </motion.div>
 
@@ -137,9 +137,6 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
       </AspectLock>
 
       <LeftBar />
-
-      {/* Global Audio Player */}
-      <SongSeekbar />
 
       {/* Livestream Alert */}
       <LivestreamAlert />

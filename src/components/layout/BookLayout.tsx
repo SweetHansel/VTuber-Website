@@ -28,10 +28,20 @@ interface PageSpreadProps {
 }
 
 function PageSpread({ index, pageIndex, Page }: PageSpreadProps) {
-  const left = useTransform(index, (v) => 180 - clamp(v - pageIndex, 0, 1) * 180);
-  const right = useTransform(index, (v) => clamp(v - pageIndex - 1, 0, 1) * -180);
-  const zLeft = useTransform(index, (v) => clamp(v - pageIndex, 0, 1) < 0.5 ? 2 : 0);
-  const zRight = useTransform(index, (v) => clamp(v - pageIndex - 1, 0, 1) < 0.5 ? 10 - pageIndex : 0);
+  const left = useTransform(
+    index,
+    (v) => 180 - clamp(v - pageIndex, 0, 1) * 180,
+  );
+  const right = useTransform(
+    index,
+    (v) => clamp(v - pageIndex - 1, 0, 1) * -180,
+  );
+  const zLeft = useTransform(index, (v) =>
+    clamp(v - pageIndex, 0, 1) < 0.5 ? 2 : 0,
+  );
+  const zRight = useTransform(index, (v) =>
+    clamp(v - pageIndex - 1, 0, 1.1) < 1 ? (10 - pageIndex)*3 : 0,
+  );
 
   return (
     <>
@@ -93,10 +103,9 @@ export function BookLayout() {
     Number.isInteger(v) && v < sections.length ? "visible" : "hidden",
   );
 
-
   const handleWheel = (e: React.WheelEvent) => {
     const direction = e.deltaY > 0 ? 1 : -1;
-    index.set(clamp(index.get() + direction * 0.2, 0, sections.length));
+    index.set(clamp(index.get() + direction * 0.15, 0, sections.length));
 
     isScrollingRef.current = true;
 
@@ -111,7 +120,8 @@ export function BookLayout() {
       const current = index.get();
       const target = Math.round(current);
       if (!Number.isInteger(current)) {
-        animate(index, target, { type: "spring", stiffness: 300, damping: 30 });
+        animate(index, target, { type: "spring",
+    duration: 0.2, stiffness: 300, damping: 10 });
       }
     }, 250);
   };
@@ -139,7 +149,12 @@ export function BookLayout() {
     const current = index.get();
     const target = Math.round(current);
     if (!Number.isInteger(current)) {
-      animate(index, target, { type: "spring", stiffness: 300, damping: 30 });
+      animate(index, target, {
+        type: "spring",
+        stiffness: 300,
+        visualDuration: 0.5,
+        damping: 30,
+      });
     }
   };
 
@@ -156,7 +171,7 @@ export function BookLayout() {
   });
 
   const zRight = useTransform(index, (index) => {
-    return index < 1.5 ? 11 : 0;
+    return index < 1.5 ? 33 : 0;
   });
 
   const nextPage = () => {
@@ -177,15 +192,22 @@ export function BookLayout() {
       onTouchEnd={handleTouchEnd}
     >
       <motion.div
-        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden justify-center p-8"
+        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden  items-center justify-center flex p-8"
         style={{ rotateY: left, zIndex: zLeft }}
       >
+          <h2 className="text-3xl font-bold">
+            Welcome
+          </h2>
+      </motion.div>
+
+      <motion.div
+        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden  items-center justify-center flex p-8"
+        style={{ rotateY: right, zIndex: zRight }}
+      >
+        
         <ul className="space-y-2">
           {sections.map((section, i) => (
-            <li
-              key={section}
-              onClick={() => setIndexAnimated(i + 1)}
-            >
+            <li key={section} onClick={() => setIndexAnimated(i + 1)}>
               <button className="text-white/70 hover:text-white transition-colors text-left">
                 {sectionLabel[section]}
               </button>
@@ -193,11 +215,6 @@ export function BookLayout() {
           ))}
         </ul>
       </motion.div>
-
-      <motion.div
-        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden "
-        style={{ rotateY: right, zIndex: zRight }}
-      />
 
       {sections.map((section, i) => (
         <PageSpread
@@ -209,12 +226,12 @@ export function BookLayout() {
       ))}
 
       <motion.div
-        className="absolute h-full w-full"
+        className="absolute h-full w-full pointer-events-none"
         style={{ visibility: showPrevButtons }}
       >
         <button
           onClick={prevPage}
-          className="absolute bottom-0 left-0 w-0 h-0 z-50 cursor-pointer
+          className="absolute bottom-0 left-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
             border-b-[60px] border-b-white/20
             border-r-[60px] border-r-transparent
             hover:border-b-white/40 transition-colors"
@@ -225,7 +242,7 @@ export function BookLayout() {
 
         <button
           onClick={() => setIndexAnimated(0)}
-          className="absolute top-0 left-0 w-0 h-0 z-50 cursor-pointer
+          className="absolute top-0 left-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
             border-t-[60px] border-t-white/20
             border-r-[60px] border-r-transparent
             hover:border-t-white/40 transition-colors"
@@ -236,12 +253,12 @@ export function BookLayout() {
       </motion.div>
 
       <motion.div
-        className="absolute h-full w-full"
+        className="absolute h-full w-full pointer-events-none"
         style={{ visibility: showNextButton }}
       >
         <button
           onClick={nextPage}
-          className="absolute bottom-0 right-0 w-0 h-0 z-50 cursor-pointer
+          className="absolute bottom-0 right-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
             border-b-[60px] border-b-white/20
             border-l-[60px] border-l-transparent
             hover:border-b-white/40 transition-colors"

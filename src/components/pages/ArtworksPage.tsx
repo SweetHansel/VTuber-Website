@@ -14,7 +14,6 @@ const filters: { label: string; value: ArtworkFilter }[] = [
   { label: 'All', value: 'all' },
   { label: 'Fan Art', value: 'fanart' },
   { label: 'Official', value: 'official' },
-  { label: 'Memes', value: 'meme' },
 ]
 
 function ArtworksLeft() {

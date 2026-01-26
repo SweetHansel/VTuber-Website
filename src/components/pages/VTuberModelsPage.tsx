@@ -124,11 +124,11 @@ function VTuberModelsRight() {
           <Loader2 className="h-8 w-8 animate-spin text-white/40" />
         </div>
       )}
-      Test
+
       {/* Model grid */}
       {!loading && (
         <div className="grid flex-1 grid-cols-2 gap-4 overflow-y-auto md:grid-cols-3">
-          Test
+  
           {models.map((model) => (
             <motion.div
               key={model.id}

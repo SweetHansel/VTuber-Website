@@ -19,6 +19,15 @@ export const LivestreamSettings: GlobalConfig = {
       },
     },
     {
+      name: 'trackedSocials',
+      type: 'relationship',
+      relationTo: 'socials', 
+      hasMany: true,
+      admin: {
+        description: 'Social accounts to check for live status (YouTube/Twitch)',
+      },
+    },
+    {
       name: 'pollingInterval',
       type: 'number',
       defaultValue: 60,
@@ -64,15 +73,6 @@ export const LivestreamSettings: GlobalConfig = {
           name: 'isLive',
           type: 'checkbox',
           defaultValue: false,
-        },
-        {
-          name: 'platform',
-          type: 'select',
-          options: [
-            { label: 'None', value: '' },
-            { label: 'Twitch', value: 'twitch' },
-            { label: 'YouTube', value: 'youtube' },
-          ],
         },
         {
           name: 'streamUrl',

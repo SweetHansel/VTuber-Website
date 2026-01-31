@@ -1,11 +1,11 @@
 import type { CollectionConfig } from 'payload'
 
-export const ThreeDModels: CollectionConfig = {
-  slug: '3d-models',
+export const Models: CollectionConfig = {
+  slug: 'models',
   admin: {
     useAsTitle: 'name',
     group: 'Model',
-    defaultColumns: ['name', 'modelType', 'createdAt'],
+    defaultColumns: ['name', 'modelType', 'version', 'isActive', 'createdAt'],
   },
   access: {
     read: () => true,
@@ -18,29 +18,38 @@ export const ThreeDModels: CollectionConfig = {
       name: 'name',
       type: 'text',
       required: true,
+      admin: {
+        description: 'Model name/version identifier',
+      },
+    },
+    {
+      name: 'version',
+      type: 'text',
+      admin: {
+        description: 'e.g., "1.0", "2.0 Summer", "Halloween"',
+      },
     },
     {
       name: 'modelType',
       type: 'select',
+      required: true,
       options: [
+        // 2D types
+        { label: 'Live2D', value: 'live2d' },
+        { label: 'PNGTuber', value: 'pngtuber' },
+        { label: '2D Other', value: '2d-other' },
+        // 3D types
         { label: 'VRM', value: 'vrm' },
         { label: 'MMD', value: 'mmd' },
         { label: 'FBX', value: 'fbx' },
-        { label: 'Other', value: 'other' },
+        { label: '3D Other', value: '3d-other' },
       ],
-      required: true,
-    },
-    {
-      name: 'thumbnail',
-      type: 'upload',
-      relationTo: 'media',
-      required: true,
     },
     {
       name: 'showcase',
       type: 'array',
       admin: {
-        description: 'Images, GIFs, or videos showcasing the model',
+        description: 'Images, GIFs, or videos showcasing the model (first featured item used as thumbnail)',
       },
       fields: [
         {
@@ -58,18 +67,14 @@ export const ThreeDModels: CollectionConfig = {
           type: 'checkbox',
           defaultValue: false,
           admin: {
-            description: 'Use as main showcase image',
+            description: 'Use as main showcase image/thumbnail',
           },
         },
       ],
     },
     {
-      name: 'modelFile',
-      type: 'upload',
-      relationTo: 'media',
-      admin: {
-        description: 'VRM or GLB/GLTF file for 3D viewer (optional - uploading exposes the file)',
-      },
+      name: 'description',
+      type: 'richText',
     },
     {
       name: 'refSheets',
@@ -94,12 +99,28 @@ export const ThreeDModels: CollectionConfig = {
       ],
     },
     {
-      name: 'description',
-      type: 'richText',
+      name: 'includeModelFile',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description: 'Include downloadable model file (exposes the file publicly)',
+      },
+    },
+    {
+      name: 'modelFile',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description: 'Model file (.zip, .json, .vrm, .glb, etc.)',
+        condition: (data) => data?.includeModelFile === true,
+      },
     },
     {
       name: 'technicalSpecs',
       type: 'group',
+      admin: {
+        condition: (data) => ['vrm', 'mmd', 'fbx', '3d-other'].includes(data?.modelType),
+      },
       fields: [
         {
           name: 'polyCount',
@@ -134,14 +155,11 @@ export const ThreeDModels: CollectionConfig = {
       fields: [
         {
           name: 'role',
-          type: 'select',
-          options: [
-            { label: 'Character Design', value: 'character-design' },
-            { label: '3D Modeling', value: '3d-modeling' },
-            { label: 'Rigging', value: 'rigging' },
-            { label: 'Texturing', value: 'texturing' },
-          ],
+          type: 'text',
           required: true,
+          admin: {
+            description: 'e.g., "Character Design", "Illustration", "Rigging", "3D Modeling", "Texturing"',
+          },
         },
         {
           name: 'artist',
@@ -151,14 +169,11 @@ export const ThreeDModels: CollectionConfig = {
         {
           name: 'name',
           type: 'text',
+          admin: {
+            description: 'Manual name if not in people collection',
+          },
         },
       ],
-    },
-    {
-      name: 'tags',
-      type: 'relationship',
-      relationTo: 'tags',
-      hasMany: true,
     },
     {
       name: 'debutDate',
@@ -168,6 +183,15 @@ export const ThreeDModels: CollectionConfig = {
       name: 'isActive',
       type: 'checkbox',
       defaultValue: true,
+      admin: {
+        description: 'Currently in use',
+      },
+    },
+    {
+      name: 'tags',
+      type: 'relationship',
+      relationTo: 'tags',
+      hasMany: true,
     },
   ],
 }

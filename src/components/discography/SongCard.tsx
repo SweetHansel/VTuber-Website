@@ -11,7 +11,7 @@ import { Play, Pause, Music, ExternalLink } from 'lucide-react'
 export interface SongCardProps {
   id: string
   title: string
-  trackType: 'cover' | 'original' | 'remix'
+  trackType: 'cover' | 'original' | 'remix' | 'karaoke' | 'other'
   coverArt: string
   audioUrl?: string
   duration?: number
@@ -114,9 +114,11 @@ export function SongCard({
               'rounded-full px-2 py-0.5 text-xs font-medium capitalize',
               trackType === 'original'
                 ? 'bg-green-500/80 text-white'
-                : trackType === 'cover'
+                : trackType === 'cover' || trackType === 'karaoke'
                 ? 'bg-blue-500/80 text-white'
-                : 'bg-blue-500/80 text-white'
+                : trackType === 'remix'
+                ? 'bg-purple-500/80 text-white'
+                : 'bg-gray-500/80 text-white'
             )}
           >
             {trackType}

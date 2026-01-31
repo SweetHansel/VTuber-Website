@@ -17,14 +17,112 @@ export async function POST(request: Request) {
 
     const results: string[] = []
 
-    // Seed Profile global
+    // Seed Tags first (needed for relationships)
+    const tags = [
+      { name: 'Gaming', slug: 'gaming', color: '#10b981' },
+      { name: 'Music', slug: 'music', color: '#8b5cf6' },
+      { name: 'Art', slug: 'art', color: '#f59e0b' },
+      { name: 'Chatting', slug: 'chatting', color: '#3b82f6' },
+      { name: 'Collaboration', slug: 'collaboration', color: '#ec4899' },
+      { name: 'Karaoke', slug: 'karaoke', color: '#ef4444' },
+      { name: 'ASMR', slug: 'asmr', color: '#06b6d4' },
+      { name: 'Cooking', slug: 'cooking', color: '#f97316' },
+    ]
+
+    for (const tag of tags) {
+      try {
+        await payload.create({ collection: 'tags', data: tag })
+      } catch {
+        // Skip duplicates
+      }
+    }
+    results.push(`Tags seeded (${tags.length} items)`)
+
+    // Seed Socials (for social links)
+    const socials = [
+      { name: 'Twitter', platform: 'twitter' as const, url: 'https://twitter.com/loremipsum' },
+      { name: 'YouTube', platform: 'youtube' as const, url: 'https://youtube.com/@loremipsum' },
+      { name: 'Twitch', platform: 'twitch' as const, url: 'https://twitch.tv/loremipsum' },
+      { name: 'Instagram', platform: 'instagram' as const, url: 'https://instagram.com/loremipsum' },
+    ]
+
+    const createdSocialIds: number[] = []
+    for (const social of socials) {
+      try {
+        const created = await payload.create({ collection: 'socials', data: social })
+        createdSocialIds.push(created.id)
+      } catch {
+        // Skip duplicates
+      }
+    }
+    results.push(`Socials seeded (${socials.length} items)`)
+
+    // Seed People (collaborators, artists, etc.)
+    const people = [
+      {
+        name: 'Artist One',
+        bio: 'Talented illustrator specializing in character design and key visuals.',
+        roles: 'Illustrator',
+      },
+      {
+        name: 'Music Producer',
+        bio: 'Creates amazing original music and arrangements.',
+        roles: 'Music Producer, Composer',
+      },
+      {
+        name: 'Rigger San',
+        bio: 'Professional Live2D rigger with years of experience.',
+        roles: 'Live2D Rigger',
+      },
+      {
+        name: 'Video Editor',
+        bio: 'Creates engaging video content and motion graphics.',
+        roles: 'Video Editor, Animator',
+      },
+      {
+        name: 'Mixer Engineer',
+        bio: 'Audio engineer specializing in vocal mixing and mastering.',
+        roles: 'Mix Engineer, Master Engineer',
+      },
+    ]
+
+    let mainPersonId: number | null = null
+    for (const person of people) {
+      try {
+        const created = await payload.create({ collection: 'people', data: person })
+        if (!mainPersonId) mainPersonId = created.id
+      } catch {
+        // Skip duplicates
+      }
+    }
+    results.push(`People seeded (${people.length} items)`)
+
+    // Create the main VTuber person entry with socials
+    try {
+      const mainPerson = await payload.create({
+        collection: 'people',
+        data: {
+          name: 'Lorem Ipsum',
+          bio: 'Virtual content creator and entertainer.',
+          roles: 'VTuber, Streamer, Singer',
+          socials: createdSocialIds,
+        },
+      })
+      mainPersonId = mainPerson.id
+      results.push('Main person created with socials')
+    } catch {
+      // Skip if exists
+    }
+
+    // Seed Profile global (now links to person)
     await payload.updateGlobal({
       slug: 'profile',
       data: {
         name: 'Lorem Ipsum',
-        japaneseName: 'ロレム・イプサム',
+        alternateName: 'ロレム・イプサム',
         tagline: 'Lorem ipsum dolor sit amet.',
         shortBio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla interdum dapibus metus, at vestibulum magna venenatis sit amet. Suspendisse potenti. Aliquam quis tempor velit.',
+        debutDate: '2024-06-01T00:00:00.000Z',
         birthday: '2025-03-15T00:00:00.000Z',
         height: '160cm',
         traits: [
@@ -61,18 +159,13 @@ export async function POST(request: Request) {
             ],
           },
         ],
-        hashtags: {
-          general: '#LoremIpsum',
-          fanart: '#LoremIpsumArt',
-          stream: '#LoremIpsumLive',
-          fanName: 'PlaceHolders',
-        },
-        socialLinks: [
-          { platform: 'twitter', url: 'https://twitter.com/loremipsum', label: 'Twitter' },
-          { platform: 'youtube', url: 'https://youtube.com/@loremipsum', label: 'YouTube' },
-          { platform: 'twitch', url: 'https://twitch.tv/loremipsum', label: 'Twitch' },
-          { platform: 'discord', url: 'https://discord.gg/loremipsum', label: 'Discord' },
+        hashtags: [
+          { label: 'General', value: '#LoremIpsum' },
+          { label: 'Fan Art', value: '#LoremIpsumArt' },
+          { label: 'Stream', value: '#LoremIpsumLive' },
+          { label: 'Fan Name', value: 'PlaceHolders' },
         ],
+        person: mainPersonId,
       },
     })
     results.push('Profile seeded')
@@ -107,27 +200,6 @@ export async function POST(request: Request) {
       },
     })
     results.push('Site Settings seeded')
-
-    // Seed Tags
-    const tags = [
-      { name: 'Gaming', slug: 'gaming', color: '#10b981' },
-      { name: 'Music', slug: 'music', color: '#8b5cf6' },
-      { name: 'Art', slug: 'art', color: '#f59e0b' },
-      { name: 'Chatting', slug: 'chatting', color: '#3b82f6' },
-      { name: 'Collaboration', slug: 'collaboration', color: '#ec4899' },
-      { name: 'Karaoke', slug: 'karaoke', color: '#ef4444' },
-      { name: 'ASMR', slug: 'asmr', color: '#06b6d4' },
-      { name: 'Cooking', slug: 'cooking', color: '#f97316' },
-    ]
-
-    for (const tag of tags) {
-      try {
-        await payload.create({ collection: 'tags', data: tag })
-      } catch {
-        // Skip duplicates
-      }
-    }
-    results.push(`Tags seeded (${tags.length} items)`)
 
     // Seed Announcements
     const announcements = [
@@ -311,95 +383,24 @@ export async function POST(request: Request) {
     }
     results.push(`Blog Posts seeded (${blogPosts.length} items)`)
 
-    // Seed People (collaborators, artists, etc.)
-    const people = [
-      {
-        name: 'Artist One',
-        bio: 'Talented illustrator specializing in character design and key visuals.',
-        roles: ['illustrator' as const],
-        socialLinks: [
-          { platform: 'twitter' as const, url: 'https://twitter.com/artistone' },
-          { platform: 'pixiv' as const, url: 'https://pixiv.net/users/12345' },
+    // Seed Livestream Settings (with tracked socials)
+    // Get YouTube and Twitch social IDs for tracking
+    const { docs: allSocials } = await payload.find({
+      collection: 'socials',
+      where: {
+        or: [
+          { platform: { equals: 'youtube' } },
+          { platform: { equals: 'twitch' } },
         ],
       },
-      {
-        name: 'Music Producer',
-        bio: 'Creates amazing original music and arrangements.',
-        roles: ['music-producer' as const],
-        socialLinks: [
-          { platform: 'twitter' as const, url: 'https://twitter.com/musicproducer' },
-          { platform: 'youtube' as const, url: 'https://youtube.com/@musicproducer' },
-        ],
-      },
-      {
-        name: 'Rigger San',
-        bio: 'Professional Live2D rigger with years of experience.',
-        roles: ['rigger' as const],
-        socialLinks: [
-          { platform: 'twitter' as const, url: 'https://twitter.com/riggersan' },
-        ],
-      },
-      {
-        name: 'Video Editor',
-        bio: 'Creates engaging video content and motion graphics.',
-        roles: ['video-editor' as const, 'animator' as const],
-        socialLinks: [
-          { platform: 'twitter' as const, url: 'https://twitter.com/videoeditor' },
-        ],
-      },
-      {
-        name: 'Mixer Engineer',
-        bio: 'Audio engineer specializing in vocal mixing and mastering.',
-        roles: ['mixer' as const],
-        socialLinks: [
-          { platform: 'twitter' as const, url: 'https://twitter.com/mixerengineer' },
-        ],
-      },
-    ]
+    })
+    const trackedSocialIds = allSocials.map((s) => s.id)
 
-    for (const person of people) {
-      try {
-        await payload.create({ collection: 'people', data: person })
-      } catch {
-        // Skip duplicates
-      }
-    }
-    results.push(`People seeded (${people.length} items)`)
-
-    // Seed Channels (for livestream tracking)
-    const channels = [
-      {
-        name: 'Main YouTube Channel',
-        platform: 'youtube' as const,
-        channelId: 'UC_placeholder_channel_id',
-        channelUrl: 'https://youtube.com/@loremipsum',
-        trackLivestream: true,
-        priority: 1,
-      },
-      {
-        name: 'Twitch Channel',
-        platform: 'twitch' as const,
-        channelId: 'loremipsum',
-        channelUrl: 'https://twitch.tv/loremipsum',
-        trackLivestream: true,
-        priority: 2,
-      },
-    ]
-
-    for (const channel of channels) {
-      try {
-        await payload.create({ collection: 'channels', data: channel })
-      } catch {
-        // Skip duplicates
-      }
-    }
-    results.push(`Channels seeded (${channels.length} items)`)
-
-    // Seed Livestream Settings
     await payload.updateGlobal({
       slug: 'livestream-settings',
       data: {
         enabled: true,
+        trackedSocials: trackedSocialIds,
         pollingInterval: 60,
         alertDuration: 10,
         showFriendStreams: true,
@@ -428,15 +429,15 @@ export async function GET() {
     info: 'POST to this endpoint with Authorization: Bearer <SEED_SECRET> to seed placeholder data',
     env: 'Set SEED_SECRET environment variable to protect this endpoint',
     seeds: [
-      'Profile global',
+      'Profile global (with person relationship)',
       'Themes global (colors)',
       'Site Settings global',
-      'Livestream Settings global',
+      'Livestream Settings global (with tracked socials)',
       'Tags (8 items)',
       'Announcements (7 items)',
       'Blog Posts (4 items)',
-      'People (5 items)',
-      'Channels (2 items)',
+      'People (6 items)',
+      'Socials (4 items)',
     ],
     note: 'Media-dependent items (artworks, music tracks, interactive media, models) must be created manually after uploading files.',
   })

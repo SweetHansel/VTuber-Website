@@ -11,15 +11,31 @@ export const Profile: GlobalConfig = {
   },
   fields: [
     {
+      name: 'person',
+      type: 'relationship',
+      relationTo: 'people',
+      admin: {
+        description: 'Link to person profile (provides name, avatar, socials)',
+      },
+    },
+    {
+      name: 'currentModel',
+      type: 'relationship',
+      relationTo: 'models',
+      admin: {
+        description: 'Currently active model for site display',
+      },
+    },
+    {
       name: 'name',
       type: 'text',
       required: true,
     },
     {
-      name: 'japaneseName',
+      name: 'alternateName',
       type: 'text',
       admin: {
-        description: 'Name in Japanese characters',
+        description: 'Alternate name (e.g., Japanese, nickname, stage name)',
       },
     },
     {
@@ -30,15 +46,17 @@ export const Profile: GlobalConfig = {
       },
     },
     {
-      name: 'avatar',
-      type: 'upload',
-      relationTo: 'media',
-    },
-    {
       name: 'shortBio',
       type: 'textarea',
       admin: {
         description: 'Brief bio for cards and previews',
+      },
+    },
+    {
+      name: 'debutDate',
+      type: 'date',
+      admin: {
+        description: 'VTuber debut date',
       },
     },
     {
@@ -102,61 +120,25 @@ export const Profile: GlobalConfig = {
     },
     {
       name: 'hashtags',
-      type: 'group',
-      fields: [
-        {
-          name: 'general',
-          type: 'text',
-          admin: {
-            description: 'Main hashtag',
-          },
-        },
-        {
-          name: 'fanart',
-          type: 'text',
-        },
-        {
-          name: 'stream',
-          type: 'text',
-        },
-        {
-          name: 'fanName',
-          type: 'text',
-          admin: {
-            description: 'What fans are called',
-          },
-        },
-      ],
-    },
-    {
-      name: 'socialLinks',
       type: 'array',
+      admin: {
+        description: 'Hashtags and fan terms',
+      },
       fields: [
-        {
-          name: 'platform',
-          type: 'select',
-          options: [
-            { label: 'Twitter/X', value: 'twitter' },
-            { label: 'YouTube', value: 'youtube' },
-            { label: 'Twitch', value: 'twitch' },
-            { label: 'TikTok', value: 'tiktok' },
-            { label: 'Instagram', value: 'instagram' },
-            { label: 'Discord', value: 'discord' },
-            { label: 'Marshmallow', value: 'marshmallow' },
-            { label: 'Other', value: 'other' },
-          ],
-          required: true,
-        },
-        {
-          name: 'url',
-          type: 'text',
-          required: true,
-        },
         {
           name: 'label',
           type: 'text',
+          required: true,
           admin: {
-            description: 'Custom label (optional)',
+            description: 'e.g., "General", "Fan Art", "Stream", "Fan Name"',
+          },
+        },
+        {
+          name: 'value',
+          type: 'text',
+          required: true,
+          admin: {
+            description: 'e.g., "#LoremIpsum", "Placeholders"',
           },
         },
       ],

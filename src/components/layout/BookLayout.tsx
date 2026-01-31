@@ -5,24 +5,20 @@ import { AboutPage } from "@/components/pages/AboutPage";
 import { ArtworksPage } from "@/components/pages/ArtworksPage";
 import { DiscographyPage } from "@/components/pages/DiscographyPage";
 import { VTuberModelsPage } from "@/components/pages/VTuberModelsPage";
-import { ChevronLeft, ChevronRight, ListTree } from "lucide-react";
+import { ChevronLeft, ChevronRight, ListTree, Zap } from "lucide-react";
 import {
   animate,
   motion,
   useMotionValue,
-  useMotionValueEvent,
   useTransform,
   type MotionValue,
 } from "framer-motion";
 
 // Page content type - components receive isActive prop
-export interface PageProps {
-  isActive: boolean;
-}
 
 export interface PageContent {
-  Left: React.ComponentType<PageProps>;
-  Right: React.ComponentType<PageProps>;
+  Left: React.ComponentType;
+  Right: React.ComponentType;
 }
 
 // Separate component to properly use hooks
@@ -33,42 +29,45 @@ interface PageSpreadProps {
 }
 
 function PageSpread({ index, pageIndex, Page }: PageSpreadProps) {
-  const [isActive, setIsActive] = useState(false);
-
-  // Track when this page becomes active (index rounds to pageIndex + 1)
-  useMotionValueEvent(index, "change", (v) => {
-    const active = Math.round(v) === pageIndex + 1;
-    setIsActive(active);
-  });
-
   const left = useTransform(
     index,
-    (v) => 180 - clamp(v - pageIndex, 0, 1) * 180,
+    (v) => 180 - (clamp(v - pageIndex, 0.25, 0.75) - 0.25) * 2 * 180,
   );
   const right = useTransform(
     index,
-    (v) => clamp(v - pageIndex - 1, 0, 1) * -180,
+    (v) => (clamp(v - pageIndex - 1, 0.25, 0.75) - 0.25) * 2 * -180,
   );
-  const zLeft = useTransform(index, (v) =>
-    clamp(v - pageIndex -1, 0, 1.1) < 0.2 ? (10 - pageIndex)*3 : (10 - pageIndex-v)*3,
-  );
-  const zRight = useTransform(index, (v) =>
-    clamp(v - pageIndex - 1, 0, 1.1) < 1 ? (10 - pageIndex)*3 : (10 - pageIndex-v)*3,
+  const z = useTransform(index, (v) => {
+    // const velo = index.getVelocity();
+    // let threshold: number;
+    // if (Math.abs(velo) > 0) {
+    //   if (velo > 0) threshold = 0.00001;
+    //   else threshold = 0.00002;
+    // } else threshold = 0.5;
+
+    // if (pageIndex == 1) console.log(v, velo, threshold);
+    return v - pageIndex - 1 <= 0.5
+      ? 10 - pageIndex
+      : 10 + 2 + pageIndex - 2 * Math.round(v);
+  });
+
+  const hide = useTransform(index, (v) =>
+    v > pageIndex + 2 || v < pageIndex - 1 ? 0 : 1,
   );
 
   return (
     <>
       <motion.div
         className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden overflow-y-clip overflow-x-visible overscroll-contain"
-        style={{ rotateY: left, zIndex: zLeft }}
+        style={{ rotateY: left, zIndex: z, opacity: hide }}
       >
-        <Page.Left isActive={isActive} />
+        <Page.Left />
       </motion.div>
       <motion.div
         className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden overflow-y-clip overflow-x-visible overscroll-contain"
-        style={{ rotateY: right, zIndex: zRight }}
+        style={{ rotateY: right, zIndex: z , opacity: hide}}
       >
-        <Page.Right isActive={isActive} />
+        <Page.Right />
       </motion.div>
     </>
   );
@@ -103,7 +102,7 @@ export function BookLayout() {
   const touchStartRef = useRef<number | null>(null);
 
   const setIndexAnimated = (val: number) => {
-    animate(index, val, { duration: 0.3, bounce:0 });
+    animate(index, val, { duration: 0.1, bounce: 0 });
   };
 
   // Controls prev/ToC buttons (visible when index >= 1)
@@ -118,7 +117,8 @@ export function BookLayout() {
 
   const handleWheel = (e: React.WheelEvent) => {
     const direction = e.deltaY > 0 ? 1 : -1;
-    index.set(clamp(index.get() + direction * 0.3, 0, sections.length));
+    setIndexAnimated(clamp(index.get() + direction * 0.2, 0, sections.length));
+    // index.set(clamp(index.get() + direction * 0.05, 0, sections.length))
 
     isScrollingRef.current = true;
 
@@ -133,10 +133,9 @@ export function BookLayout() {
       const current = index.get();
       const target = Math.round(current);
       if (!Number.isInteger(current)) {
-        animate(index, target, { type: "spring",
-    duration: 0.3, bounce: 0 });
+        animate(index, target, { type: "spring", duration: 2, bounce: 0 });
       }
-    }, 250);
+    }, 100);
   };
 
   // Touch/swipe handlers
@@ -164,25 +163,11 @@ export function BookLayout() {
     if (!Number.isInteger(current)) {
       animate(index, target, {
         type: "spring",
-    duration: 0.3, bounce: 0 });
+        duration: 0.3,
+        bounce: 0,
+      });
     }
   };
-
-  const left = useTransform(index, (index) => {
-    return 180 - clamp(index + 1, 0, 1) * 180;
-  });
-
-  const right = useTransform(index, (index) => {
-    return clamp(index, 0, 1) * -180;
-  });
-
-  const zLeft = useTransform(index, (index) => {
-    return index < 0.5 ? 33 : 0;
-  });
-
-  const zRight = useTransform(index, (index) => {
-    return index < 1.5 ? 33 : 0;
-  });
 
   const nextPage = () => {
     setIndexAnimated(Math.round(index.get()) + 1);
@@ -201,20 +186,17 @@ export function BookLayout() {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <motion.div
+      {/* <motion.div
         className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden  items-center justify-center flex p-8"
         style={{ rotateY: left, zIndex: zLeft }}
       >
-          <h2 className="text-3xl font-bold">
-            Welcome
-          </h2>
+        <h2 className="text-3xl font-bold">Welcome</h2>
       </motion.div>
 
       <motion.div
         className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden  items-center justify-center flex p-8"
-        style={{ rotateY: right, zIndex: zRight }}
+        style={{ rotateY: right, zIndex: zLeft }}
       >
-        
         <ul className="space-y-2">
           {sections.map((section, i) => (
             <li key={section} onClick={() => setIndexAnimated(i + 1)}>
@@ -224,7 +206,7 @@ export function BookLayout() {
             </li>
           ))}
         </ul>
-      </motion.div>
+      </motion.div> */}
 
       {sections.map((section, i) => (
         <PageSpread

@@ -58,13 +58,32 @@ function useFetch<T>(url: string, options?: { skip?: boolean }): UseFetchResult<
   return { data, loading, error, refetch: fetchData }
 }
 
+// Social interface (from Socials collection)
+export interface Social {
+  id: string
+  name: string
+  platform: 'twitter' | 'bluesky' | 'youtube' | 'twitch' | 'instagram' | 'tiktok' | 'pixiv' | 'vgen' | 'website' | 'other'
+  url: string
+  avatar?: { url?: string }
+}
+
+// Person interface (from People collection)
+export interface Person {
+  id: string
+  name: string
+  roles?: string
+  avatar?: { url?: string }
+  bio?: string
+  socials?: Social[]
+}
+
 // Profile hook
 export interface ProfileData {
   name?: string
-  japaneseName?: string
+  alternateName?: string
   tagline?: string
-  avatar?: { url?: string }
   shortBio?: string
+  debutDate?: string
   birthday?: string
   height?: string
   traits?: Array<{
@@ -73,17 +92,12 @@ export interface ProfileData {
     color?: string
     items?: Array<{ value: string }>
   }>
-  hashtags?: {
-    general?: string
-    fanart?: string
-    stream?: string
-    fanName?: string
-  }
-  socialLinks?: Array<{
-    platform: string
-    url: string
-    label?: string
+  hashtags?: Array<{
+    label: string
+    value: string
   }>
+  person?: Person
+  currentModel?: Model
 }
 
 export function useProfile() {
@@ -94,7 +108,7 @@ export function useProfile() {
 export interface MusicTrack {
   id: string
   title: string
-  trackType: 'cover' | 'original' | 'remix' | 'karaoke'
+  trackType: 'cover' | 'original' | 'remix' | 'karaoke' | 'other'
   coverArt?: { url?: string }
   audioFile?: { url?: string }
   duration?: number
@@ -152,35 +166,29 @@ export function useUpdates(filter?: 'all' | 'announcements' | 'blogs') {
 }
 
 // Models hook
-export interface Live2DModel {
+export interface Model {
   id: string
   name: string
   version?: string
-  thumbnail?: { url?: string }
+  modelType: 'live2d' | 'pngtuber' | '2d-other' | 'vrm' | 'mmd' | 'fbx' | '3d-other'
+  showcase?: Array<{
+    media?: { url?: string }
+    caption?: string
+    isFeatured?: boolean
+  }>
   isActive?: boolean
   debutDate?: string
-}
-
-export interface ThreeDModel {
-  id: string
-  name: string
-  modelType?: string
-  thumbnail?: { url?: string }
-  isActive?: boolean
   technicalSpecs?: {
     polyCount?: number
+    textureResolution?: string
     blendshapes?: number
+    boneCount?: number
   }
 }
 
-export interface ModelsData {
-  live2d: Live2DModel[]
-  '3d': ThreeDModel[]
-}
-
-export function useModels(type?: 'live2d' | '3d') {
+export function useModels(type?: '2d' | '3d') {
   const queryParam = type ? `?type=${type}` : ''
-  return useFetch<ModelsData>(`/api/cms/models${queryParam}`)
+  return useFetch<Model[]>(`/api/cms/models${queryParam}`)
 }
 
 // Interactive media hook

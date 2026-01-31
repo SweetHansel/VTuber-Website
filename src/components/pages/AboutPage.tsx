@@ -47,7 +47,7 @@ function AboutLeft() {
         variants={staggerItemVariants}
         className="relative aspect-[3/4] w-48 overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20"
       >
-        {profileData.avatar?.url ? (
+        {/* {profileData.avatar?.url ? (
           <Image
             src={profileData.avatar.url}
             alt={profileData.name || 'Avatar'}
@@ -59,7 +59,7 @@ function AboutLeft() {
           <div className="flex h-full w-full items-center justify-center text-white/20">
             <span className="text-4xl">?</span>
           </div>
-        )}
+        )} */}
       </motion.div>
       <motion.button
         variants={staggerItemVariants}
@@ -94,8 +94,8 @@ function AboutRight() {
       {/* Name & Tagline */}
       <motion.div variants={staggerItemVariants}>
         <h1 className="text-3xl font-bold text-white">{profileData.name}</h1>
-        {profileData.japaneseName && (
-          <p className="text-lg text-white/60">{profileData.japaneseName}</p>
+        {profileData.alternateName && (
+          <p className="text-lg text-white/60">{profileData.alternateName}</p>
         )}
         {profileData.tagline && (
           <p className="mt-1 text-blue-300">{profileData.tagline}</p>
@@ -178,7 +178,7 @@ function AboutRight() {
         )}
 
         {/* Hashtags */}
-        {profileData.hashtags && (
+        {profileData.hashtags && profileData.hashtags.length > 0 && (
           <motion.div
             variants={staggerItemVariants}
             className="rounded-xl bg-white/5 p-4"
@@ -188,26 +188,11 @@ function AboutRight() {
               <h3 className="font-medium text-white">Hashtags</h3>
             </div>
             <div className="space-y-1 text-sm">
-              {profileData.hashtags.general && (
-                <p className="text-white/60">
-                  General: <span className="text-blue-300">{profileData.hashtags.general}</span>
+              {profileData.hashtags.map((hashtag) => (
+                <p key={hashtag.label} className="text-white/60">
+                  {hashtag.label}: <span className="text-blue-300">{hashtag.value}</span>
                 </p>
-              )}
-              {profileData.hashtags.fanart && (
-                <p className="text-white/60">
-                  Fan Art: <span className="text-blue-300">{profileData.hashtags.fanart}</span>
-                </p>
-              )}
-              {profileData.hashtags.stream && (
-                <p className="text-white/60">
-                  Live: <span className="text-blue-300">{profileData.hashtags.stream}</span>
-                </p>
-              )}
-              {profileData.hashtags.fanName && (
-                <p className="text-white/60">
-                  Fans: <span className="text-blue-300">{profileData.hashtags.fanName}</span>
-                </p>
-              )}
+              ))}
             </div>
           </motion.div>
         )}

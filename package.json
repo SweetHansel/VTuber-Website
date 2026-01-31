@@ -6,9 +6,10 @@
   "engines": {
     "node": "^20.0.0"
   },
+  "//":"currently using migrate fresh as a way to simplify dev, will remove alter at production lol",
   "scripts": {
     "dev": "next dev --experimental-https",
-    "build": "payload generate:importmap && next build",
+    "build": "payload generate:importmap && payload generate:types && payload migrate:fresh --force-accept-warning && next build",
     "start": "next start",
     "lint": "eslint",
     "generate:importmap": "payload generate:importmap",

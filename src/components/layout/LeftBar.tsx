@@ -1,17 +1,20 @@
 "use client";
 
 import { Twitter, Youtube, Twitch, MessageCircle, Instagram, LucideIcon, ExternalLink, Loader2 } from "lucide-react";
-import { useProfile } from "@/hooks/useCMS";
+import { useProfile, Social } from "@/hooks/useCMS";
 
 // Platform to icon mapping
 const platformIcons: Record<string, LucideIcon> = {
   twitter: Twitter,
+  bluesky: Twitter, // Use Twitter icon for bluesky for now
   youtube: Youtube,
   twitch: Twitch,
   discord: MessageCircle,
   instagram: Instagram,
   tiktok: ExternalLink,
-  marshmallow: ExternalLink,
+  pixiv: ExternalLink,
+  vgen: ExternalLink,
+  website: ExternalLink,
   other: ExternalLink,
 };
 
@@ -24,17 +27,17 @@ interface SocialLink {
 export function LeftBar() {
   const { data: profile, loading, error } = useProfile();
 
-  // Transform CMS data or use fallback
-  const socialLinks: SocialLink[] = profile?.socialLinks && profile.socialLinks.length > 0
-    ? profile.socialLinks.map((link) => ({
-        name: link.label || link.platform.charAt(0).toUpperCase() + link.platform.slice(1),
-        url: link.url,
-        icon: platformIcons[link.platform] || ExternalLink,
-      }))
-    : [];
+  // Get social links from profile.person.socials
+  const socials: Social[] = profile?.person?.socials || [];
+
+  const socialLinks: SocialLink[] = socials.map((social) => ({
+    name: social.name,
+    url: social.url,
+    icon: platformIcons[social.platform] || ExternalLink,
+  }));
 
   if (error) {
-    console.warn("Failed to fetch profile for social links, using fallback:", error);
+    console.warn("Failed to fetch profile for social links:", error);
   }
 
   if (loading) {
@@ -45,6 +48,10 @@ export function LeftBar() {
         </div>
       </div>
     );
+  }
+
+  if (socialLinks.length === 0) {
+    return null;
   }
 
   return (

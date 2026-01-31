@@ -279,8 +279,7 @@
         },
         "role": {
           "name": "role",
-          "type": "enum_artworks_credits_role",
-          "typeSchema": "public",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
@@ -982,8 +981,7 @@
         },
         "role": {
           "name": "role",
-          "type": "enum_videos_credits_role",
-          "typeSchema": "public",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
@@ -1460,8 +1458,7 @@
         },
         "role": {
           "name": "role",
-          "type": "enum_music_tracks_credits_role",
-          "typeSchema": "public",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
@@ -1983,124 +1980,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.live2d_models_ref_sheets": {
-      "name": "live2d_models_ref_sheets",
-      "schema": "",
-      "columns": {
-        "_order": {
-          "name": "_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_parent_id": {
-          "name": "_parent_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "varchar",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "media_id": {
-          "name": "media_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "label": {
-          "name": "label",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "live2d_models_ref_sheets_order_idx": {
-          "name": "live2d_models_ref_sheets_order_idx",
-          "columns": [
-            {
-              "expression": "_order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "live2d_models_ref_sheets_parent_id_idx": {
-          "name": "live2d_models_ref_sheets_parent_id_idx",
-          "columns": [
-            {
-              "expression": "_parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "live2d_models_ref_sheets_media_idx": {
-          "name": "live2d_models_ref_sheets_media_idx",
-          "columns": [
-            {
-              "expression": "media_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "live2d_models_ref_sheets_media_id_media_id_fk": {
-          "name": "live2d_models_ref_sheets_media_id_media_id_fk",
-          "tableFrom": "live2d_models_ref_sheets",
-          "tableTo": "media",
-          "columnsFrom": [
-            "media_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "live2d_models_ref_sheets_parent_id_fk": {
-          "name": "live2d_models_ref_sheets_parent_id_fk",
-          "tableFrom": "live2d_models_ref_sheets",
-          "tableTo": "live2d_models",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.live2d_models_showcase": {
-      "name": "live2d_models_showcase",
+    "public.models_showcase": {
+      "name": "models_showcase",
       "schema": "",
       "columns": {
         "_order": {
@@ -2142,8 +2023,8 @@
         }
       },
       "indexes": {
-        "live2d_models_showcase_order_idx": {
-          "name": "live2d_models_showcase_order_idx",
+        "models_showcase_order_idx": {
+          "name": "models_showcase_order_idx",
           "columns": [
             {
               "expression": "_order",
@@ -2157,8 +2038,8 @@
           "method": "btree",
           "with": {}
         },
-        "live2d_models_showcase_parent_id_idx": {
-          "name": "live2d_models_showcase_parent_id_idx",
+        "models_showcase_parent_id_idx": {
+          "name": "models_showcase_parent_id_idx",
           "columns": [
             {
               "expression": "_parent_id",
@@ -2172,8 +2053,8 @@
           "method": "btree",
           "with": {}
         },
-        "live2d_models_showcase_media_idx": {
-          "name": "live2d_models_showcase_media_idx",
+        "models_showcase_media_idx": {
+          "name": "models_showcase_media_idx",
           "columns": [
             {
               "expression": "media_id",
@@ -2189,9 +2070,9 @@
         }
       },
       "foreignKeys": {
-        "live2d_models_showcase_media_id_media_id_fk": {
-          "name": "live2d_models_showcase_media_id_media_id_fk",
-          "tableFrom": "live2d_models_showcase",
+        "models_showcase_media_id_media_id_fk": {
+          "name": "models_showcase_media_id_media_id_fk",
+          "tableFrom": "models_showcase",
           "tableTo": "media",
           "columnsFrom": [
             "media_id"
@@ -2202,10 +2083,10 @@
           "onDelete": "set null",
           "onUpdate": "no action"
         },
-        "live2d_models_showcase_parent_id_fk": {
-          "name": "live2d_models_showcase_parent_id_fk",
-          "tableFrom": "live2d_models_showcase",
-          "tableTo": "live2d_models",
+        "models_showcase_parent_id_fk": {
+          "name": "models_showcase_parent_id_fk",
+          "tableFrom": "models_showcase",
+          "tableTo": "models",
           "columnsFrom": [
             "_parent_id"
           ],
@@ -2222,8 +2103,124 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.live2d_models_credits": {
-      "name": "live2d_models_credits",
+    "public.models_ref_sheets": {
+      "name": "models_ref_sheets",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "media_id": {
+          "name": "media_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "models_ref_sheets_order_idx": {
+          "name": "models_ref_sheets_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "models_ref_sheets_parent_id_idx": {
+          "name": "models_ref_sheets_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "models_ref_sheets_media_idx": {
+          "name": "models_ref_sheets_media_idx",
+          "columns": [
+            {
+              "expression": "media_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "models_ref_sheets_media_id_media_id_fk": {
+          "name": "models_ref_sheets_media_id_media_id_fk",
+          "tableFrom": "models_ref_sheets",
+          "tableTo": "media",
+          "columnsFrom": [
+            "media_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "models_ref_sheets_parent_id_fk": {
+          "name": "models_ref_sheets_parent_id_fk",
+          "tableFrom": "models_ref_sheets",
+          "tableTo": "models",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.models_credits": {
+      "name": "models_credits",
       "schema": "",
       "columns": {
         "_order": {
@@ -2246,8 +2243,7 @@
         },
         "role": {
           "name": "role",
-          "type": "enum_live2d_models_credits_role",
-          "typeSchema": "public",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
@@ -2265,8 +2261,8 @@
         }
       },
       "indexes": {
-        "live2d_models_credits_order_idx": {
-          "name": "live2d_models_credits_order_idx",
+        "models_credits_order_idx": {
+          "name": "models_credits_order_idx",
           "columns": [
             {
               "expression": "_order",
@@ -2280,8 +2276,8 @@
           "method": "btree",
           "with": {}
         },
-        "live2d_models_credits_parent_id_idx": {
-          "name": "live2d_models_credits_parent_id_idx",
+        "models_credits_parent_id_idx": {
+          "name": "models_credits_parent_id_idx",
           "columns": [
             {
               "expression": "_parent_id",
@@ -2295,8 +2291,8 @@
           "method": "btree",
           "with": {}
         },
-        "live2d_models_credits_artist_idx": {
-          "name": "live2d_models_credits_artist_idx",
+        "models_credits_artist_idx": {
+          "name": "models_credits_artist_idx",
           "columns": [
             {
               "expression": "artist_id",
@@ -2312,9 +2308,9 @@
         }
       },
       "foreignKeys": {
-        "live2d_models_credits_artist_id_people_id_fk": {
-          "name": "live2d_models_credits_artist_id_people_id_fk",
-          "tableFrom": "live2d_models_credits",
+        "models_credits_artist_id_people_id_fk": {
+          "name": "models_credits_artist_id_people_id_fk",
+          "tableFrom": "models_credits",
           "tableTo": "people",
           "columnsFrom": [
             "artist_id"
@@ -2325,10 +2321,10 @@
           "onDelete": "set null",
           "onUpdate": "no action"
         },
-        "live2d_models_credits_parent_id_fk": {
-          "name": "live2d_models_credits_parent_id_fk",
-          "tableFrom": "live2d_models_credits",
-          "tableTo": "live2d_models",
+        "models_credits_parent_id_fk": {
+          "name": "models_credits_parent_id_fk",
+          "tableFrom": "models_credits",
+          "tableTo": "models",
           "columnsFrom": [
             "_parent_id"
           ],
@@ -2345,124 +2341,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.live2d_models_expressions": {
-      "name": "live2d_models_expressions",
-      "schema": "",
-      "columns": {
-        "_order": {
-          "name": "_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_parent_id": {
-          "name": "_parent_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "varchar",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "preview_id": {
-          "name": "preview_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "live2d_models_expressions_order_idx": {
-          "name": "live2d_models_expressions_order_idx",
-          "columns": [
-            {
-              "expression": "_order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "live2d_models_expressions_parent_id_idx": {
-          "name": "live2d_models_expressions_parent_id_idx",
-          "columns": [
-            {
-              "expression": "_parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "live2d_models_expressions_preview_idx": {
-          "name": "live2d_models_expressions_preview_idx",
-          "columns": [
-            {
-              "expression": "preview_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "live2d_models_expressions_preview_id_media_id_fk": {
-          "name": "live2d_models_expressions_preview_id_media_id_fk",
-          "tableFrom": "live2d_models_expressions",
-          "tableTo": "media",
-          "columnsFrom": [
-            "preview_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "live2d_models_expressions_parent_id_fk": {
-          "name": "live2d_models_expressions_parent_id_fk",
-          "tableFrom": "live2d_models_expressions",
-          "tableTo": "live2d_models",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.live2d_models": {
-      "name": "live2d_models",
+    "public.models": {
+      "name": "models",
       "schema": "",
       "columns": {
         "id": {
@@ -2483,17 +2363,12 @@
           "primaryKey": false,
           "notNull": false
         },
-        "thumbnail_id": {
-          "name": "thumbnail_id",
-          "type": "integer",
+        "model_type": {
+          "name": "model_type",
+          "type": "enum_models_model_type",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
-        },
-        "model_file_id": {
-          "name": "model_file_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
         },
         "description": {
           "name": "description",
@@ -2501,661 +2376,16 @@
           "primaryKey": false,
           "notNull": false
         },
-        "debut_date": {
-          "name": "debut_date",
-          "type": "timestamp(3) with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "is_active": {
-          "name": "is_active",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": true
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp(3) with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp(3) with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "live2d_models_thumbnail_idx": {
-          "name": "live2d_models_thumbnail_idx",
-          "columns": [
-            {
-              "expression": "thumbnail_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "live2d_models_model_file_idx": {
-          "name": "live2d_models_model_file_idx",
-          "columns": [
-            {
-              "expression": "model_file_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "live2d_models_updated_at_idx": {
-          "name": "live2d_models_updated_at_idx",
-          "columns": [
-            {
-              "expression": "updated_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "live2d_models_created_at_idx": {
-          "name": "live2d_models_created_at_idx",
-          "columns": [
-            {
-              "expression": "created_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "live2d_models_thumbnail_id_media_id_fk": {
-          "name": "live2d_models_thumbnail_id_media_id_fk",
-          "tableFrom": "live2d_models",
-          "tableTo": "media",
-          "columnsFrom": [
-            "thumbnail_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "live2d_models_model_file_id_media_id_fk": {
-          "name": "live2d_models_model_file_id_media_id_fk",
-          "tableFrom": "live2d_models",
-          "tableTo": "media",
-          "columnsFrom": [
-            "model_file_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.live2d_models_rels": {
-      "name": "live2d_models_rels",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "order": {
-          "name": "order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "parent_id": {
-          "name": "parent_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "path": {
-          "name": "path",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "tags_id": {
-          "name": "tags_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "live2d_models_rels_order_idx": {
-          "name": "live2d_models_rels_order_idx",
-          "columns": [
-            {
-              "expression": "order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "live2d_models_rels_parent_idx": {
-          "name": "live2d_models_rels_parent_idx",
-          "columns": [
-            {
-              "expression": "parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "live2d_models_rels_path_idx": {
-          "name": "live2d_models_rels_path_idx",
-          "columns": [
-            {
-              "expression": "path",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "live2d_models_rels_tags_id_idx": {
-          "name": "live2d_models_rels_tags_id_idx",
-          "columns": [
-            {
-              "expression": "tags_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "live2d_models_rels_parent_fk": {
-          "name": "live2d_models_rels_parent_fk",
-          "tableFrom": "live2d_models_rels",
-          "tableTo": "live2d_models",
-          "columnsFrom": [
-            "parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "live2d_models_rels_tags_fk": {
-          "name": "live2d_models_rels_tags_fk",
-          "tableFrom": "live2d_models_rels",
-          "tableTo": "tags",
-          "columnsFrom": [
-            "tags_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.3d_models_showcase": {
-      "name": "3d_models_showcase",
-      "schema": "",
-      "columns": {
-        "_order": {
-          "name": "_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_parent_id": {
-          "name": "_parent_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "varchar",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "media_id": {
-          "name": "media_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "caption": {
-          "name": "caption",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "is_featured": {
-          "name": "is_featured",
+        "include_model_file": {
+          "name": "include_model_file",
           "type": "boolean",
           "primaryKey": false,
           "notNull": false,
           "default": false
-        }
-      },
-      "indexes": {
-        "3d_models_showcase_order_idx": {
-          "name": "3d_models_showcase_order_idx",
-          "columns": [
-            {
-              "expression": "_order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "3d_models_showcase_parent_id_idx": {
-          "name": "3d_models_showcase_parent_id_idx",
-          "columns": [
-            {
-              "expression": "_parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "3d_models_showcase_media_idx": {
-          "name": "3d_models_showcase_media_idx",
-          "columns": [
-            {
-              "expression": "media_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "3d_models_showcase_media_id_media_id_fk": {
-          "name": "3d_models_showcase_media_id_media_id_fk",
-          "tableFrom": "3d_models_showcase",
-          "tableTo": "media",
-          "columnsFrom": [
-            "media_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "3d_models_showcase_parent_id_fk": {
-          "name": "3d_models_showcase_parent_id_fk",
-          "tableFrom": "3d_models_showcase",
-          "tableTo": "3d_models",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.3d_models_ref_sheets": {
-      "name": "3d_models_ref_sheets",
-      "schema": "",
-      "columns": {
-        "_order": {
-          "name": "_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_parent_id": {
-          "name": "_parent_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "varchar",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "media_id": {
-          "name": "media_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "label": {
-          "name": "label",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "3d_models_ref_sheets_order_idx": {
-          "name": "3d_models_ref_sheets_order_idx",
-          "columns": [
-            {
-              "expression": "_order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "3d_models_ref_sheets_parent_id_idx": {
-          "name": "3d_models_ref_sheets_parent_id_idx",
-          "columns": [
-            {
-              "expression": "_parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "3d_models_ref_sheets_media_idx": {
-          "name": "3d_models_ref_sheets_media_idx",
-          "columns": [
-            {
-              "expression": "media_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "3d_models_ref_sheets_media_id_media_id_fk": {
-          "name": "3d_models_ref_sheets_media_id_media_id_fk",
-          "tableFrom": "3d_models_ref_sheets",
-          "tableTo": "media",
-          "columnsFrom": [
-            "media_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "3d_models_ref_sheets_parent_id_fk": {
-          "name": "3d_models_ref_sheets_parent_id_fk",
-          "tableFrom": "3d_models_ref_sheets",
-          "tableTo": "3d_models",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.3d_models_credits": {
-      "name": "3d_models_credits",
-      "schema": "",
-      "columns": {
-        "_order": {
-          "name": "_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_parent_id": {
-          "name": "_parent_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "varchar",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "role": {
-          "name": "role",
-          "type": "enum_3d_models_credits_role",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "artist_id": {
-          "name": "artist_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "3d_models_credits_order_idx": {
-          "name": "3d_models_credits_order_idx",
-          "columns": [
-            {
-              "expression": "_order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "3d_models_credits_parent_id_idx": {
-          "name": "3d_models_credits_parent_id_idx",
-          "columns": [
-            {
-              "expression": "_parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "3d_models_credits_artist_idx": {
-          "name": "3d_models_credits_artist_idx",
-          "columns": [
-            {
-              "expression": "artist_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "3d_models_credits_artist_id_people_id_fk": {
-          "name": "3d_models_credits_artist_id_people_id_fk",
-          "tableFrom": "3d_models_credits",
-          "tableTo": "people",
-          "columnsFrom": [
-            "artist_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "3d_models_credits_parent_id_fk": {
-          "name": "3d_models_credits_parent_id_fk",
-          "tableFrom": "3d_models_credits",
-          "tableTo": "3d_models",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.3d_models": {
-      "name": "3d_models",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "model_type": {
-          "name": "model_type",
-          "type": "enum_3d_models_model_type",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "thumbnail_id": {
-          "name": "thumbnail_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
         },
         "model_file_id": {
           "name": "model_file_id",
           "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "description": {
-          "name": "description",
-          "type": "jsonb",
           "primaryKey": false,
           "notNull": false
         },
@@ -3212,23 +2442,8 @@
         }
       },
       "indexes": {
-        "3d_models_thumbnail_idx": {
-          "name": "3d_models_thumbnail_idx",
-          "columns": [
-            {
-              "expression": "thumbnail_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "3d_models_model_file_idx": {
-          "name": "3d_models_model_file_idx",
+        "models_model_file_idx": {
+          "name": "models_model_file_idx",
           "columns": [
             {
               "expression": "model_file_id",
@@ -3242,8 +2457,8 @@
           "method": "btree",
           "with": {}
         },
-        "3d_models_updated_at_idx": {
-          "name": "3d_models_updated_at_idx",
+        "models_updated_at_idx": {
+          "name": "models_updated_at_idx",
           "columns": [
             {
               "expression": "updated_at",
@@ -3257,8 +2472,8 @@
           "method": "btree",
           "with": {}
         },
-        "3d_models_created_at_idx": {
-          "name": "3d_models_created_at_idx",
+        "models_created_at_idx": {
+          "name": "models_created_at_idx",
           "columns": [
             {
               "expression": "created_at",
@@ -3274,22 +2489,9 @@
         }
       },
       "foreignKeys": {
-        "3d_models_thumbnail_id_media_id_fk": {
-          "name": "3d_models_thumbnail_id_media_id_fk",
-          "tableFrom": "3d_models",
-          "tableTo": "media",
-          "columnsFrom": [
-            "thumbnail_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "3d_models_model_file_id_media_id_fk": {
-          "name": "3d_models_model_file_id_media_id_fk",
-          "tableFrom": "3d_models",
+        "models_model_file_id_media_id_fk": {
+          "name": "models_model_file_id_media_id_fk",
+          "tableFrom": "models",
           "tableTo": "media",
           "columnsFrom": [
             "model_file_id"
@@ -3307,8 +2509,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.3d_models_rels": {
-      "name": "3d_models_rels",
+    "public.models_rels": {
+      "name": "models_rels",
       "schema": "",
       "columns": {
         "id": {
@@ -3343,8 +2545,8 @@
         }
       },
       "indexes": {
-        "3d_models_rels_order_idx": {
-          "name": "3d_models_rels_order_idx",
+        "models_rels_order_idx": {
+          "name": "models_rels_order_idx",
           "columns": [
             {
               "expression": "order",
@@ -3358,8 +2560,8 @@
           "method": "btree",
           "with": {}
         },
-        "3d_models_rels_parent_idx": {
-          "name": "3d_models_rels_parent_idx",
+        "models_rels_parent_idx": {
+          "name": "models_rels_parent_idx",
           "columns": [
             {
               "expression": "parent_id",
@@ -3373,8 +2575,8 @@
           "method": "btree",
           "with": {}
         },
-        "3d_models_rels_path_idx": {
-          "name": "3d_models_rels_path_idx",
+        "models_rels_path_idx": {
+          "name": "models_rels_path_idx",
           "columns": [
             {
               "expression": "path",
@@ -3388,8 +2590,8 @@
           "method": "btree",
           "with": {}
         },
-        "3d_models_rels_tags_id_idx": {
-          "name": "3d_models_rels_tags_id_idx",
+        "models_rels_tags_id_idx": {
+          "name": "models_rels_tags_id_idx",
           "columns": [
             {
               "expression": "tags_id",
@@ -3405,10 +2607,10 @@
         }
       },
       "foreignKeys": {
-        "3d_models_rels_parent_fk": {
-          "name": "3d_models_rels_parent_fk",
-          "tableFrom": "3d_models_rels",
-          "tableTo": "3d_models",
+        "models_rels_parent_fk": {
+          "name": "models_rels_parent_fk",
+          "tableFrom": "models_rels",
+          "tableTo": "models",
           "columnsFrom": [
             "parent_id"
           ],
@@ -3418,184 +2620,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "3d_models_rels_tags_fk": {
-          "name": "3d_models_rels_tags_fk",
-          "tableFrom": "3d_models_rels",
+        "models_rels_tags_fk": {
+          "name": "models_rels_tags_fk",
+          "tableFrom": "models_rels",
           "tableTo": "tags",
           "columnsFrom": [
             "tags_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.people_roles": {
-      "name": "people_roles",
-      "schema": "",
-      "columns": {
-        "order": {
-          "name": "order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "parent_id": {
-          "name": "parent_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "value": {
-          "name": "value",
-          "type": "enum_people_roles",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        }
-      },
-      "indexes": {
-        "people_roles_order_idx": {
-          "name": "people_roles_order_idx",
-          "columns": [
-            {
-              "expression": "order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "people_roles_parent_idx": {
-          "name": "people_roles_parent_idx",
-          "columns": [
-            {
-              "expression": "parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "people_roles_parent_fk": {
-          "name": "people_roles_parent_fk",
-          "tableFrom": "people_roles",
-          "tableTo": "people",
-          "columnsFrom": [
-            "parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.people_social_links": {
-      "name": "people_social_links",
-      "schema": "",
-      "columns": {
-        "_order": {
-          "name": "_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_parent_id": {
-          "name": "_parent_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "varchar",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "platform": {
-          "name": "platform",
-          "type": "enum_people_social_links_platform",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "url": {
-          "name": "url",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {
-        "people_social_links_order_idx": {
-          "name": "people_social_links_order_idx",
-          "columns": [
-            {
-              "expression": "_order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "people_social_links_parent_id_idx": {
-          "name": "people_social_links_parent_id_idx",
-          "columns": [
-            {
-              "expression": "_parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "people_social_links_parent_id_fk": {
-          "name": "people_social_links_parent_id_fk",
-          "tableFrom": "people_social_links",
-          "tableTo": "people",
-          "columnsFrom": [
-            "_parent_id"
           ],
           "columnsTo": [
             "id"
@@ -3625,6 +2655,12 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
+        },
+        "roles": {
+          "name": "roles",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
         },
         "avatar_id": {
           "name": "avatar_id",
@@ -3749,8 +2785,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "channels_id": {
-          "name": "channels_id",
+        "socials_id": {
+          "name": "socials_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -3808,11 +2844,11 @@
           "method": "btree",
           "with": {}
         },
-        "people_rels_channels_id_idx": {
-          "name": "people_rels_channels_id_idx",
+        "people_rels_socials_id_idx": {
+          "name": "people_rels_socials_id_idx",
           "columns": [
             {
-              "expression": "channels_id",
+              "expression": "socials_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -3853,12 +2889,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "people_rels_channels_fk": {
-          "name": "people_rels_channels_fk",
+        "people_rels_socials_fk": {
+          "name": "people_rels_socials_fk",
           "tableFrom": "people_rels",
-          "tableTo": "channels",
+          "tableTo": "socials",
           "columnsFrom": [
-            "channels_id"
+            "socials_id"
           ],
           "columnsTo": [
             "id"
@@ -4258,8 +3294,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.channels": {
-      "name": "channels",
+    "public.socials": {
+      "name": "socials",
       "schema": "",
       "columns": {
         "id": {
@@ -4276,19 +3312,13 @@
         },
         "platform": {
           "name": "platform",
-          "type": "enum_channels_platform",
+          "type": "enum_socials_platform",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
-        "channel_id": {
-          "name": "channel_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "channel_url": {
-          "name": "channel_url",
+        "url": {
+          "name": "url",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
@@ -4298,20 +3328,6 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
-        },
-        "track_livestream": {
-          "name": "track_livestream",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": true
-        },
-        "priority": {
-          "name": "priority",
-          "type": "numeric",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 1
         },
         "updated_at": {
           "name": "updated_at",
@@ -4329,8 +3345,8 @@
         }
       },
       "indexes": {
-        "channels_avatar_idx": {
-          "name": "channels_avatar_idx",
+        "socials_avatar_idx": {
+          "name": "socials_avatar_idx",
           "columns": [
             {
               "expression": "avatar_id",
@@ -4344,8 +3360,8 @@
           "method": "btree",
           "with": {}
         },
-        "channels_updated_at_idx": {
-          "name": "channels_updated_at_idx",
+        "socials_updated_at_idx": {
+          "name": "socials_updated_at_idx",
           "columns": [
             {
               "expression": "updated_at",
@@ -4359,8 +3375,8 @@
           "method": "btree",
           "with": {}
         },
-        "channels_created_at_idx": {
-          "name": "channels_created_at_idx",
+        "socials_created_at_idx": {
+          "name": "socials_created_at_idx",
           "columns": [
             {
               "expression": "created_at",
@@ -4376,9 +3392,9 @@
         }
       },
       "foreignKeys": {
-        "channels_avatar_id_media_id_fk": {
-          "name": "channels_avatar_id_media_id_fk",
-          "tableFrom": "channels",
+        "socials_avatar_id_media_id_fk": {
+          "name": "socials_avatar_id_media_id_fk",
+          "tableFrom": "socials",
           "tableTo": "media",
           "columnsFrom": [
             "avatar_id"
@@ -4414,7 +3430,8 @@
         },
         "location": {
           "name": "location",
-          "type": "varchar",
+          "type": "enum_interactive_media_location",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
@@ -4892,18 +3909,6 @@
           "notNull": true,
           "default": "'editor'"
         },
-        "avatar_id": {
-          "name": "avatar_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "display_name": {
-          "name": "display_name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
         "person_id": {
           "name": "person_id",
           "type": "integer",
@@ -4969,21 +3974,6 @@
         }
       },
       "indexes": {
-        "users_avatar_idx": {
-          "name": "users_avatar_idx",
-          "columns": [
-            {
-              "expression": "avatar_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
         "users_person_idx": {
           "name": "users_person_idx",
           "columns": [
@@ -5046,19 +4036,6 @@
         }
       },
       "foreignKeys": {
-        "users_avatar_id_media_id_fk": {
-          "name": "users_avatar_id_media_id_fk",
-          "tableFrom": "users",
-          "tableTo": "media",
-          "columnsFrom": [
-            "avatar_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
         "users_person_id_people_id_fk": {
           "name": "users_person_id_people_id_fk",
           "tableFrom": "users",
@@ -5579,14 +4556,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "live2d_models_id": {
-          "name": "live2d_models_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "3d_models_id": {
-          "name": "3d_models_id",
+        "models_id": {
+          "name": "models_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -5603,8 +4574,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "channels_id": {
-          "name": "channels_id",
+        "socials_id": {
+          "name": "socials_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -5764,26 +4735,11 @@
           "method": "btree",
           "with": {}
         },
-        "payload_locked_documents_rels_live2d_models_id_idx": {
-          "name": "payload_locked_documents_rels_live2d_models_id_idx",
+        "payload_locked_documents_rels_models_id_idx": {
+          "name": "payload_locked_documents_rels_models_id_idx",
           "columns": [
             {
-              "expression": "live2d_models_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "payload_locked_documents_rels_3d_models_id_idx": {
-          "name": "payload_locked_documents_rels_3d_models_id_idx",
-          "columns": [
-            {
-              "expression": "3d_models_id",
+              "expression": "models_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -5824,11 +4780,11 @@
           "method": "btree",
           "with": {}
         },
-        "payload_locked_documents_rels_channels_id_idx": {
-          "name": "payload_locked_documents_rels_channels_id_idx",
+        "payload_locked_documents_rels_socials_id_idx": {
+          "name": "payload_locked_documents_rels_socials_id_idx",
           "columns": [
             {
-              "expression": "channels_id",
+              "expression": "socials_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -5977,25 +4933,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "payload_locked_documents_rels_live2d_models_fk": {
-          "name": "payload_locked_documents_rels_live2d_models_fk",
+        "payload_locked_documents_rels_models_fk": {
+          "name": "payload_locked_documents_rels_models_fk",
           "tableFrom": "payload_locked_documents_rels",
-          "tableTo": "live2d_models",
+          "tableTo": "models",
           "columnsFrom": [
-            "live2d_models_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "payload_locked_documents_rels_3d_models_fk": {
-          "name": "payload_locked_documents_rels_3d_models_fk",
-          "tableFrom": "payload_locked_documents_rels",
-          "tableTo": "3d_models",
-          "columnsFrom": [
-            "3d_models_id"
+            "models_id"
           ],
           "columnsTo": [
             "id"
@@ -6029,12 +4972,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "payload_locked_documents_rels_channels_fk": {
-          "name": "payload_locked_documents_rels_channels_fk",
+        "payload_locked_documents_rels_socials_fk": {
+          "name": "payload_locked_documents_rels_socials_fk",
           "tableFrom": "payload_locked_documents_rels",
-          "tableTo": "channels",
+          "tableTo": "socials",
           "columnsFrom": [
-            "channels_id"
+            "socials_id"
           ],
           "columnsTo": [
             "id"
@@ -6562,8 +5505,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.profile_social_links": {
-      "name": "profile_social_links",
+    "public.profile_hashtags": {
+      "name": "profile_hashtags",
       "schema": "",
       "columns": {
         "_order": {
@@ -6584,29 +5527,22 @@
           "primaryKey": true,
           "notNull": true
         },
-        "platform": {
-          "name": "platform",
-          "type": "enum_profile_social_links_platform",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "url": {
-          "name": "url",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
         "label": {
           "name": "label",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {
-        "profile_social_links_order_idx": {
-          "name": "profile_social_links_order_idx",
+        "profile_hashtags_order_idx": {
+          "name": "profile_hashtags_order_idx",
           "columns": [
             {
               "expression": "_order",
@@ -6620,8 +5556,8 @@
           "method": "btree",
           "with": {}
         },
-        "profile_social_links_parent_id_idx": {
-          "name": "profile_social_links_parent_id_idx",
+        "profile_hashtags_parent_id_idx": {
+          "name": "profile_hashtags_parent_id_idx",
           "columns": [
             {
               "expression": "_parent_id",
@@ -6637,9 +5573,9 @@
         }
       },
       "foreignKeys": {
-        "profile_social_links_parent_id_fk": {
-          "name": "profile_social_links_parent_id_fk",
-          "tableFrom": "profile_social_links",
+        "profile_hashtags_parent_id_fk": {
+          "name": "profile_hashtags_parent_id_fk",
+          "tableFrom": "profile_hashtags",
           "tableTo": "profile",
           "columnsFrom": [
             "_parent_id"
@@ -6667,14 +5603,26 @@
           "primaryKey": true,
           "notNull": true
         },
+        "person_id": {
+          "name": "person_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "current_model_id": {
+          "name": "current_model_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "name": {
           "name": "name",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
-        "japanese_name": {
-          "name": "japanese_name",
+        "alternate_name": {
+          "name": "alternate_name",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -6685,15 +5633,15 @@
           "primaryKey": false,
           "notNull": false
         },
-        "avatar_id": {
-          "name": "avatar_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
         "short_bio": {
           "name": "short_bio",
           "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "debut_date": {
+          "name": "debut_date",
+          "type": "timestamp(3) with time zone",
           "primaryKey": false,
           "notNull": false
         },
@@ -6705,30 +5653,6 @@
         },
         "height": {
           "name": "height",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "hashtags_general": {
-          "name": "hashtags_general",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "hashtags_fanart": {
-          "name": "hashtags_fanart",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "hashtags_stream": {
-          "name": "hashtags_stream",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "hashtags_fan_name": {
-          "name": "hashtags_fan_name",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -6747,11 +5671,26 @@
         }
       },
       "indexes": {
-        "profile_avatar_idx": {
-          "name": "profile_avatar_idx",
+        "profile_person_idx": {
+          "name": "profile_person_idx",
           "columns": [
             {
-              "expression": "avatar_id",
+              "expression": "person_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "profile_current_model_idx": {
+          "name": "profile_current_model_idx",
+          "columns": [
+            {
+              "expression": "current_model_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -6764,12 +5703,25 @@
         }
       },
       "foreignKeys": {
-        "profile_avatar_id_media_id_fk": {
-          "name": "profile_avatar_id_media_id_fk",
+        "profile_person_id_people_id_fk": {
+          "name": "profile_person_id_people_id_fk",
           "tableFrom": "profile",
-          "tableTo": "media",
+          "tableTo": "people",
           "columnsFrom": [
-            "avatar_id"
+            "person_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "profile_current_model_id_models_id_fk": {
+          "name": "profile_current_model_id_models_id_fk",
+          "tableFrom": "profile",
+          "tableTo": "models",
+          "columnsFrom": [
+            "current_model_id"
           ],
           "columnsTo": [
             "id"
@@ -7031,159 +5983,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.links_social_links": {
-      "name": "links_social_links",
-      "schema": "",
-      "columns": {
-        "_order": {
-          "name": "_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_parent_id": {
-          "name": "_parent_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "varchar",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "url": {
-          "name": "url",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "icon_id": {
-          "name": "icon_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "links_social_links_order_idx": {
-          "name": "links_social_links_order_idx",
-          "columns": [
-            {
-              "expression": "_order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "links_social_links_parent_id_idx": {
-          "name": "links_social_links_parent_id_idx",
-          "columns": [
-            {
-              "expression": "_parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "links_social_links_icon_idx": {
-          "name": "links_social_links_icon_idx",
-          "columns": [
-            {
-              "expression": "icon_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "links_social_links_icon_id_media_id_fk": {
-          "name": "links_social_links_icon_id_media_id_fk",
-          "tableFrom": "links_social_links",
-          "tableTo": "media",
-          "columnsFrom": [
-            "icon_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "links_social_links_parent_id_fk": {
-          "name": "links_social_links_parent_id_fk",
-          "tableFrom": "links_social_links",
-          "tableTo": "links",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.links": {
-      "name": "links",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp(3) with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp(3) with time zone",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.themes_interactive_media": {
       "name": "themes_interactive_media",
       "schema": "",
@@ -7403,13 +6202,6 @@
           "notNull": false,
           "default": false
         },
-        "manual_override_platform": {
-          "name": "manual_override_platform",
-          "type": "enum_livestream_settings_manual_override_platform",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false
-        },
         "manual_override_stream_url": {
           "name": "manual_override_stream_url",
           "type": "varchar",
@@ -7478,6 +6270,137 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
+    },
+    "public.livestream_settings_rels": {
+      "name": "livestream_settings_rels",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "path": {
+          "name": "path",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "socials_id": {
+          "name": "socials_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "livestream_settings_rels_order_idx": {
+          "name": "livestream_settings_rels_order_idx",
+          "columns": [
+            {
+              "expression": "order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "livestream_settings_rels_parent_idx": {
+          "name": "livestream_settings_rels_parent_idx",
+          "columns": [
+            {
+              "expression": "parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "livestream_settings_rels_path_idx": {
+          "name": "livestream_settings_rels_path_idx",
+          "columns": [
+            {
+              "expression": "path",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "livestream_settings_rels_socials_id_idx": {
+          "name": "livestream_settings_rels_socials_id_idx",
+          "columns": [
+            {
+              "expression": "socials_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "livestream_settings_rels_parent_fk": {
+          "name": "livestream_settings_rels_parent_fk",
+          "tableFrom": "livestream_settings_rels",
+          "tableTo": "livestream_settings",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "livestream_settings_rels_socials_fk": {
+          "name": "livestream_settings_rels_socials_fk",
+          "tableFrom": "livestream_settings_rels",
+          "tableTo": "socials",
+          "columnsFrom": [
+            "socials_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
   "enums": {
@@ -7490,19 +6413,6 @@
         "release",
         "collab",
         "general"
-      ]
-    },
-    "public.enum_artworks_credits_role": {
-      "name": "enum_artworks_credits_role",
-      "schema": "public",
-      "values": [
-        "artist",
-        "illustrator",
-        "colorist",
-        "line-art",
-        "background",
-        "commissioner",
-        "other"
       ]
     },
     "public.enum_artworks_artwork_type": {
@@ -7521,19 +6431,6 @@
       "values": [
         "draft",
         "published"
-      ]
-    },
-    "public.enum_videos_credits_role": {
-      "name": "enum_videos_credits_role",
-      "schema": "public",
-      "values": [
-        "director",
-        "editor",
-        "animator",
-        "illustrator",
-        "cameraman",
-        "motion-graphics",
-        "other"
       ]
     },
     "public.enum_videos_video_type": {
@@ -7559,20 +6456,6 @@
         "other"
       ]
     },
-    "public.enum_music_tracks_credits_role": {
-      "name": "enum_music_tracks_credits_role",
-      "schema": "public",
-      "values": [
-        "vocals",
-        "composer",
-        "lyricist",
-        "arranger",
-        "mix",
-        "master",
-        "illustration",
-        "video"
-      ]
-    },
     "public.enum_music_tracks_streaming_links_platform": {
       "name": "enum_music_tracks_streaming_links_platform",
       "schema": "public",
@@ -7593,67 +6476,21 @@
         "cover",
         "original",
         "remix",
-        "karaoke"
+        "karaoke",
+        "other"
       ]
     },
-    "public.enum_live2d_models_credits_role": {
-      "name": "enum_live2d_models_credits_role",
+    "public.enum_models_model_type": {
+      "name": "enum_models_model_type",
       "schema": "public",
       "values": [
-        "character-design",
-        "illustration",
-        "rigging",
-        "additional-art"
-      ]
-    },
-    "public.enum_3d_models_credits_role": {
-      "name": "enum_3d_models_credits_role",
-      "schema": "public",
-      "values": [
-        "character-design",
-        "3d-modeling",
-        "rigging",
-        "texturing"
-      ]
-    },
-    "public.enum_3d_models_model_type": {
-      "name": "enum_3d_models_model_type",
-      "schema": "public",
-      "values": [
+        "live2d",
+        "pngtuber",
+        "2d-other",
         "vrm",
         "mmd",
         "fbx",
-        "other"
-      ]
-    },
-    "public.enum_people_roles": {
-      "name": "enum_people_roles",
-      "schema": "public",
-      "values": [
-        "content-creator",
-        "manager",
-        "moderator",
-        "other",
-        "illustrator",
-        "rigger",
-        "3d-modeler",
-        "music-producer",
-        "mixer",
-        "video-editor",
-        "animator"
-      ]
-    },
-    "public.enum_people_social_links_platform": {
-      "name": "enum_people_social_links_platform",
-      "schema": "public",
-      "values": [
-        "twitter",
-        "youtube",
-        "twitch",
-        "instagram",
-        "pixiv",
-        "website",
-        "other"
+        "3d-other"
       ]
     },
     "public.enum_albums_streaming_links_platform": {
@@ -7677,13 +6514,33 @@
         "compilation"
       ]
     },
-    "public.enum_channels_platform": {
-      "name": "enum_channels_platform",
+    "public.enum_socials_platform": {
+      "name": "enum_socials_platform",
       "schema": "public",
       "values": [
-        "twitch",
+        "twitter",
+        "bluesky",
         "youtube",
-        "tiktok"
+        "twitch",
+        "instagram",
+        "tiktok",
+        "pixiv",
+        "vgen",
+        "website",
+        "other"
+      ]
+    },
+    "public.enum_interactive_media_location": {
+      "name": "enum_interactive_media_location",
+      "schema": "public",
+      "values": [
+        "main-character",
+        "landing-left",
+        "landing-bottom-right",
+        "page-artworks",
+        "page-discography",
+        "page-about",
+        "page-models"
       ]
     },
     "public.enum_users_role": {
@@ -7694,26 +6551,13 @@
         "editor"
       ]
     },
-    "public.enum_profile_social_links_platform": {
-      "name": "enum_profile_social_links_platform",
-      "schema": "public",
-      "values": [
-        "twitter",
-        "youtube",
-        "twitch",
-        "tiktok",
-        "instagram",
-        "discord",
-        "marshmallow",
-        "other"
-      ]
-    },
     "public.enum_themes_interactive_media_slot": {
       "name": "enum_themes_interactive_media_slot",
       "schema": "public",
       "values": [
-        "landing-character",
+        "main-character",
         "landing-left",
+        "landing-bottom-right",
         "page-artworks",
         "page-discography",
         "page-about",
@@ -7729,15 +6573,6 @@
         "bottom-right",
         "bottom-left"
       ]
-    },
-    "public.enum_livestream_settings_manual_override_platform": {
-      "name": "enum_livestream_settings_manual_override_platform",
-      "schema": "public",
-      "values": [
-        "",
-        "twitch",
-        "youtube"
-      ]
     }
   },
   "schemas": {},
@@ -7750,6 +6585,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "50b129ae-b62b-4333-936e-9a2da931ea5e",
+  "id": "986d2173-ecb0-442e-8b2c-0ded9f402c0b",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

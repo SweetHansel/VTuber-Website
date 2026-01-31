@@ -28,7 +28,7 @@ function ArtworksLeft() {
   );
 }
 
-function ArtworksRight({isActive}) {
+function ArtworksRight() {
   const [filter, setFilter] = useState<ArtworkFilter>("all");
 
   return (
@@ -36,9 +36,7 @@ function ArtworksRight({isActive}) {
       variants={staggerContainerVariants}
       initial="initial"
       animate="enter"
-      className={cn("absolute flex h-full w-full flex-col p-6",
-        isActive? "overflow-visible" : "overflow-hidden"
-      )}
+      className="absolute flex h-full w-full flex-col p-6"
     >
       {/* Header */}
       <motion.div

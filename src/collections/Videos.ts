@@ -93,17 +93,11 @@ export const Videos: CollectionConfig = {
       fields: [
         {
           name: 'role',
-          type: 'select',
-          options: [
-            { label: 'Director', value: 'director' },
-            { label: 'Editor', value: 'editor' },
-            { label: 'Animator', value: 'animator' },
-            { label: 'Illustrator', value: 'illustrator' },
-            { label: 'Cameraman', value: 'cameraman' },
-            { label: 'Motion Graphics', value: 'motion-graphics' },
-            { label: 'Other', value: 'other' },
-          ],
+          type: 'text',
           required: true,
+          admin: {
+            description: 'e.g., "Director", "Editor", "Animator", "Illustrator", "Cameraman", "Motion Graphics"',
+          },
         },
         {
           name: 'person',

@@ -47,17 +47,11 @@ export const Artworks: CollectionConfig = {
       fields: [
         {
           name: 'role',
-          type: 'select',
-          options: [
-            { label: 'Artist', value: 'artist' },
-            { label: 'Illustrator', value: 'illustrator' },
-            { label: 'Colorist', value: 'colorist' },
-            { label: 'Line Art', value: 'line-art' },
-            { label: 'Background', value: 'background' },
-            { label: 'Commissioner', value: 'commissioner' },
-            { label: 'Other', value: 'other' },
-          ],
+          type: 'text',
           required: true,
+          admin: {
+            description: 'e.g., "Artist", "Illustrator", "Colorist", "Line Art", "Background", "Commissioner"',
+          },
         },
         {
           name: 'person',

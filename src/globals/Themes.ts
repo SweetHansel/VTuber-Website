@@ -52,8 +52,9 @@ export const Themes: GlobalConfig = {
           type: 'select',
           required: true,
           options: [
-            { label: 'Landing - Main Character', value: 'landing-character' },
-            { label: 'Landing - Left Panel', value: 'landing-left' },
+            { label: 'Main Character', value: 'main-character' },
+            { label: 'Landing - Left', value: 'landing-left' },
+            { label: 'Landing - Bottom Right', value: 'landing-bottom-right' },
             { label: 'Page - Artworks', value: 'page-artworks' },
             { label: 'Page - Discography', value: 'page-discography' },
             { label: 'Page - About', value: 'page-about' },

@@ -15,7 +15,7 @@ function transformTrack(track: MusicTrack): SongCardProps {
   return {
     id: track.id,
     title: track.title,
-    trackType: track.trackType === 'karaoke' ? 'cover' : track.trackType,
+    trackType: track.trackType,
     coverArt: track.coverArt?.url || '/placeholder-cover-1.jpg',
     audioUrl: track.audioFile?.url,
     duration: track.duration,

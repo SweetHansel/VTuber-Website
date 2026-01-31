@@ -33,20 +33,11 @@ export const Users: CollectionConfig = {
       required: true,
     },
     {
-      name: 'avatar',
-      type: 'upload',
-      relationTo: 'media',
-    },
-    {
-      name: 'displayName',
-      type: 'text',
-    },
-    {
       name: 'person',
       type: 'relationship',
       relationTo: 'people',
       admin: {
-        description: 'Link to associated person profile (optional)',
+        description: 'Link to associated person profile (provides avatar and display name)',
       },
     },
   ],

@@ -8,7 +8,7 @@ export async function GET() {
 
     const profile = await payload.findGlobal({
       slug: 'profile',
-      depth: 2, // Resolve media relationships
+      depth: 3, // Resolve person.socials and currentModel.showcase relationships
     })
 
     return NextResponse.json({ data: profile })

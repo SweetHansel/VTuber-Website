@@ -1,35 +1,38 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { SongGrid } from '@/components/discography/SongGrid'
-import { InteractiveMediaFromCMS } from '@/components/layout/InteractiveMediaFromCMS'
-import { staggerContainerVariants, staggerItemVariants } from '@/animations'
-import { cn } from '@/lib/utils'
-import type { PageContent } from '@/components/layout/BookLayout'
+import { useState } from "react";
+import { motion, useTransform } from "framer-motion";
+import { SongGrid } from "@/components/discography/SongGrid";
+import { InteractiveMediaFromCMS } from "@/components/layout/InteractiveMediaFromCMS";
+import { staggerContainerVariants, staggerItemVariants } from "@/animations";
+import { cn } from "@/lib/utils";
+import type { LRProps, PageContent } from "@/components/layout/BookLayout";
 
-type MusicFilter = 'all' | 'covers' | 'originals'
+type MusicFilter = "all" | "covers" | "originals";
 
 const filters: { label: string; value: MusicFilter }[] = [
-  { label: 'All', value: 'all' },
-  { label: 'Covers', value: 'covers' },
-  { label: 'Originals', value: 'originals' },
-]
+  { label: "All", value: "all" },
+  { label: "Covers", value: "covers" },
+  { label: "Originals", value: "originals" },
+];
 
-function DiscographyRight() {
+function DiscographyRight({ index }: LRProps) {
+  const width = useTransform(index, (v) => {
+    return (v <= 0.5 ? (1 + v * 2) * 100 : (3 - v * 2) * 100) + "%";
+  });
   return (
-    <div className="absolute h-full w-full">
+    <motion.div className="absolute h-full w-full" style={{ width }}>
       <InteractiveMediaFromCMS
         location="page-discography"
         className="absolute h-full w-full"
         depth={-40}
       />
-    </div>
-  )
+    </motion.div>
+  );
 }
 
 function DiscographyLeft() {
-  const [filter, setFilter] = useState<MusicFilter>('all')
+  const [filter, setFilter] = useState<MusicFilter>("all");
 
   return (
     <motion.div
@@ -52,10 +55,10 @@ function DiscographyLeft() {
               key={value}
               onClick={() => setFilter(value)}
               className={cn(
-                'rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
+                "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
                 filter === value
-                  ? 'bg-white/20 text-white'
-                  : 'text-white/60 hover:text-white'
+                  ? "bg-white/20 text-white"
+                  : "text-white/60 hover:text-white",
               )}
             >
               {label}
@@ -72,10 +75,10 @@ function DiscographyLeft() {
         <SongGrid filter={filter} />
       </motion.div>
     </motion.div>
-  )
+  );
 }
 
 export const DiscographyPage: PageContent = {
   Left: DiscographyLeft,
   Right: DiscographyRight,
-}
+};

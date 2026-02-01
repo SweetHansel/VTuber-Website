@@ -11,34 +11,119 @@ export const Themes: GlobalConfig = {
   },
   fields: [
     {
-      name: 'primaryColor',
-      type: 'text',
+      type: 'collapsible',
+      label: 'Base Colors',
       admin: {
-        description: 'Primary brand color (hex)',
-        components: {
-          Field: '/components/admin/ColorPicker#ColorPicker',
-        },
+        initCollapsed: false,
       },
+      fields: [
+        {
+          name: 'backgroundColor',
+          type: 'text',
+          defaultValue: '#0a0a0a',
+          admin: {
+            description: 'Page background color',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+        {
+          name: 'foregroundColor',
+          type: 'text',
+          defaultValue: '#ededed',
+          admin: {
+            description: 'Text/foreground color',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+      ],
     },
     {
-      name: 'secondaryColor',
-      type: 'text',
+      type: 'collapsible',
+      label: 'Brand Colors',
       admin: {
-        description: 'Secondary color (hex)',
-        components: {
-          Field: '/components/admin/ColorPicker#ColorPicker',
-        },
+        initCollapsed: false,
       },
+      fields: [
+        {
+          name: 'primaryColor',
+          type: 'text',
+          defaultValue: '#3b82f6',
+          admin: {
+            description: 'Primary brand color (buttons, links, accents)',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+        {
+          name: 'primaryHoverColor',
+          type: 'text',
+          defaultValue: '#2563eb',
+          admin: {
+            description: 'Primary color on hover',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+        {
+          name: 'secondaryColor',
+          type: 'text',
+          defaultValue: '#8b5cf6',
+          admin: {
+            description: 'Secondary brand color',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+        {
+          name: 'accentColor',
+          type: 'text',
+          defaultValue: '#ec4899',
+          admin: {
+            description: 'Accent color for highlights',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+      ],
     },
     {
-      name: 'accentColor',
-      type: 'text',
+      type: 'collapsible',
+      label: 'Surface Colors',
       admin: {
-        description: 'Accent color (hex)',
-        components: {
-          Field: '/components/admin/ColorPicker#ColorPicker',
-        },
+        initCollapsed: false,
       },
+      fields: [
+        {
+          name: 'bgPrimaryColor',
+          type: 'text',
+          defaultValue: '#1e3a8a',
+          admin: {
+            description: 'Primary background (cards, panels)',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+        {
+          name: 'bgSurfaceColor',
+          type: 'text',
+          defaultValue: '#172554',
+          admin: {
+            description: 'Surface background (elevated elements)',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+      ],
     },
     {
       name: 'interactiveMedia',
@@ -68,7 +153,7 @@ export const Themes: GlobalConfig = {
           name: 'configuration',
           type: 'relationship',
           // Note: 'interactive-media' will be available after running payload generate:importmap
-          relationTo: 'interactive-media' as 'media',
+          relationTo: 'interactive-media',
           required: true,
           admin: {
             description: 'Interactive media configuration to use',

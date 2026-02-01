@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useTransform } from "framer-motion";
 import { MasonryGallery } from "@/components/gallery/MasonryGallery";
 import { staggerContainerVariants, staggerItemVariants } from "@/animations";
 import { cn } from "@/lib/utils";
-import type { PageContent } from "@/components/layout/BookLayout";
+import type { LRProps, PageContent } from "@/components/layout/BookLayout";
 import { InteractiveMediaFromCMS } from "../layout/InteractiveMediaFromCMS";
 
 type ArtworkFilter = "all" | "fanart" | "official" | "meme";
@@ -16,27 +16,36 @@ const filters: { label: string; value: ArtworkFilter }[] = [
   { label: "Official", value: "official" },
 ];
 
-function ArtworksLeft() {
+function ArtworksLeft({ index }: LRProps) {
+  const width = useTransform(index, (v) => {
+    return (v <= 0.5 ? (1 + v) *2/1.5* 100 : (2 - v) *2/1.5* 100) + "%";
+  });
+
   return (
-    <div className="absolute h-full w-full">
+    <motion.div className="absolute h-full" style={{ width }}>
       <InteractiveMediaFromCMS
         location="page-artworks"
         className="absolute h-full w-full"
         depth={-50}
       />
-    </div>
+    </motion.div>
   );
 }
 
-function ArtworksRight() {
+function ArtworksRight({ index }: LRProps) {
   const [filter, setFilter] = useState<ArtworkFilter>("all");
+
+  const width = useTransform(index, (v) => {
+    return (v <= 0.5 ? (1 + v) * 100 : (2 - v) * 100) + "%";
+  });
 
   return (
     <motion.div
       variants={staggerContainerVariants}
       initial="initial"
       animate="enter"
-      className="absolute flex h-full w-full flex-col p-6"
+      className="absolute flex h-full w-full flex-col p-2 overflow-scroll right-0"
+      style={{ width }}
     >
       {/* Header */}
       <motion.div

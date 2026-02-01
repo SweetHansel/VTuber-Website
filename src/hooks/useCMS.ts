@@ -231,9 +231,18 @@ export function useInteractiveMedia(location?: string) {
 
 // Themes hook
 export interface ThemesData {
+  // Base colors
+  backgroundColor?: string
+  foregroundColor?: string
+  // Brand colors
   primaryColor?: string
+  primaryHoverColor?: string
   secondaryColor?: string
   accentColor?: string
+  // Surface colors
+  bgPrimaryColor?: string
+  bgSurfaceColor?: string
+  // Interactive media slots
   interactiveMedia?: Array<{
     slot: string
     configuration?: InteractiveMediaData

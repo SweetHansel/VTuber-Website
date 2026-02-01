@@ -16,9 +16,12 @@ import {
 
 // Page content type - components receive isActive prop
 
+export interface LRProps {
+  index: MotionValue<number>;
+}
 export interface PageContent {
-  Left: React.ComponentType;
-  Right: React.ComponentType;
+  Left: React.ComponentType<LRProps>;
+  Right: React.ComponentType<LRProps>;
 }
 
 // Utility
@@ -37,13 +40,18 @@ function LeftPage({ index, pageIndex, Page }: PageProps) {
     index,
     (v) => 180 - (clamp(v - pageIndex, 0.25, 0.75) - 0.25) * 2 * 180,
   );
+  const innerPageTransforms = useTransform(index, (v) => {
+    return v - pageIndex < 0.5
+      ? clamp(v - pageIndex, 0, 0.25) * 2
+      : clamp(v - pageIndex, 0.75, 1) * 2 - 1;
+  });
   return (
     <motion.div
-      className="absolute bg-[var(--bg-primary)] w-[50%] h-full top-0 origin-bottom-right backface-hidden"
+      className="absolute bg-[var(--bg-primary)] w-[50%] h-full top-0 origin-bottom-right backface-hidden transform-flat"
       style={{ rotateY }}
       transition={{ duration: 0.3, bounce: 0 }}
     >
-      <Page.Left />
+      <Page.Left index={innerPageTransforms} />
     </motion.div>
   );
 }
@@ -53,14 +61,19 @@ function RightPage({ index, pageIndex, Page }: PageProps) {
     index,
     (v) => (clamp(v - pageIndex - 1, 0.25, 0.75) - 0.25) * 2 * -180,
   );
+  const innerPageTransforms = useTransform(index, (v) => {
+    return v - pageIndex -1 <= 0
+      ? clamp(v - pageIndex - 1, -0.25, 0) * 2 +0.5 
+      : clamp(v - pageIndex - 1, 0, 0.25) * 2 +0.5 ;
+  });
 
   return (
     <motion.div
-      className="absolute bg-[var(--bg-primary)] w-[50%] h-full top-0 origin-bottom-left backface-hidden"
-      style={{ rotateY, translateX: '100%' }}
+      className="absolute bg-[var(--bg-primary)] w-[50%] h-full top-0 origin-bottom-left backface-hidden transform-flat"
+      style={{ rotateY, translateX: "100%" }}
       transition={{ duration: 0.3, bounce: 0 }}
     >
-      <Page.Right />
+      <Page.Right index={innerPageTransforms} />
     </motion.div>
   );
 }
@@ -163,7 +176,7 @@ export function BookLayout() {
 
   return (
     <div
-      className="absolute h-full w-full perspective-[1000px] transform-3d"
+      className="absolute h-full w-full perspective-[1000px]"
       onClick={(e) => e.stopPropagation()}
       onWheel={handleWheel}
       onTouchStart={handleTouchStart}
@@ -183,7 +196,7 @@ export function BookLayout() {
         <RightPage
           key={`right-${section}`}
           index={index}
-          pageIndex={sections.length-i-1}
+          pageIndex={sections.length - i - 1}
           Page={pages[section]}
         />
       ))}

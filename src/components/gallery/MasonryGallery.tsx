@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Loader2, ExternalLink } from "lucide-react";
@@ -91,6 +91,23 @@ export function MasonryGallery({ filter = "all" }: MasonryGalleryProps) {
   const openModal = useModalStore((state) => state.openModal);
   const { data: cmsArtworks, loading, error } = useArtworks(filter);
 
+  // Track container width for responsive masonry
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(800);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect.width;
+      if (width) setContainerWidth(width);
+    });
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [loading]);
+
   // Track detected aspect ratios for images without CMS dimensions
   const [detectedRatios, setDetectedRatios] = useState<Record<string, number>>({});
 
@@ -122,11 +139,11 @@ export function MasonryGallery({ filter = "all" }: MasonryGalleryProps) {
     [cmsArtworks, artworks, filter],
   );
 
-  // Compute rows - using fixed container width estimate (will be responsive via CSS)
+  // Compute rows based on actual container width
   // Target row height of 120px, 8px gap
   const rows = useMemo(
-    () => computeRows(filteredArtworks, detectedRatios, 800, 120, 8),
-    [filteredArtworks, detectedRatios],
+    () => computeRows(filteredArtworks, detectedRatios, containerWidth, 120, 8),
+    [filteredArtworks, detectedRatios, containerWidth],
   );
 
   const handleClick = (artwork: Artwork) => {
@@ -152,14 +169,12 @@ export function MasonryGallery({ filter = "all" }: MasonryGalleryProps) {
   const ROW_HEIGHT = 120;
 
   return (
-    <div className="flex flex-col gap-2">
+    <div ref={containerRef} className="relative w-full flex flex-col gap-2">
       {rows.map((row, rowIndex) => (
         <div key={rowIndex} className="flex flex-row-reverse justify-start gap-2">
           {row.map(({ artwork, ratio }, itemIndex) => (
             <motion.div
               key={artwork.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: (rowIndex * row.length + itemIndex) * 0.02 }}
               className="relative flex-shrink-0 cursor-pointer overflow-y-scroll rounded-lg group"
               style={{

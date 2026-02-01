@@ -42,7 +42,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
         >
           {/* Left Section */}
           <motion.div
-            className="relative h-full overflow-visible z-30"
+            className="relative h-full z-30"
             initial={false}
             animate={{
               width: `${leftWidth}%`,
@@ -59,9 +59,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
               <div
                 className={cn(
                   "h-full w-full overflow-hidden z-10",
-                  focusState == "default"
-                    ? "transform-3d  rotate-x-11 rotate-z-5"
-                    : "",
+                  focusState == "default" && "rotate-x-11 rotate-z-5",
                 )}
                 onClick={(e) => {
                   if (focusState == "default") setFocus("left");
@@ -74,7 +72,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                   className="h-full w-full object-contain absolute bottom-0"
                 />
                 <div
-                  className="bg-blue-900 absolute top-[5%] left-[5%] h-[70%] w-[90%]"
+                  className="bg-[var(--bg-primary)] absolute top-[5%] left-[5%] h-[70%] w-[90%]"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <UpdatesPage />
@@ -98,7 +96,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
           >
             {/* Top Right */}
             <motion.div
-              className="relative w-full overflow-visible"
+              className="relative w-full"
               initial={false}
               animate={{
                 height: `${topRightHeight}%`,
@@ -110,22 +108,22 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                 aspectRatio={1}
                 anchorX="left"
                 anchorY="bottom"
-                className="absolute  overflow-visible"
+                className="absolute"
               >
                 <InteractiveMediaFromCMS
                   location="main-character"
                   className="absolute h-[120%] w-[120%] left-[20%] top-0"
                 />
-                <div
-                  className="absolute h-full w-full left-[30%]  bg-[var(--bg-surface)]/80 backdrop-blur-lg -z-10"
+                {/* <div
+                  className="absolute h-full w-full left-[30%] bg-[var(--bg-surface)]/80 backdrop-blur-lg -z-10"
                   onClick={(e) => e.stopPropagation()}
-                />
+                /> */}
               </AspectLock>
             </motion.div>
 
             {/* Bottom Right - Main Content */}
             <motion.div
-              className="relative w-full overflow-visible"
+              className="relative w-full"
               initial={false}
               animate={{
                 height: `${bottomRightHeight}%`,
@@ -137,14 +135,12 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                 aspectRatio={16 / 9}
                 anchorX="left"
                 anchorY="top"
-                className="absolute perspective-1000 transform-3d  overflow-visible "
+                className="absolute perspective-1000 transform-3d pointer-events-none"
               >
                 <div
                   className={cn(
-                    "h-full w-full  overflow-visible",
-                    focusState == "default"
-                      ? "rotate-x-10 -rotate-z-5 -translate-z-1"
-                      : "",
+                    "h-full w-full pointer-events-auto",
+                    focusState == "default" && "rotate-x-10 -rotate-z-5",
                   )}
                   onClick={(e) => {
                     if (focusState == "default") setFocus("bottom-right");
@@ -154,9 +150,9 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                   <InteractiveMediaFromCMS
                     showEmpty
                     location="landing-bottom-right"
-                    className="h-[105%] w-[105%] top-[-2.5%] left-[-5%] object-contain absolute bottom-0  overflow-visible"
+                    className="absolute h-[105%] w-[105%] top-[-2.5%] left-[-5%] object-contain"
                   />
-                  <div className="absolute h-[95%] w-[95%] top-[2.5%] left-0 ">
+                  <div className="absolute h-[95%] w-[95%] top-[2.5%] left-0">
                     <BookLayout />
                   </div>
                 </div>

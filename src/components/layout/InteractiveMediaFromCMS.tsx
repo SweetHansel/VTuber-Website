@@ -30,7 +30,7 @@ function LoadingSkeleton({ className }: { className?: string }) {
 function EmptySkeleton({ className }: { className?: string }) {
   return (
     <div className={cn('relative', className)}>
-      <div className="h-full w-full rounded-lg bg-blue-950/60" />
+      <div className="h-full w-full rounded-lg bg-[var(--bg-surface)]/60" />
     </div>
   )
 }

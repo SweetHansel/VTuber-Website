@@ -98,7 +98,7 @@ function AboutRight() {
           <p className="text-lg text-white/60">{profileData.alternateName}</p>
         )}
         {profileData.tagline && (
-          <p className="mt-1 text-blue-300">{profileData.tagline}</p>
+          <p className="mt-1 text-[var(--primary)]">{profileData.tagline}</p>
         )}
       </motion.div>
 
@@ -184,13 +184,13 @@ function AboutRight() {
             className="rounded-xl bg-white/5 p-4"
           >
             <div className="mb-2 flex items-center gap-2">
-              <Hash className="h-4 w-4 text-blue-400" />
+              <Hash className="h-4 w-4 text-[var(--primary)]" />
               <h3 className="font-medium text-white">Hashtags</h3>
             </div>
             <div className="space-y-1 text-sm">
               {profileData.hashtags.map((hashtag) => (
                 <p key={hashtag.label} className="text-white/60">
-                  {hashtag.label}: <span className="text-blue-300">{hashtag.value}</span>
+                  {hashtag.label}: <span className="text-[var(--primary)]">{hashtag.value}</span>
                 </p>
               ))}
             </div>

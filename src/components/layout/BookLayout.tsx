@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { AboutPage } from "@/components/pages/AboutPage";
 import { ArtworksPage } from "@/components/pages/ArtworksPage";
 import { DiscographyPage } from "@/components/pages/DiscographyPage";
 import { VTuberModelsPage } from "@/components/pages/VTuberModelsPage";
-import { ChevronLeft, ChevronRight, ListTree, Zap } from "lucide-react";
+import { ChevronLeft, ChevronRight, ListTree } from "lucide-react";
 import {
   animate,
   motion,
@@ -21,70 +21,51 @@ export interface PageContent {
   Right: React.ComponentType;
 }
 
-// Separate component to properly use hooks
-interface PageSpreadProps {
+// Utility
+const clamp = (value: number, min: number, max: number) =>
+  Math.max(min, Math.min(value, max));
+
+// Separate components for left and right pages
+interface PageProps {
   index: MotionValue<number>;
   pageIndex: number;
   Page: PageContent;
 }
 
-function PageSpread({ index, pageIndex, Page }: PageSpreadProps) {
-  const left = useTransform(
+function LeftPage({ index, pageIndex, Page }: PageProps) {
+  const rotateY = useTransform(
     index,
     (v) => 180 - (clamp(v - pageIndex, 0.25, 0.75) - 0.25) * 2 * 180,
   );
-  const right = useTransform(
-    index,
-    (v) => (clamp(v - pageIndex - 1, 0.25, 0.75) - 0.25) * 2 * -180,
-  );
-  const z = useTransform(index, (v) => {
-    // const velo = index.getVelocity();
-    // let threshold: number;
-    // if (Math.abs(velo) > 0) {
-    //   if (velo > 0) threshold = 0.00001;
-    //   else threshold = 0.00002;
-    // } else threshold = 0.5;
-
-    // if (pageIndex == 1) console.log(v, velo, threshold);
-    return v - pageIndex - 1 <= 0.5
-      ? 10 - pageIndex
-      : 10 + 2 + pageIndex - 2 * Math.round(v);
-  });
-
-  const hide = useTransform(index, (v) =>
-    v > pageIndex + 2 || v < pageIndex - 1 ? 0 : 1,
-  );
-
   return (
-    <>
-      <motion.div
-        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden overflow-y-clip overflow-x-visible overscroll-contain"
-        style={{ rotateY: left, zIndex: z, opacity: hide }}
-      >
-        <Page.Left />
-      </motion.div>
-      <motion.div
-        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden overflow-y-clip overflow-x-visible overscroll-contain"
-        style={{ rotateY: right, zIndex: z , opacity: hide}}
-      >
-        <Page.Right />
-      </motion.div>
-    </>
+    <motion.div
+      className="absolute bg-[var(--bg-primary)] w-[50%] h-full top-0 origin-bottom-right backface-hidden"
+      style={{ rotateY }}
+      transition={{ duration: 0.3, bounce: 0 }}
+    >
+      <Page.Left />
+    </motion.div>
   );
 }
 
-// Utility
-const clamp = (value: number, min: number, max: number) =>
-  Math.max(min, Math.min(value, max));
+function RightPage({ index, pageIndex, Page }: PageProps) {
+  const rotateY = useTransform(
+    index,
+    (v) => (clamp(v - pageIndex - 1, 0.25, 0.75) - 0.25) * 2 * -180,
+  );
+
+  return (
+    <motion.div
+      className="absolute bg-[var(--bg-primary)] w-[50%] h-full top-0 origin-bottom-left backface-hidden"
+      style={{ rotateY, translateX: '100%' }}
+      transition={{ duration: 0.3, bounce: 0 }}
+    >
+      <Page.Right />
+    </motion.div>
+  );
+}
 
 const sections = ["about", "artworks", "discography", "vtuber-models"];
-
-const sectionLabel: Record<string, string> = {
-  about: "About Me",
-  artworks: "Artworks",
-  discography: "Discography",
-  "vtuber-models": "VTuber Models",
-};
 
 // Page mapping
 const pages: Record<string, PageContent> = {
@@ -102,7 +83,7 @@ export function BookLayout() {
   const touchStartRef = useRef<number | null>(null);
 
   const setIndexAnimated = (val: number) => {
-    animate(index, val, { duration: 0.1, bounce: 0 });
+    animate(index, val, { duration: 0.5, bounce: 0 });
   };
 
   // Controls prev/ToC buttons (visible when index >= 1)
@@ -117,8 +98,11 @@ export function BookLayout() {
 
   const handleWheel = (e: React.WheelEvent) => {
     const direction = e.deltaY > 0 ? 1 : -1;
-    setIndexAnimated(clamp(index.get() + direction * 0.2, 0, sections.length));
-    // index.set(clamp(index.get() + direction * 0.05, 0, sections.length))
+    animate(index, clamp(index.get() + direction * 0.1, 0, sections.length), {
+      type: "spring",
+      duration: 0.1,
+      bounce: 0,
+    });
 
     isScrollingRef.current = true;
 
@@ -179,40 +163,27 @@ export function BookLayout() {
 
   return (
     <div
-      className="absolute h-full w-full perspective-[1000px]"
+      className="absolute h-full w-full perspective-[1000px] transform-3d"
       onClick={(e) => e.stopPropagation()}
       onWheel={handleWheel}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* <motion.div
-        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-right rotate-z-10 backface-hidden  items-center justify-center flex p-8"
-        style={{ rotateY: left, zIndex: zLeft }}
-      >
-        <h2 className="text-3xl font-bold">Welcome</h2>
-      </motion.div>
-
-      <motion.div
-        className="absolute bg-blue-900 w-[50%] h-full top-0 origin-bottom-left rotate-z-10 right-0 backface-hidden  items-center justify-center flex p-8"
-        style={{ rotateY: right, zIndex: zLeft }}
-      >
-        <ul className="space-y-2">
-          {sections.map((section, i) => (
-            <li key={section} onClick={() => setIndexAnimated(i + 1)}>
-              <button className="text-white/70 hover:text-white transition-colors text-left">
-                {sectionLabel[section]}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </motion.div> */}
-
       {sections.map((section, i) => (
-        <PageSpread
-          key={section}
+        <LeftPage
+          key={`left-${section}`}
           index={index}
           pageIndex={i}
+          Page={pages[section]}
+        />
+      ))}
+      {/* Right pages rendered in reverse DOM order to fix 3D stacking */}
+      {sections.toReversed().map((section, i) => (
+        <RightPage
+          key={`right-${section}`}
+          index={index}
+          pageIndex={sections.length-i-1}
           Page={pages[section]}
         />
       ))}

@@ -28,7 +28,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
   const topRightHeight = 100 - config.B;
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div className="relative h-screen w-full overflow-hidden bg-white">
       {/* Main Layout Container */}
       <AspectLock
         aspectRatio={16 / 9}
@@ -110,14 +110,14 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                 aspectRatio={1}
                 anchorX="left"
                 anchorY="bottom"
-                className="absolute"
+                className="absolute  overflow-visible"
               >
                 <InteractiveMediaFromCMS
                   location="main-character"
                   className="absolute h-[120%] w-[120%] left-[20%] top-0"
                 />
                 <div
-                  className="absolute h-full w-full left-[30%]  bg-blue-950/80 backdrop-blur-lg -z-10"
+                  className="absolute h-full w-full left-[30%]  bg-[var(--bg-surface)]/80 backdrop-blur-lg -z-10"
                   onClick={(e) => e.stopPropagation()}
                 />
               </AspectLock>
@@ -137,13 +137,13 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                 aspectRatio={16 / 9}
                 anchorX="left"
                 anchorY="top"
-                className="absolute perspective-1000"
+                className="absolute perspective-1000 transform-3d  overflow-visible "
               >
                 <div
                   className={cn(
-                    "h-full w-full",
+                    "h-full w-full  overflow-visible",
                     focusState == "default"
-                      ? "transform-3d  rotate-x-12 -rotate-z-5 -translate-z-1"
+                      ? "rotate-x-10 -rotate-z-5 -translate-z-1"
                       : "",
                   )}
                   onClick={(e) => {
@@ -154,7 +154,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                   <InteractiveMediaFromCMS
                     showEmpty
                     location="landing-bottom-right"
-                    className="h-[105%] w-[105%] top-[-2.5%] left-[-5%] object-contain absolute bottom-0"
+                    className="h-[105%] w-[105%] top-[-2.5%] left-[-5%] object-contain absolute bottom-0  overflow-visible"
                   />
                   <div className="absolute h-[95%] w-[95%] top-[2.5%] left-0 ">
                     <BookLayout />

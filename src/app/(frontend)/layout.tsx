@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from 'next/font/google'
 import { AudioProvider } from '@/components/audio/AudioProvider'
+import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { MainLayout } from '@/components/layout/MainLayout'
 
 const geistSans = Geist({
@@ -20,9 +21,11 @@ export default function FrontendLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <AudioProvider>
-          <MainLayout>{children}</MainLayout>
-        </AudioProvider>
+        <ThemeProvider>
+          <AudioProvider>
+            <MainLayout>{children}</MainLayout>
+          </AudioProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

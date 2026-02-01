@@ -249,7 +249,7 @@ function VTuberModelsRight() {
                 onClick={() => setSelectedModel(model)}
                 className={cn(
                   "group cursor-pointer overflow-hidden rounded-xl bg-white/5 transition-colors hover:bg-white/10",
-                  selectedModel?.id === model.id && "ring-2 ring-blue-500",
+                  selectedModel?.id === model.id && "ring-2 ring-[var(--primary)]",
                 )}
               >
                 {/* Thumbnail */}

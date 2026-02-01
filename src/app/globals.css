@@ -3,9 +3,12 @@
 :root {
   --background: #0a0a0a;
   --foreground: #ededed;
-  --primary: #8b5cf6;
-  --primary-hover: #7c3aed;
-  --secondary: #ec4899;
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --secondary: #8b5cf6;
+  --accent: #ec4899;
+  --bg-primary: #1e3a8a;
+  --bg-surface: #172554;
 }
 
 @theme inline {

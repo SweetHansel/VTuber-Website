@@ -158,18 +158,6 @@ function VTuberModelsRight() {
                   {model.version && (
                     <p className="text-sm text-(--page-text)/60">v{model.version}</p>
                   )}
-                  {cardData.specs?.polyCount && (
-                    <p className="text-sm text-(--page-text)/60">
-                      {cardData.specs.polyCount.toLocaleString()} polys
-                    </p>
-                  )}
-                </div>
-
-                {/* View button */}
-                <div className="flex items-center justify-end border-t border-(--page-surface)/5 p-2">
-                  <span className="flex items-center gap-1 text-xs text-(--page-text)/60 group-hover:text-(--page-text)">
-                    View <ChevronRight className="h-3 w-3" />
-                  </span>
                 </div>
               </motion.div>
             );

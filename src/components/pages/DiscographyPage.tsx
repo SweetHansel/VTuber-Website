@@ -22,12 +22,12 @@ function DiscographyRight({ index }: Readonly<LRProps>) {
   });
   return (
     <motion.div
-      className="absolute h-full w-full right-0 pointer-events-none"
+      className="absolute h-full right-0 overflow-clip pointer-events-none"
       style={{ width }}
     >
       <InteractiveMediaFromCMS
         location="page-discography"
-        className="absolute h-full w-full"
+        className="absolute h-full aspect-video right-0"
         depth={-40}
       />
     </motion.div>
@@ -44,21 +44,21 @@ function DiscographyLeft() {
       animate="enter"
       className="flex h-full w-full flex-col p-4 gap-2"
     >
-      <div className="p-2 bg-(--page-primary)/90">
+      <div className="p-2 bg-(--page-surface)/5">
         <h1 className="text-base text-(--page-text)">Cover</h1>
       </div>
       <motion.div
         variants={staggerItemVariants}
-        className="flex-1 overflow-y-auto bg-(--page-primary)/90 p-2"
+        className="flex-1 overflow-y-auto bg-(--page-surface)/5 p-2"
       >
         <SongGrid filter={filters[1].value} />
       </motion.div>
-      <div className="p-2 bg-(--page-primary)/90">
+      <div className="p-2 bg-(--page-surface)/5">
         <h1 className="text-base text-(--page-text)">Originals</h1>
       </div>
       <motion.div
         variants={staggerItemVariants}
-        className="flex-1 overflow-y-auto bg-(--page-primary)/90 p-2"
+        className="flex-1 overflow-y-auto bg-(--page-surface)/5 p-2"
       >
         <SongGrid filter={filters[2].value} />
       </motion.div>

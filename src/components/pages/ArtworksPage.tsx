@@ -22,10 +22,10 @@ function ArtworksLeft({ index }: LRProps) {
   });
 
   return (
-    <motion.div className="absolute h-full" style={{ width }}>
+    <motion.div className="absolute h-full oveflow-clip" style={{ width }}>
       <InteractiveMediaFromCMS
         location="page-artworks"
-        className="absolute h-full w-full"
+        className="absolute h-full aspect-video left-0"
         depth={-50}
       />
     </motion.div>

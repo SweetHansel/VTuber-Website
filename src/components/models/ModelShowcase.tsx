@@ -112,13 +112,13 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
           <>
             <button
               onClick={goPrev}
-              className="absolute left-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white/80 backdrop-blur-sm transition-colors hover:bg-black/70 hover:text-white"
+              className="absolute left-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-(--page-surface)/5 text-(--page-text)/80 backdrop-blur-sm transition-colors hover:bg-(--page-surface)/10 hover:text-(--page-text)"
             >
               <ChevronLeft className="h-6 w-6" />
             </button>
             <button
               onClick={goNext}
-              className="absolute right-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white/80 backdrop-blur-sm transition-colors hover:bg-black/70 hover:text-white"
+              className="absolute right-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-(--page-surface)/5 text-(--page-text)/80 backdrop-blur-sm transition-colors hover:bg-(--page-surface)/10 hover:text-(--page-text)"
             >
               <ChevronRight className="h-6 w-6" />
             </button>

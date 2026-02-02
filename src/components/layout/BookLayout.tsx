@@ -14,6 +14,10 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { CONTENT_SECTIONS } from "@/constants/sections";
+import { cn } from "@/lib/utils";
+import { AspectLock } from "./AspectLock";
+import { InteractiveMediaFromCMS } from "./InteractiveMediaFromCMS";
+import { useLayoutStore } from "@/stores/layoutStore";
 
 // Page content type - components receive isActive prop
 
@@ -42,9 +46,9 @@ function LeftPage({ index, pageIndex, Page }: Readonly<PageProps>) {
     (v) => 180 - (clamp(v - pageIndex, 0.25, 0.75) - 0.25) * 2 * 180,
   );
   const innerPageTransforms = useTransform(index, (v) => {
-    return v - pageIndex -1 <= 0
-      ? clamp(v - pageIndex - 1, -0.25, 0) * 2 +0.5 
-      : clamp(v - pageIndex - 1, 0, 0.25) * 2 +0.5 ;
+    return v - pageIndex - 1 <= 0
+      ? clamp(v - pageIndex - 1, -0.25, 0) * 2 + 0.5
+      : clamp(v - pageIndex - 1, 0, 0.25) * 2 + 0.5;
   });
 
   return (
@@ -64,9 +68,9 @@ function RightPage({ index, pageIndex, Page }: Readonly<PageProps>) {
     (v) => (clamp(v - pageIndex - 1, 0.25, 0.75) - 0.25) * 2 * -180,
   );
   const innerPageTransforms = useTransform(index, (v) => {
-    return v - pageIndex -1 <= 0
-      ? clamp(v - pageIndex - 1, -0.25, 0) * 2 +0.5 
-      : clamp(v - pageIndex - 1, 0, 0.25) * 2 +0.5 ;
+    return v - pageIndex - 1 <= 0
+      ? clamp(v - pageIndex - 1, -0.25, 0) * 2 + 0.5
+      : clamp(v - pageIndex - 1, 0, 0.25) * 2 + 0.5;
   });
 
   return (
@@ -91,14 +95,15 @@ const pages: Record<string, PageContent> = {
 };
 
 export function BookLayout() {
-  const index = useMotionValue(0);
+  const { focusState, setFocus } = useLayoutStore();
+  const index = useMotionValue(1);
 
   const isScrollingRef = useRef(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const touchStartRef = useRef<number | null>(null);
 
   const setIndexAnimated = (val: number) => {
-    animate(index, val, { duration: 0.5, bounce: 0 });
+    animate(index, val, { duration: 1, bounce: 0 });
   };
 
   // Controls prev/ToC buttons (visible when index >= 1)
@@ -113,7 +118,7 @@ export function BookLayout() {
 
   const handleWheel = (e: React.WheelEvent) => {
     const direction = e.deltaY > 0 ? 1 : -1;
-    animate(index, clamp(index.get() + direction * 0.1, 0, sections.length), {
+    animate(index, clamp(index.get() + direction * 0.1, 1, sections.length), {
       type: "spring",
       duration: 0.1,
       bounce: 0,
@@ -177,74 +182,99 @@ export function BookLayout() {
   };
 
   return (
-    <div
-      className="absolute h-full w-full perspective-[1000px]"
-      onClick={(e) => e.stopPropagation()}
-      onWheel={handleWheel}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
+    <AspectLock
+      aspectRatio={16 / 9}
+      anchorX="left"
+      anchorY="top"
+      className="absolute perspective-1000 transform-3d pointer-events-none"
     >
-      {sections.map((section, i) => (
-        <LeftPage
-          key={`left-${section}`}
-          index={index}
-          pageIndex={i}
-          Page={pages[section]}
-        />
-      ))}
-      {/* Right pages rendered in reverse DOM order to fix 3D stacking */}
-      {sections.toReversed().map((section, i) => (
-        <RightPage
-          key={`right-${section}`}
-          index={index}
-          pageIndex={sections.length - i - 1}
-          Page={pages[section]}
-        />
-      ))}
-
-      <motion.div
-        className="absolute h-full w-full pointer-events-none"
-        style={{ visibility: showPrevButtons }}
+      <div
+        className={cn(
+          "h-full w-full pointer-events-auto",
+          focusState == "default" && "rotate-x-10 -rotate-z-5",
+        )}
+        onClick={(e) => {
+          if (focusState == "default") setFocus("bottom-right");
+          e.stopPropagation();
+        }}
       >
-        <button
-          onClick={prevPage}
-          className="absolute bottom-0 left-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
+        <InteractiveMediaFromCMS
+          showEmpty
+          location="landing-bottom-right"
+          className="absolute h-[102%] w-[102%] top-[-1%] left-[-2%] object-contain"
+        />
+        <div className="absolute h-[98%] w-[98%] top-[1%] left-0">
+          <div
+            className="absolute h-full w-full perspective-[1000px]"
+            onClick={(e) => e.stopPropagation()}
+            onWheel={handleWheel}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {sections.map((section, i) => (
+              <LeftPage
+                key={`left-${section}`}
+                index={index}
+                pageIndex={i}
+                Page={pages[section]}
+              />
+            ))}
+            {/* Right pages rendered in reverse DOM order to fix 3D stacking */}
+            {sections.toReversed().map((section, i) => (
+              <RightPage
+                key={`right-${section}`}
+                index={index}
+                pageIndex={sections.length - i - 1}
+                Page={pages[section]}
+              />
+            ))}
+
+            <motion.div
+              className="absolute h-full w-full pointer-events-none"
+              style={{ visibility: showPrevButtons }}
+            >
+              <button
+                onClick={prevPage}
+                className="absolute bottom-0 left-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
             border-b-60 border-b-(--page-surface)/20
             border-r-60 border-r-transparent
             hover:border-b-(--page-surface)/40 transition-colors"
-          aria-label="Previous page"
-        >
-          <ChevronLeft className="absolute bottom-50 left-5 w-4 h-4 text-(--page-text)/60" />
-        </button>
+                aria-label="Previous page"
+              >
+                <ChevronLeft className="absolute bottom-50 left-5 w-4 h-4 text-(--page-text)/60" />
+              </button>
 
-        <button
-          onClick={() => setIndexAnimated(0)}
-          className="absolute top-0 left-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
+              <button
+                onClick={() => setIndexAnimated(1)}
+                className="absolute top-0 left-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
             border-t-60 border-t-(--page-surface)/20
             border-r-60 border-r-transparent
             hover:border-t-(--page-surface)/40 transition-colors"
-          aria-label="ToC"
-        >
-          <ListTree className="absolute top-50 left-5 w-4 h-4 text-(--page-text)/60" />
-        </button>
-      </motion.div>
+                aria-label="ToC"
+              >
+                <ListTree className="absolute top-50 left-5 w-4 h-4 text-(--page-text)/60" />
+              </button>
+            </motion.div>
 
-      <motion.div
-        className="absolute h-full w-full pointer-events-none"
-        style={{ visibility: showNextButton }}
-      >
-        <button
-          onClick={nextPage}
-          className="absolute bottom-0 right-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
+            <motion.div
+              className="absolute h-full w-full pointer-events-none"
+              style={{ visibility: showNextButton }}
+            >
+              <button
+                onClick={nextPage}
+                className="absolute bottom-0 right-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
             border-b-60 border-b-(--page-surface)/20
             border-l-60 border-l-transparent
             hover:border-b-(--page-surface)/40 transition-colors"
-          aria-label="Next page"
-        >
-          <ChevronRight className="absolute bottom-50 right-5 w-4 h-4 text-(--page-text)/60" />
-        </button>
-      </motion.div>
-    </div>
+                aria-label="Next page"
+              >
+                <ChevronRight className="absolute bottom-50 right-5 w-4 h-4 text-(--page-text)/60" />
+              </button>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    </AspectLock>
   );
 }

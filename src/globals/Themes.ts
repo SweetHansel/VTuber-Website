@@ -20,7 +20,7 @@ export const Themes: GlobalConfig = {
         {
           name: 'phoneBg',
           type: 'text',
-          defaultValue: '#1e293b',
+          defaultValue: '#1e3a8a',
           admin: {
             description: 'Phone background color',
             components: {

@@ -64,7 +64,7 @@ export function UpdatesPage() {
   return (
     <div className="flex h-full flex-col p-1 bg-black">
       <div className="text-(--phone-text) flex flex-row justify-between">
-        <div>A</div>
+        <div>12:07</div>
         <div className="flex flex-row">
           <BatteryMediumIcon />
           <SignalHigh />

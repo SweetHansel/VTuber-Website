@@ -12,6 +12,7 @@ import { InteractiveMediaFromCMS } from "./InteractiveMediaFromCMS";
 import { AspectLock } from "./AspectLock";
 import { BookLayout } from "./BookLayout";
 import { cn } from "@/lib/utils";
+import { PhoneLayout } from "./PhoneLayout";
 
 interface MainLayoutProps {
   children?: React.ReactNode;
@@ -57,35 +58,7 @@ export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
             }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <AspectLock
-              aspectRatio={1 / 2}
-              anchorX="right"
-              anchorY="bottom"
-              className="absolute perspective-1000"
-            >
-              <div
-                className={cn(
-                  "h-full w-full overflow-hidden z-10",
-                  focusState == "default" && "rotate-x-11 rotate-z-5",
-                )}
-                onClick={(e) => {
-                  if (focusState == "default") setFocus("left");
-                  e.stopPropagation();
-                }}
-              >
-                <InteractiveMediaFromCMS
-                  showEmpty
-                  location="landing-left"
-                  className="h-full w-full object-contain absolute bottom-0"
-                />
-                <div
-                  className="absolute top-[5%] left-[5%] h-[70%] w-[90%]"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <UpdatesPage />
-                </div>
-              </div>
-            </AspectLock>
+            <PhoneLayout/>
           </motion.div>
 
           {/* Global Audio Player */}
@@ -134,32 +107,7 @@ export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
               }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <AspectLock
-                aspectRatio={16 / 9}
-                anchorX="left"
-                anchorY="top"
-                className="absolute perspective-1000 transform-3d pointer-events-none"
-              >
-                <div
-                  className={cn(
-                    "h-full w-full pointer-events-auto",
-                    focusState == "default" && "rotate-x-10 -rotate-z-5",
-                  )}
-                  onClick={(e) => {
-                    if (focusState == "default") setFocus("bottom-right");
-                    e.stopPropagation();
-                  }}
-                >
-                  <InteractiveMediaFromCMS
-                    showEmpty
-                    location="landing-bottom-right"
-                    className="absolute h-[105%] w-[105%] top-[-2.5%] left-[-5%] object-contain"
-                  />
-                  <div className="absolute h-[95%] w-[95%] top-[2.5%] left-0">
-                    <BookLayout />
-                  </div>
-                </div>
-              </AspectLock>
+              <BookLayout/>
             </motion.div>
           </motion.div>
         </main>

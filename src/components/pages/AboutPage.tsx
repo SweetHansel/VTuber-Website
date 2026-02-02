@@ -24,7 +24,7 @@ const iconMap: Record<string, LucideIcon> = {
 function LoadingSkeleton() {
   return (
     <div className="flex h-full items-center justify-center">
-      <Loader2 className="h-8 w-8 animate-spin text-white/40" />
+      <Loader2 className="h-8 w-8 animate-spin text-(--page-text)/40" />
     </div>
   )
 }
@@ -46,7 +46,7 @@ function AboutLeft() {
       <ModelShowcase model={getModel(profile?.currentModel)} />
       <motion.button
         variants={staggerItemVariants}
-        className="rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/20"
+        className="rounded-full bg-(--page-surface)/10 px-4 py-2 text-sm font-medium text-(--page-text) transition-colors hover:bg-(--page-surface)/20"
       >
         View All Models →
       </motion.button>
@@ -62,7 +62,7 @@ function AboutRight() {
   }
 
   if (!profile) {
-    return <div className="flex h-full items-center justify-center text-white/60">Profile not found</div>
+    return <div className="flex h-full items-center justify-center text-(--page-text)/60">Profile not found</div>
   }
 
   // Get the current model from union type
@@ -86,9 +86,9 @@ function AboutRight() {
 
       {/* Name & Tagline */}
       <motion.div variants={staggerItemVariants}>
-        <h1 className="text-3xl font-bold text-white">{profile.name}</h1>
+        <h1 className="text-3xl font-bold text-(--page-text)">{profile.name}</h1>
         {profile.alternateName && (
-          <p className="text-lg text-white/60">{profile.alternateName}</p>
+          <p className="text-lg text-(--page-text)/60">{profile.alternateName}</p>
         )}
         {profile.tagline && (
           <p className="mt-1 text-primary">{profile.tagline}</p>
@@ -97,7 +97,7 @@ function AboutRight() {
 
       {/* Bio */}
       {profile.shortBio && (
-        <motion.p variants={staggerItemVariants} className="text-white/80">
+        <motion.p variants={staggerItemVariants} className="text-(--page-text)/80">
           {profile.shortBio}
         </motion.p>
       )}
@@ -106,8 +106,8 @@ function AboutRight() {
       <motion.div variants={staggerItemVariants} className="flex gap-6">
         {profile.birthday && (
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-white/60" />
-            <span className="text-sm text-white/80">
+            <Calendar className="h-4 w-4 text-(--page-text)/60" />
+            <span className="text-sm text-(--page-text)/80">
               {new Date(profile.birthday).toLocaleDateString('en-US', {
                 month: 'long',
                 day: 'numeric',
@@ -117,8 +117,8 @@ function AboutRight() {
         )}
         {profile.height && (
           <div className="flex items-center gap-2">
-            <Ruler className="h-4 w-4 text-white/60" />
-            <span className="text-sm text-white/80">{profile.height}</span>
+            <Ruler className="h-4 w-4 text-(--page-text)/60" />
+            <span className="text-sm text-(--page-text)/80">{profile.height}</span>
           </div>
         )}
       </motion.div>
@@ -144,16 +144,16 @@ function AboutRight() {
         {profile.hashtags && profile.hashtags.length > 0 && (
           <motion.div
             variants={staggerItemVariants}
-            className="rounded-xl bg-white/5 p-4"
+            className="rounded-xl bg-(--page-surface)/5 p-4"
           >
             <div className="mb-2 flex items-center gap-2">
-              <Hash className="h-4 w-4 text-primary" />
-              <h3 className="font-medium text-white">Hashtags</h3>
+              <Hash className="h-4 w-4 text-(--page-primary)" />
+              <h3 className="font-medium text-(--page-text)">Hashtags</h3>
             </div>
             <div className="space-y-1 text-sm">
               {profile.hashtags.map((hashtag) => (
-                <p key={hashtag.label} className="text-white/60">
-                  {hashtag.label}: <span className="text-primary">{hashtag.value}</span>
+                <p key={hashtag.label} className="text-(--page-text)/60">
+                  {hashtag.label}: <span className="text-(--page-primary)">{hashtag.value}</span>
                 </p>
               ))}
             </div>
@@ -189,20 +189,20 @@ function InfoSection({ icon: Icon, title, items, color, customColor }: Readonly<
   return (
     <motion.div
       variants={staggerItemVariants}
-      className="rounded-xl bg-white/5 p-4"
+      className="rounded-xl bg-(--page-surface)/5 p-4"
     >
       <div className="mb-2 flex items-center gap-2">
         <Icon
           className={cn('h-4 w-4', colorClass)}
           style={customColor ? { color: customColor } : undefined}
         />
-        <h3 className="font-medium text-white">{title}</h3>
+        <h3 className="font-medium text-(--page-text)">{title}</h3>
       </div>
       <div className="flex flex-wrap gap-2">
         {items.map((item) => (
           <span
             key={item}
-            className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white/80"
+            className="rounded-full bg-(--page-surface)/10 px-2 py-0.5 text-xs text-(--page-text)/80"
           >
             {item}
           </span>

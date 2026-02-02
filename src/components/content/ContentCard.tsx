@@ -78,17 +78,17 @@ export function ContentCard({
         )}
 
         {/* Title */}
-        <h3 className="mb-1 line-clamp-2 text-sm font-medium text-white">
+        <h3 className="mb-1 line-clamp-2 text-sm font-medium text-(--phone-text)">
           {title}
         </h3>
 
         {/* Excerpt */}
         {excerpt && (
-          <p className="mb-2 line-clamp-2 text-xs text-white/60">{excerpt}</p>
+          <p className="mb-2 line-clamp-2 text-xs text-(--phone-text)/60">{excerpt}</p>
         )}
 
         {/* Meta info */}
-        <div className="flex flex-wrap items-center gap-2 text-xs text-white/50">
+        <div className="flex flex-wrap items-center gap-2 text-xs text-(--phone-text)/50">
           {eventDate && (
             <span className="flex items-center gap-1">
               <Calendar className="h-3 w-3" />

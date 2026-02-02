@@ -27,7 +27,7 @@ export function SongCard({
   duration,
   originalArtist,
   streamingLinks,
-}: SongCardProps) {
+}: Readonly<SongCardProps>) {
   const { currentTrack, isPlaying, setTrack, play, pause } = useAudioStore();
   const openModal = useModalStore((state) => state.openModal);
 
@@ -78,7 +78,7 @@ export function SongCard({
       <div
         className={cn(
           "relative aspect-square overflow-hidden",
-          isCurrentTrack && "ring-2 ring-primary",
+          isCurrentTrack && "ring-2 ring-(--page-primary)",
         )}
       >
         <Image
@@ -102,7 +102,7 @@ export function SongCard({
               )}
             </button>
           ) : (
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 text-white">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-(--page-surface)/20 text-(--page-text)">
               <Music className="h-6 w-6" />
             </div>
           )}
@@ -133,7 +133,7 @@ export function SongCard({
               {[1, 2, 3].map((bar) => (
                 <motion.span
                   key={bar}
-                  className="w-1 rounded-full bg-primary"
+                  className="w-1 rounded-full bg-(--page-primary)"
                   animate={{
                     height: [4, 12, 4],
                   }}
@@ -151,14 +151,14 @@ export function SongCard({
 
       {/* Info */}
       <div className="p-3">
-        <h3 className="line-clamp-1 font-medium text-white">{title}</h3>
+        <h3 className="line-clamp-1 font-medium text-(--page-text)">{title}</h3>
         {originalArtist && (
-          <p className="line-clamp-1 text-sm text-white/60">
+          <p className="line-clamp-1 text-sm text-(--page-text)/60">
             Original: {originalArtist}
           </p>
         )}
         {duration && (
-          <p className="mt-1 text-xs text-white/40">
+          <p className="mt-1 text-xs text-(--page-text)/40">
             {formatDuration(duration)}
           </p>
         )}
@@ -173,7 +173,7 @@ export function SongCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="rounded-full bg-white/10 p-1.5 text-white/60 transition-colors hover:bg-white/20 hover:text-white"
+                className="rounded-full bg-(--page-surface)/10 p-1.5 text-(--page-text)/60 transition-colors hover:bg-(--page-surface)/20 hover:text-(--page-text)"
               >
                 <ExternalLink className="h-3 w-3" />
               </a>

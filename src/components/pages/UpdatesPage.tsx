@@ -63,7 +63,7 @@ export function UpdatesPage() {
 
   return (
     <div className="flex h-full flex-col p-1 bg-black">
-      <div className="text-white flex flex-row justify-between">
+      <div className="text-(--phone-text) flex flex-row justify-between">
         <div>A</div>
         <div className="flex flex-row">
           <BatteryMediumIcon />
@@ -91,18 +91,18 @@ export function UpdatesPage() {
       {/* Loading state */}
       {loading && (
         <div className="flex flex-1 items-center justify-center">
-          <Loader2 className="h-6 w-6 animate-spin text-white/40" />
+          <Loader2 className="h-6 w-6 animate-spin text-(--phone-text)/40" />
         </div>
       )}
 
       {/* Content cards */}
       {!loading && (
-        <div className="bg-(--phone-screen)  flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-track-white/5 scrollbar-thumb-white/20">
+        <div className="bg-(--phone-bg) flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-track-(--phone-surface)/5 scrollbar-thumb-(--phone-surface)/20">
           {sortedContent.map((item) => (
             <ContentCard key={`${item.type}-${item.id}`} {...item} />
           ))}
           {sortedContent.length === 0 && (
-            <p className="py-8 text-center text-sm text-white/40">
+            <p className="py-8 text-center text-sm text-(--phone-text)/40">
               No content found
             </p>
           )}

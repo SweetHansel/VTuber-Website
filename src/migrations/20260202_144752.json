@@ -6110,26 +6110,89 @@
           "primaryKey": true,
           "notNull": true
         },
-        "primary_color": {
-          "name": "primary_color",
+        "phone_bg": {
+          "name": "phone_bg",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'#1e293b'"
+        },
+        "phone_text": {
+          "name": "phone_text",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'#ffffff'"
+        },
+        "phone_surface": {
+          "name": "phone_surface",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'#ffffff'"
+        },
+        "phone_primary": {
+          "name": "phone_primary",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false,
           "default": "'#3b82f6'"
         },
-        "phone_screen_color": {
-          "name": "phone_screen_color",
+        "page_bg": {
+          "name": "page_bg",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'#1e3a8a'"
+        },
+        "page_text": {
+          "name": "page_text",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false,
           "default": "'#ffffff'"
         },
-        "page_surface_color": {
-          "name": "page_surface_color",
+        "page_surface": {
+          "name": "page_surface",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false,
           "default": "'#ffffff'"
+        },
+        "page_primary": {
+          "name": "page_primary",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'#3b82f6'"
+        },
+        "modal_bg": {
+          "name": "modal_bg",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'#1e293b'"
+        },
+        "modal_text": {
+          "name": "modal_text",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'#ffffff'"
+        },
+        "modal_surface": {
+          "name": "modal_surface",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'#ffffff'"
+        },
+        "modal_primary": {
+          "name": "modal_primary",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'#3b82f6'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -6590,6 +6653,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "0ccf98cc-1bbc-4e0c-85d9-1a3eb4d9a855",
+  "id": "4547a6f8-fe6e-4f3b-ad29-30ff5bcb9076",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

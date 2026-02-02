@@ -478,9 +478,18 @@ export async function POST(request: Request) {
     await payload.updateGlobal({
       slug: 'themes',
       data: {
-        primaryColor: '#3b82f6',
-        phoneScreenColor: '#1e3a8a',
-        pageSurfaceColor: '#172554',
+        phoneBg: '#1e293b',
+        phoneText: '#ffffff',
+        phoneSurface: '#ffffff',
+        phonePrimary: '#3b82f6',
+        pageBg: '#1e3a8a',
+        pageText: '#ffffff',
+        pageSurface: '#ffffff',
+        pagePrimary: '#3b82f6',
+        modalBg: '#1e293b',
+        modalText: '#ffffff',
+        modalSurface: '#ffffff',
+        modalPrimary: '#3b82f6',
         interactiveMedia: createdInteractiveMedia,
       },
     })

@@ -44,21 +44,21 @@ function DiscographyLeft() {
       animate="enter"
       className="flex h-full w-full flex-col p-4 gap-2"
     >
-      <div className="p-2 bg-(--primary)/90">
-        <h1 className="text-base text-white">Cover</h1>
+      <div className="p-2 bg-(--page-primary)/90">
+        <h1 className="text-base text-(--page-text)">Cover</h1>
       </div>
       <motion.div
         variants={staggerItemVariants}
-        className="flex-1 overflow-y-auto bg-(--primary)/90 p-2"
+        className="flex-1 overflow-y-auto bg-(--page-primary)/90 p-2"
       >
         <SongGrid filter={filters[1].value} />
       </motion.div>
-      <div className="p-2 bg-(--primary)/90">
-        <h1 className="text-base text-white">Originals</h1>
+      <div className="p-2 bg-(--page-primary)/90">
+        <h1 className="text-base text-(--page-text)">Originals</h1>
       </div>
       <motion.div
         variants={staggerItemVariants}
-        className="flex-1 overflow-y-auto bg-(--primary)/90 p-2"
+        className="flex-1 overflow-y-auto bg-(--page-primary)/90 p-2"
       >
         <SongGrid filter={filters[2].value} />
       </motion.div>

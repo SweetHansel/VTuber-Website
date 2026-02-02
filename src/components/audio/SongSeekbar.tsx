@@ -102,7 +102,7 @@ export function SongSeekbar() {
                   className="object-cover"
                 />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <ChevronUp className="h-5 w-5 text-white" />
+                  <ChevronUp className="h-5 w-5 text-(--page-text)" />
                 </div>
               </motion.button>
             )}
@@ -131,11 +131,11 @@ export function SongSeekbar() {
                       />
                     </div>
                     <div className="min-w-0">
-                      <h4 className="truncate text-sm font-medium text-white">
+                      <h4 className="truncate text-sm font-medium text-(--page-text)">
                         {currentTrack.title}
                       </h4>
                       {currentTrack.artist && (
-                        <p className="truncate text-xs text-white/60">
+                        <p className="truncate text-xs text-(--page-text)/60">
                           {currentTrack.artist}
                         </p>
                       )}
@@ -146,14 +146,14 @@ export function SongSeekbar() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={playPrevious}
-                      className="p-2 text-white/60 hover:text-white"
+                      className="p-2 text-(--page-text)/60 hover:text-(--page-text)"
                     >
                       <SkipBack className="h-5 w-5" />
                     </button>
 
                     <button
                       onClick={togglePlay}
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black hover:scale-105"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-(--page-surface) text-black hover:scale-105"
                     >
                       {isPlaying ? (
                         <Pause className="h-5 w-5" fill="currentColor" />
@@ -167,14 +167,14 @@ export function SongSeekbar() {
 
                     <button
                       onClick={playNext}
-                      className="p-2 text-white/60 hover:text-white"
+                      className="p-2 text-(--page-text)/60 hover:text-(--page-text)"
                     >
                       <SkipForward className="h-5 w-5" />
                     </button>
                   </div>
 
                   {/* Time display */}
-                  <div className="hidden w-24 text-center text-xs text-white/60 md:block">
+                  <div className="hidden w-24 text-center text-xs text-(--page-text)/60 md:block">
                     {formatDuration(playbackPosition)} /{" "}
                     {formatDuration(duration)}
                   </div>
@@ -183,7 +183,7 @@ export function SongSeekbar() {
                   <div className="hidden items-center gap-2 md:flex">
                     <button
                       onClick={handleVolumeToggle}
-                      className="p-2 text-white/60 hover:text-white"
+                      className="p-2 text-(--page-text)/60 hover:text-(--page-text)"
                     >
                       {isMuted || volume === 0 ? (
                         <VolumeX className="h-5 w-5" />
@@ -198,7 +198,7 @@ export function SongSeekbar() {
                       step="0.01"
                       value={volume}
                       onChange={(e) => setVolume(Number.parseFloat(e.target.value))}
-                      className="h-1 w-20 appearance-none rounded-full bg-white/20 accent-primary"
+                      className="h-1 w-20 appearance-none rounded-full bg-(--page-surface)/20 accent-(--page-primary)"
                     />
                   </div>
 
@@ -208,8 +208,8 @@ export function SongSeekbar() {
                     className={cn(
                       "p-2 transition-colors",
                       showQueue
-                        ? "text-primary"
-                        : "text-white/60 hover:text-white",
+                        ? "text-(--page-primary)"
+                        : "text-(--page-text)/60 hover:text-(--page-text)",
                     )}
                   >
                     <ListMusic className="h-5 w-5" />
@@ -218,7 +218,7 @@ export function SongSeekbar() {
                   {/* Collapse toggle */}
                   <button
                     onClick={() => setIsExpanded(false)}
-                    className="text-white/60 hover:text-white"
+                    className="text-(--page-text)/60 hover:text-(--page-text)"
                   >
                     <ChevronDown className="h-5 w-5" />
                   </button>
@@ -228,10 +228,10 @@ export function SongSeekbar() {
                 <div
                   ref={progressRef}
                   onClick={handleProgressClick}
-                  className="group h-2 cursor-pointer bg-white/10"
+                  className="group h-2 cursor-pointer bg-(--page-surface)/10"
                 >
                   <motion.div
-                    className="h-full bg-primary transition-all group-hover:h-1.5"
+                    className="h-full bg-(--page-primary) transition-all group-hover:h-1.5"
                     style={{ width: `${progressPercent}%` }}
                   />
                 </div>
@@ -252,11 +252,11 @@ export function SongSeekbar() {
             className="fixed bottom-16 right-0 top-0 z-20 w-80 bg-black/90 backdrop-blur-lg"
           >
             <div className="flex h-full flex-col">
-              <div className="flex items-center justify-between border-b border-white/10 p-4">
-                <h3 className="font-medium text-white">Queue</h3>
+              <div className="flex items-center justify-between border-b border-(--page-surface)/10 p-4">
+                <h3 className="font-medium text-(--page-text)">Queue</h3>
                 <button
                   onClick={() => setShowQueue(false)}
-                  className="text-white/60 hover:text-white"
+                  className="text-(--page-text)/60 hover:text-(--page-text)"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -264,7 +264,7 @@ export function SongSeekbar() {
 
               <div className="flex-1 overflow-y-auto p-2">
                 {queue.length === 0 ? (
-                  <p className="py-8 text-center text-sm text-white/40">
+                  <p className="py-8 text-center text-sm text-(--page-text)/40">
                     Queue is empty
                   </p>
                 ) : (
@@ -273,8 +273,8 @@ export function SongSeekbar() {
                       key={`${track.id}-${index}`}
                       onClick={() => playTrackAt(index)}
                       className={cn(
-                        "flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors hover:bg-white/10",
-                        index === queueIndex && "bg-white/10",
+                        "flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors hover:bg-(--page-surface)/10",
+                        index === queueIndex && "bg-(--page-surface)/10",
                       )}
                     >
                       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded">
@@ -290,7 +290,7 @@ export function SongSeekbar() {
                               {[1, 2, 3].map((bar) => (
                                 <motion.span
                                   key={bar}
-                                  className="w-0.5 rounded-full bg-primary"
+                                  className="w-0.5 rounded-full bg-(--page-primary)"
                                   animate={{ height: [2, 8, 2] }}
                                   transition={{
                                     duration: 0.5,
@@ -304,10 +304,10 @@ export function SongSeekbar() {
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm text-white">
+                        <p className="truncate text-sm text-(--page-text)">
                           {track.title}
                         </p>
-                        <p className="truncate text-xs text-white/60">
+                        <p className="truncate text-xs text-(--page-text)/60">
                           {formatDuration(track.duration)}
                         </p>
                       </div>
@@ -316,7 +316,7 @@ export function SongSeekbar() {
                           e.stopPropagation();
                           removeFromQueue(index);
                         }}
-                        className="p-1 text-white/40 hover:text-white"
+                        className="p-1 text-(--page-text)/40 hover:text-(--page-text)"
                       >
                         <X className="h-4 w-4" />
                       </button>

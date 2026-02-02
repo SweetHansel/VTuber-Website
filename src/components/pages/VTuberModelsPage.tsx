@@ -79,17 +79,17 @@ function VTuberModelsRight() {
     <div className="flex h-full flex-col p-6">
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white">VTuber Models</h1>
+        <h1 className="text-2xl font-bold text-(--page-text)">VTuber Models</h1>
 
         {/* Tab switcher */}
-        <div className="flex gap-1 rounded-lg bg-white/5 p-1">
+        <div className="flex gap-1 rounded-lg bg-(--page-surface)/5 p-1">
           <button
             onClick={() => setActiveTab("2d")}
             className={cn(
               "flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
               activeTab === "2d"
-                ? "bg-white/20 text-white"
-                : "text-white/60 hover:text-white",
+                ? "bg-(--page-surface)/20 text-(--page-text)"
+                : "text-(--page-text)/60 hover:text-(--page-text)",
             )}
           >
             <User className="h-4 w-4" />
@@ -100,8 +100,8 @@ function VTuberModelsRight() {
             className={cn(
               "flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
               activeTab === "3d"
-                ? "bg-white/20 text-white"
-                : "text-white/60 hover:text-white",
+                ? "bg-(--page-surface)/20 text-(--page-text)"
+                : "text-(--page-text)/60 hover:text-(--page-text)",
             )}
           >
             <Box className="h-4 w-4" />
@@ -113,7 +113,7 @@ function VTuberModelsRight() {
       {/* Loading state */}
       {loading && (
         <div className="flex flex-1 items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-white/40" />
+          <Loader2 className="h-8 w-8 animate-spin text-(--page-text)/40" />
         </div>
       )}
 
@@ -129,8 +129,8 @@ function VTuberModelsRight() {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setSelectedModel(model)}
                 className={cn(
-                  "group cursor-pointer overflow-hidden rounded-xl bg-white/5 transition-colors hover:bg-white/10",
-                  selectedModel?.id === model.id && "ring-2 ring-primary",
+                  "group cursor-pointer overflow-hidden rounded-xl bg-(--page-surface)/5 transition-colors hover:bg-(--page-surface)/10",
+                  selectedModel?.id === model.id && "ring-2 ring-(--page-primary)",
                 )}
               >
                 {/* Thumbnail */}
@@ -154,20 +154,20 @@ function VTuberModelsRight() {
 
                 {/* Info */}
                 <div className="p-3">
-                  <h3 className="font-medium text-white">{model.name}</h3>
+                  <h3 className="font-medium text-(--page-text)">{model.name}</h3>
                   {model.version && (
-                    <p className="text-sm text-white/60">v{model.version}</p>
+                    <p className="text-sm text-(--page-text)/60">v{model.version}</p>
                   )}
                   {cardData.specs?.polyCount && (
-                    <p className="text-sm text-white/60">
+                    <p className="text-sm text-(--page-text)/60">
                       {cardData.specs.polyCount.toLocaleString()} polys
                     </p>
                   )}
                 </div>
 
                 {/* View button */}
-                <div className="flex items-center justify-end border-t border-white/5 p-2">
-                  <span className="flex items-center gap-1 text-xs text-white/60 group-hover:text-white">
+                <div className="flex items-center justify-end border-t border-(--page-surface)/5 p-2">
+                  <span className="flex items-center gap-1 text-xs text-(--page-text)/60 group-hover:text-(--page-text)">
                     View <ChevronRight className="h-3 w-3" />
                   </span>
                 </div>
@@ -179,7 +179,7 @@ function VTuberModelsRight() {
 
       {/* Empty state */}
       {!loading && filteredModels.length === 0 && (
-        <div className="flex flex-1 items-center justify-center text-white/40">
+        <div className="flex flex-1 items-center justify-center text-(--page-text)/40">
           No models found
         </div>
       )}

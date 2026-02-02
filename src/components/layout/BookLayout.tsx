@@ -49,7 +49,7 @@ function LeftPage({ index, pageIndex, Page }: Readonly<PageProps>) {
 
   return (
     <motion.div
-      className="absolute bg-(--page-surface) w-[50%] h-full top-0 origin-bottom-right backface-hidden transform-flat"
+      className="absolute bg-(--page-bg) w-[50%] h-full top-0 origin-bottom-right backface-hidden transform-flat"
       style={{ rotateY }}
       transition={{ duration: 0.3, bounce: 0 }}
     >
@@ -71,7 +71,7 @@ function RightPage({ index, pageIndex, Page }: Readonly<PageProps>) {
 
   return (
     <motion.div
-      className="absolute bg-(--page-surface) w-[50%] h-full top-0 origin-bottom-left backface-hidden transform-flat"
+      className="absolute bg-(--page-bg) w-[50%] h-full top-0 origin-bottom-left backface-hidden transform-flat"
       style={{ rotateY, translateX: "100%" }}
       transition={{ duration: 0.3, bounce: 0 }}
     >
@@ -210,23 +210,23 @@ export function BookLayout() {
         <button
           onClick={prevPage}
           className="absolute bottom-0 left-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
-            border-b-60 border-b-white/20
+            border-b-60 border-b-(--page-surface)/20
             border-r-60 border-r-transparent
-            hover:border-b-white/40 transition-colors"
+            hover:border-b-(--page-surface)/40 transition-colors"
           aria-label="Previous page"
         >
-          <ChevronLeft className="absolute bottom-50 left-5 w-4 h-4 text-white/60" />
+          <ChevronLeft className="absolute bottom-50 left-5 w-4 h-4 text-(--page-text)/60" />
         </button>
 
         <button
           onClick={() => setIndexAnimated(0)}
           className="absolute top-0 left-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
-            border-t-60 border-t-white/20
+            border-t-60 border-t-(--page-surface)/20
             border-r-60 border-r-transparent
-            hover:border-t-white/40 transition-colors"
+            hover:border-t-(--page-surface)/40 transition-colors"
           aria-label="ToC"
         >
-          <ListTree className="absolute top-50 left-5 w-4 h-4 text-white/60" />
+          <ListTree className="absolute top-50 left-5 w-4 h-4 text-(--page-text)/60" />
         </button>
       </motion.div>
 
@@ -237,12 +237,12 @@ export function BookLayout() {
         <button
           onClick={nextPage}
           className="absolute bottom-0 right-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
-            border-b-60 border-b-white/20
+            border-b-60 border-b-(--page-surface)/20
             border-l-60 border-l-transparent
-            hover:border-b-white/40 transition-colors"
+            hover:border-b-(--page-surface)/40 transition-colors"
           aria-label="Next page"
         >
-          <ChevronRight className="absolute bottom-50 right-5 w-4 h-4 text-white/60" />
+          <ChevronRight className="absolute bottom-50 right-5 w-4 h-4 text-(--page-text)/60" />
         </button>
       </motion.div>
     </div>

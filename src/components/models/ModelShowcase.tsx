@@ -12,7 +12,7 @@ interface ModelShowcaseProps {
   model: Model | null;
 }
 
-export function ModelShowcase({ model }: ModelShowcaseProps) {
+export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const openModal = useModalStore((state) => state.openModal);
 
@@ -44,10 +44,10 @@ export function ModelShowcase({ model }: ModelShowcaseProps) {
   if (!model) {
     return (
       <div className="flex h-full items-center justify-center p-6">
-        <div className="text-center text-white">
-          <Box className="mx-auto h-16 w-16 mb-4 text-white/60" />
+        <div className="text-center text-(--page-text)">
+          <Box className="mx-auto h-16 w-16 mb-4 text-(--page-text)/60" />
           <h2 className="text-xl font-bold">Model Showcase</h2>
-          <p className="text-sm text-white/60 mt-2">Select a model to view</p>
+          <p className="text-sm text-(--page-text)/60 mt-2">Select a model to view</p>
         </div>
       </div>
     );
@@ -56,10 +56,10 @@ export function ModelShowcase({ model }: ModelShowcaseProps) {
   if (showcase.length === 0) {
     return (
       <div className="flex h-full items-center justify-center p-6">
-        <div className="text-center text-white">
-          <Box className="mx-auto h-16 w-16 mb-4 text-white/60" />
+        <div className="text-center text-(--page-text)">
+          <Box className="mx-auto h-16 w-16 mb-4 text-(--page-text)/60" />
           <h2 className="text-xl font-bold">{model.name}</h2>
-          <p className="text-sm text-white/60 mt-2">No showcase images</p>
+          <p className="text-sm text-(--page-text)/60 mt-2">No showcase images</p>
         </div>
       </div>
     );
@@ -73,14 +73,14 @@ export function ModelShowcase({ model }: ModelShowcaseProps) {
       {/* Model name */}
       <div className="mb-3 flex items-center justify-center gap-2">
         <div className="text-center">
-          <h2 className="text-lg font-bold text-white">{model.name}</h2>
+          <h2 className="text-lg font-bold text-(--page-text)">{model.name}</h2>
           {model.version && (
-            <p className="text-sm text-white/60">v{model.version}</p>
+            <p className="text-sm text-(--page-text)/60">v{model.version}</p>
           )}
         </div>
         <button
           onClick={handleOpenDetails}
-          className="rounded-full p-2 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+          className="rounded-full p-2 text-(--page-text)/60 transition-colors hover:bg-(--page-surface)/10 hover:text-(--page-text)"
           title="View details"
         >
           <Info className="h-5 w-5" />
@@ -128,7 +128,7 @@ export function ModelShowcase({ model }: ModelShowcaseProps) {
 
       {/* Caption */}
       {currentItem.caption && (
-        <p className="mt-2 text-center text-sm text-white/70">
+        <p className="mt-2 text-center text-sm text-(--page-text)/70">
           {currentItem.caption}
         </p>
       )}
@@ -143,8 +143,8 @@ export function ModelShowcase({ model }: ModelShowcaseProps) {
               className={cn(
                 "h-2 w-2 rounded-full transition-all",
                 index === currentIndex
-                  ? "bg-white w-4"
-                  : "bg-white/40 hover:bg-white/60"
+                  ? "bg-(--page-surface) w-4"
+                  : "bg-(--page-surface)/40 hover:bg-(--page-surface)/60"
               )}
             />
           ))}

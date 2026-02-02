@@ -1,13 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  --primary: #3b82f6;
-  --phone-screen: #ffffff;
+  /* Phone colors */
+  --phone-bg: #1e293b;
+  --phone-text: #ffffff;
+  --phone-surface: #ffffff;
+  --phone-primary: #3b82f6;
+
+  /* Page colors */
+  --page-bg: #1e3a8a;
+  --page-text: #ffffff;
   --page-surface: #ffffff;
+  --page-primary: #3b82f6;
+
+  /* Modal colors */
+  --modal-bg: #1e293b;
+  --modal-text: #ffffff;
+  --modal-surface: #ffffff;
+  --modal-primary: #3b82f6;
 }
 
 @theme inline {
-  --color-primary: var(--primary);
+  --color-primary: var(--phone-primary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

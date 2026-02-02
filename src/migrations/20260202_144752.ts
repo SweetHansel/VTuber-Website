@@ -486,9 +486,18 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   
   CREATE TABLE "themes" (
   	"id" serial PRIMARY KEY NOT NULL,
-  	"primary_color" varchar DEFAULT '#3b82f6',
-  	"phone_screen_color" varchar DEFAULT '#ffffff',
-  	"page_surface_color" varchar DEFAULT '#ffffff',
+  	"phone_bg" varchar DEFAULT '#1e293b',
+  	"phone_text" varchar DEFAULT '#ffffff',
+  	"phone_surface" varchar DEFAULT '#ffffff',
+  	"phone_primary" varchar DEFAULT '#3b82f6',
+  	"page_bg" varchar DEFAULT '#1e3a8a',
+  	"page_text" varchar DEFAULT '#ffffff',
+  	"page_surface" varchar DEFAULT '#ffffff',
+  	"page_primary" varchar DEFAULT '#3b82f6',
+  	"modal_bg" varchar DEFAULT '#1e293b',
+  	"modal_text" varchar DEFAULT '#ffffff',
+  	"modal_surface" varchar DEFAULT '#ffffff',
+  	"modal_primary" varchar DEFAULT '#3b82f6',
   	"updated_at" timestamp(3) with time zone,
   	"created_at" timestamp(3) with time zone
   );

@@ -5,8 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useAudioStore } from "@/stores/audioStore";
 import { seekAudio } from "./AudioProvider";
-import { cn } from "@/lib/utils";
-import { formatDuration } from "@/lib/utils";
+import { cn, formatDuration } from "@/lib/utils";
 import {
   Play,
   Pause,
@@ -198,8 +197,8 @@ export function SongSeekbar() {
                       max="1"
                       step="0.01"
                       value={volume}
-                      onChange={(e) => setVolume(parseFloat(e.target.value))}
-                      className="h-1 w-20 appearance-none rounded-full bg-white/20 accent-[var(--primary)]"
+                      onChange={(e) => setVolume(Number.parseFloat(e.target.value))}
+                      className="h-1 w-20 appearance-none rounded-full bg-white/20 accent-primary"
                     />
                   </div>
 
@@ -209,7 +208,7 @@ export function SongSeekbar() {
                     className={cn(
                       "p-2 transition-colors",
                       showQueue
-                        ? "text-[var(--primary)]"
+                        ? "text-primary"
                         : "text-white/60 hover:text-white",
                     )}
                   >
@@ -232,7 +231,7 @@ export function SongSeekbar() {
                   className="group h-2 cursor-pointer bg-white/10"
                 >
                   <motion.div
-                    className="h-full bg-[var(--primary)] transition-all group-hover:h-1.5"
+                    className="h-full bg-primary transition-all group-hover:h-1.5"
                     style={{ width: `${progressPercent}%` }}
                   />
                 </div>
@@ -291,7 +290,7 @@ export function SongSeekbar() {
                               {[1, 2, 3].map((bar) => (
                                 <motion.span
                                   key={bar}
-                                  className="w-0.5 rounded-full bg-[var(--primary)]"
+                                  className="w-0.5 rounded-full bg-primary"
                                   animate={{ height: [2, 8, 2] }}
                                   transition={{
                                     duration: 0.5,

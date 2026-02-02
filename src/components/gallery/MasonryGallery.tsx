@@ -5,14 +5,15 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { Loader2, ExternalLink } from "lucide-react";
 import { useModalStore } from "@/stores/modalStore";
-import { useArtworks, type Artwork as CMSArtwork } from "@/hooks/useCMS";
+import { useArtworks, type Artwork as CMSArtwork, getMedia, getPerson, nullToUndefined } from "@/hooks/useCMS";
+import { ARTWORK_TYPE_COLORS, type ArtworkType, type ArtworkFilter } from "@/constants/artworks";
 import { cn } from "@/lib/utils";
 
 interface Artwork {
   id: string;
   title?: string;
   image: string;
-  artworkType: "fanart" | "official" | "meme" | "commissioned" | "other";
+  artworkType: ArtworkType;
   artistName?: string;
   sourceUrl?: string;
   isFeatured?: boolean;
@@ -23,21 +24,25 @@ function transformArtwork(art: CMSArtwork): Artwork {
   const artistCredit = art.credits?.find(
     (c) => c.role === "artist" || c.role === "illustrator",
   );
-  const artistName = artistCredit?.person?.name || artistCredit?.name;
+  const artistPerson = getPerson(artistCredit?.person);
+  const artistName = artistPerson?.name || artistCredit?.name;
+
+  // Get media object from union type
+  const imageMedia = getMedia(art.image);
 
   // Calculate aspect ratio from image dimensions if available
-  const width = art.image?.width;
-  const height = art.image?.height;
+  const width = imageMedia?.width;
+  const height = imageMedia?.height;
   const aspectRatio = width && height ? width / height : null;
 
   return {
-    id: art.id,
-    title: art.title,
-    image: art.image?.url || "/placeholder-art-1.jpg",
+    id: String(art.id),
+    title: nullToUndefined(art.title),
+    image: imageMedia?.url || "/placeholder-art-1.jpg",
     artworkType: art.artworkType === "other" ? "other" : art.artworkType,
     artistName: artistName ? `@${artistName.replace("@", "")}` : undefined,
-    sourceUrl: art.sourceUrl,
-    isFeatured: art.isFeatured,
+    sourceUrl: nullToUndefined(art.sourceUrl),
+    isFeatured: nullToUndefined(art.isFeatured),
     aspectRatio,
   };
 }
@@ -84,7 +89,7 @@ function computeRows(
 }
 
 interface MasonryGalleryProps {
-  filter?: "all" | "fanart" | "official" | "meme";
+  filter?: ArtworkFilter;
 }
 
 export function MasonryGallery({ filter = "all" }: MasonryGalleryProps) {
@@ -176,7 +181,7 @@ export function MasonryGallery({ filter = "all" }: MasonryGalleryProps) {
             <motion.div
               key={artwork.id}
               transition={{ delay: (rowIndex * row.length + itemIndex) * 0.02 }}
-              className="relative flex-shrink-0 cursor-pointer overflow-y-scroll rounded-lg group"
+              className="relative shrink-0 cursor-pointer overflow-y-scroll group"
               style={{
                 height: ROW_HEIGHT,
                 aspectRatio: ratio,
@@ -201,7 +206,7 @@ export function MasonryGallery({ filter = "all" }: MasonryGalleryProps) {
               />
 
               {/* Overlay on hover */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100">
+              <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100">
                 <div className="absolute bottom-0 left-0 right-0 p-2">
                   {artwork.title && (
                     <h3 className="mb-0.5 text-xs font-medium text-white line-clamp-1">
@@ -233,11 +238,7 @@ export function MasonryGallery({ filter = "all" }: MasonryGalleryProps) {
                 <span
                   className={cn(
                     "rounded-full px-1.5 py-0.5 text-[10px] font-medium capitalize",
-                    artwork.artworkType === "official"
-                      ? "bg-blue-500/80 text-white"
-                      : artwork.artworkType === "fanart"
-                        ? "bg-cyan-500/80 text-white"
-                        : "bg-gray-500/80 text-white",
+                    ARTWORK_TYPE_COLORS[artwork.artworkType],
                   )}
                 >
                   {artwork.artworkType}

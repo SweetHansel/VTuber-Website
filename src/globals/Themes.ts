@@ -12,38 +12,7 @@ export const Themes: GlobalConfig = {
   fields: [
     {
       type: 'collapsible',
-      label: 'Base Colors',
-      admin: {
-        initCollapsed: false,
-      },
-      fields: [
-        {
-          name: 'backgroundColor',
-          type: 'text',
-          defaultValue: '#0a0a0a',
-          admin: {
-            description: 'Page background color',
-            components: {
-              Field: '/components/admin/ColorPicker#ColorPicker',
-            },
-          },
-        },
-        {
-          name: 'foregroundColor',
-          type: 'text',
-          defaultValue: '#ededed',
-          admin: {
-            description: 'Text/foreground color',
-            components: {
-              Field: '/components/admin/ColorPicker#ColorPicker',
-            },
-          },
-        },
-      ],
-    },
-    {
-      type: 'collapsible',
-      label: 'Brand Colors',
+      label: 'Colors',
       admin: {
         initCollapsed: false,
       },
@@ -60,64 +29,22 @@ export const Themes: GlobalConfig = {
           },
         },
         {
-          name: 'primaryHoverColor',
+          name: 'phoneScreenColor',
           type: 'text',
-          defaultValue: '#2563eb',
+          defaultValue: '#ffffff',
           admin: {
-            description: 'Primary color on hover',
+            description: 'Phone screen background color',
             components: {
               Field: '/components/admin/ColorPicker#ColorPicker',
             },
           },
         },
         {
-          name: 'secondaryColor',
+          name: 'pageSurfaceColor',
           type: 'text',
-          defaultValue: '#8b5cf6',
+          defaultValue: '#ffffff',
           admin: {
-            description: 'Secondary brand color',
-            components: {
-              Field: '/components/admin/ColorPicker#ColorPicker',
-            },
-          },
-        },
-        {
-          name: 'accentColor',
-          type: 'text',
-          defaultValue: '#ec4899',
-          admin: {
-            description: 'Accent color for highlights',
-            components: {
-              Field: '/components/admin/ColorPicker#ColorPicker',
-            },
-          },
-        },
-      ],
-    },
-    {
-      type: 'collapsible',
-      label: 'Surface Colors',
-      admin: {
-        initCollapsed: false,
-      },
-      fields: [
-        {
-          name: 'bgPrimaryColor',
-          type: 'text',
-          defaultValue: '#1e3a8a',
-          admin: {
-            description: 'Primary background (cards, panels)',
-            components: {
-              Field: '/components/admin/ColorPicker#ColorPicker',
-            },
-          },
-        },
-        {
-          name: 'bgSurfaceColor',
-          type: 'text',
-          defaultValue: '#172554',
-          admin: {
-            description: 'Surface background (elevated elements)',
+            description: 'Page surface background color',
             components: {
               Field: '/components/admin/ColorPicker#ColorPicker',
             },
@@ -139,6 +66,7 @@ export const Themes: GlobalConfig = {
           options: [
             { label: 'Main Character', value: 'main-character' },
             { label: 'Landing - Left', value: 'landing-left' },
+            { label: 'Landing - Background', value: 'landing-bg' },
             { label: 'Landing - Bottom Right', value: 'landing-bottom-right' },
             { label: 'Page - Artworks', value: 'page-artworks' },
             { label: 'Page - Discography', value: 'page-discography' },

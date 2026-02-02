@@ -6,7 +6,8 @@ import { staggerContainerVariants, staggerItemVariants } from '@/animations'
 import { cn } from '@/lib/utils'
 import { Heart, ThumbsDown, Gamepad, Hash, Calendar, Ruler, LucideIcon, Star, Music, Sparkles, Coffee, Loader2 } from 'lucide-react'
 import type { PageContent } from '@/components/layout/BookLayout'
-import { useProfile, type ProfileData } from '@/hooks/useCMS'
+import { useProfile, type Profile, getModel, getMedia, nullToUndefined } from '@/hooks/useCMS'
+import { ModelShowcase } from '../models/ModelShowcase'
 
 // Icon mapping for dynamic traits
 const iconMap: Record<string, LucideIcon> = {
@@ -30,7 +31,6 @@ function LoadingSkeleton() {
 
 function AboutLeft() {
   const { data: profile, loading } = useProfile()
-  const profileData = profile || {}
 
   if (loading) {
     return <LoadingSkeleton />
@@ -43,24 +43,7 @@ function AboutLeft() {
       animate="enter"
       className="flex h-full flex-col items-center justify-center gap-4 p-6"
     >
-      <motion.div
-        variants={staggerItemVariants}
-        className="relative aspect-[3/4] w-48 overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20"
-      >
-        {/* {profileData.avatar?.url ? (
-          <Image
-            src={profileData.avatar.url}
-            alt={profileData.name || 'Avatar'}
-            fill
-            className="object-cover"
-            priority
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-white/20">
-            <span className="text-4xl">?</span>
-          </div>
-        )} */}
-      </motion.div>
+      <ModelShowcase model={getModel(profile?.currentModel)} />
       <motion.button
         variants={staggerItemVariants}
         className="rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/20"
@@ -73,16 +56,17 @@ function AboutLeft() {
 
 function AboutRight() {
   const { data: profile, loading } = useProfile()
-  const profileData = profile || {}
 
   if (loading) {
     return <LoadingSkeleton />
   }
 
-  // Convert traits array to named sections for compatibility
-  const hobbies = profileData.traits?.find(t => t.category.toLowerCase() === 'hobbies')
-  const likes = profileData.traits?.find(t => t.category.toLowerCase() === 'likes')
-  const dislikes = profileData.traits?.find(t => t.category.toLowerCase() === 'dislikes')
+  if (!profile) {
+    return <div className="flex h-full items-center justify-center text-white/60">Profile not found</div>
+  }
+
+  // Get the current model from union type
+  const currentModel = getModel(profile.currentModel)
 
   return (
     <motion.div
@@ -91,41 +75,50 @@ function AboutRight() {
       animate="enter"
       className="h-full space-y-6 overflow-y-auto p-6"
     >
+
+      <motion.div variants={staggerItemVariants}>
+        {currentModel?.refSheets?.map((v, i) => {
+          const media = getMedia(v.media)
+          if (!media?.url) return null
+          return <Image key={media.id ?? i} alt={media.alt ?? v.label ?? ''} src={media.url} width={200} height={200} />
+        })}
+      </motion.div>
+
       {/* Name & Tagline */}
       <motion.div variants={staggerItemVariants}>
-        <h1 className="text-3xl font-bold text-white">{profileData.name}</h1>
-        {profileData.alternateName && (
-          <p className="text-lg text-white/60">{profileData.alternateName}</p>
+        <h1 className="text-3xl font-bold text-white">{profile.name}</h1>
+        {profile.alternateName && (
+          <p className="text-lg text-white/60">{profile.alternateName}</p>
         )}
-        {profileData.tagline && (
-          <p className="mt-1 text-[var(--primary)]">{profileData.tagline}</p>
+        {profile.tagline && (
+          <p className="mt-1 text-primary">{profile.tagline}</p>
         )}
       </motion.div>
 
       {/* Bio */}
-      {profileData.shortBio && (
+      {profile.shortBio && (
         <motion.p variants={staggerItemVariants} className="text-white/80">
-          {profileData.shortBio}
+          {profile.shortBio}
         </motion.p>
       )}
 
       {/* Stats */}
       <motion.div variants={staggerItemVariants} className="flex gap-6">
-        {profileData.birthday && (
+        {profile.birthday && (
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-white/60" />
             <span className="text-sm text-white/80">
-              {new Date(profileData.birthday).toLocaleDateString('en-US', {
+              {new Date(profile.birthday).toLocaleDateString('en-US', {
                 month: 'long',
                 day: 'numeric',
               })}
             </span>
           </div>
         )}
-        {profileData.height && (
+        {profile.height && (
           <div className="flex items-center gap-2">
             <Ruler className="h-4 w-4 text-white/60" />
-            <span className="text-sm text-white/80">{profileData.height}</span>
+            <span className="text-sm text-white/80">{profile.height}</span>
           </div>
         )}
       </motion.div>
@@ -133,7 +126,7 @@ function AboutRight() {
       {/* Info sections */}
       <div className="grid gap-4 md:grid-cols-2">
         {/* Dynamic traits from CMS */}
-        {profileData.traits?.map((trait) => {
+        {profile.traits?.map((trait) => {
           const IconComponent = iconMap[trait.icon || 'Star'] || Star
           const items = trait.items?.map(i => i.value) || []
           return (
@@ -142,55 +135,25 @@ function AboutRight() {
               icon={IconComponent}
               title={trait.category}
               items={items}
-              customColor={trait.color}
+              customColor={nullToUndefined(trait.color)}
             />
           )
         })}
 
-        {/* Fallback sections if no traits defined */}
-        {(!profileData.traits || profileData.traits.length === 0) && (
-          <>
-            {hobbies && (
-              <InfoSection
-                icon={Gamepad}
-                title="Hobbies"
-                items={hobbies.items?.map(i => i.value) || []}
-                color="blue"
-              />
-            )}
-            {likes && (
-              <InfoSection
-                icon={Heart}
-                title="Likes"
-                items={likes.items?.map(i => i.value) || []}
-                color="pink"
-              />
-            )}
-            {dislikes && (
-              <InfoSection
-                icon={ThumbsDown}
-                title="Dislikes"
-                items={dislikes.items?.map(i => i.value) || []}
-                color="red"
-              />
-            )}
-          </>
-        )}
-
         {/* Hashtags */}
-        {profileData.hashtags && profileData.hashtags.length > 0 && (
+        {profile.hashtags && profile.hashtags.length > 0 && (
           <motion.div
             variants={staggerItemVariants}
             className="rounded-xl bg-white/5 p-4"
           >
             <div className="mb-2 flex items-center gap-2">
-              <Hash className="h-4 w-4 text-[var(--primary)]" />
+              <Hash className="h-4 w-4 text-primary" />
               <h3 className="font-medium text-white">Hashtags</h3>
             </div>
             <div className="space-y-1 text-sm">
-              {profileData.hashtags.map((hashtag) => (
+              {profile.hashtags.map((hashtag) => (
                 <p key={hashtag.label} className="text-white/60">
-                  {hashtag.label}: <span className="text-[var(--primary)]">{hashtag.value}</span>
+                  {hashtag.label}: <span className="text-primary">{hashtag.value}</span>
                 </p>
               ))}
             </div>
@@ -220,7 +183,7 @@ const colorMap = {
   red: 'text-red-400',
 }
 
-function InfoSection({ icon: Icon, title, items, color, customColor }: InfoSectionProps) {
+function InfoSection({ icon: Icon, title, items, color, customColor }: Readonly<InfoSectionProps>) {
   const colorClass = color ? colorMap[color] : ''
 
   return (

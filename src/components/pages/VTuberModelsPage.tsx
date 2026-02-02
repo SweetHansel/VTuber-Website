@@ -1,139 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { ChevronRight, ChevronLeft, User, Box, Loader2 } from "lucide-react";
+import { ChevronRight, User, Box, Loader2 } from "lucide-react";
 import type { PageContent } from "@/components/layout/BookLayout";
-import { useModels, type Model } from "@/hooks/useCMS";
+import { useModels, type Model, type Media, getMedia, nullToUndefined } from "@/hooks/useCMS";
 import { useModelShowcaseStore } from "@/stores/modelShowcaseStore";
+import { ModelShowcase } from "@/components/models/ModelShowcase";
+import { MODEL_2D_TYPES, MODEL_3D_TYPES } from "@/constants/models";
 
 type ModelTab = "2d" | "3d";
-
-// Model Showcase Component
-function ModelShowcase() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const model = useModelShowcaseStore((state) => state.selectedModel);
-
-  const showcase = model?.showcase || [];
-  const hasMultiple = showcase.length > 1;
-
-  const goNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % showcase.length);
-  };
-
-  const goPrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + showcase.length) % showcase.length);
-  };
-
-  if (!model) {
-    return (
-      <div className="flex h-full items-center justify-center p-6">
-        <div className="text-center text-white">
-          <Box className="mx-auto h-16 w-16 mb-4 text-white/60" />
-          <h2 className="text-xl font-bold">Model Showcase</h2>
-          <p className="text-sm text-white/60 mt-2">Select a model to view</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (showcase.length === 0) {
-    return (
-      <div className="flex h-full items-center justify-center p-6">
-        <div className="text-center text-white">
-          <Box className="mx-auto h-16 w-16 mb-4 text-white/60" />
-          <h2 className="text-xl font-bold">{model.name}</h2>
-          <p className="text-sm text-white/60 mt-2">No showcase images</p>
-        </div>
-      </div>
-    );
-  }
-
-  const currentItem = showcase[currentIndex];
-
-  return (
-    <div className="flex h-full flex-col p-4">
-      {/* Model name */}
-      <div className="mb-3 text-center">
-        <h2 className="text-lg font-bold text-white">{model.name}</h2>
-        {model.version && (
-          <p className="text-sm text-white/60">v{model.version}</p>
-        )}
-      </div>
-
-      {/* Image container */}
-      <div className="relative flex-1 min-h-0">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentIndex}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.2 }}
-            className="absolute inset-0"
-          >
-            <Image
-              src={currentItem.media?.url || "/placeholder-model.png"}
-              alt={currentItem.caption || model.name}
-              fill
-              className="object-contain"
-            />
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Navigation buttons */}
-        {hasMultiple && (
-          <>
-            <button
-              onClick={goPrev}
-              className="absolute left-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white/80 backdrop-blur-sm transition-colors hover:bg-black/70 hover:text-white"
-            >
-              <ChevronLeft className="h-6 w-6" />
-            </button>
-            <button
-              onClick={goNext}
-              className="absolute right-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white/80 backdrop-blur-sm transition-colors hover:bg-black/70 hover:text-white"
-            >
-              <ChevronRight className="h-6 w-6" />
-            </button>
-          </>
-        )}
-      </div>
-
-      {/* Caption */}
-      {currentItem.caption && (
-        <p className="mt-2 text-center text-sm text-white/70">
-          {currentItem.caption}
-        </p>
-      )}
-
-      {/* Dot indicators */}
-      {hasMultiple && (
-        <div className="mt-3 flex justify-center gap-2">
-          {showcase.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={cn(
-                "h-2 w-2 rounded-full transition-all",
-                index === currentIndex
-                  ? "bg-white w-4"
-                  : "bg-white/40 hover:bg-white/60"
-              )}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// 2D model types
-const MODEL_2D_TYPES = ['live2d', 'pngtuber', '2d-other'] as const;
-// 3D model types
-const MODEL_3D_TYPES = ['vrm', 'mmd', 'fbx', '3d-other'] as const;
 
 interface ModelCardData {
   id: string;
@@ -149,31 +27,34 @@ interface ModelCardData {
 }
 
 // Helper to get thumbnail from showcase array (first featured item or first item)
-function getThumbnail(showcase?: { media?: { url?: string }; isFeatured?: boolean }[], fallback = "/placeholder-model.png"): string {
+function getThumbnail(showcase: Model['showcase'], fallback = "/placeholder-model.png"): string {
   if (!showcase || showcase.length === 0) return fallback;
   const featured = showcase.find(item => item.isFeatured);
-  return featured?.media?.url || showcase[0]?.media?.url || fallback;
+  const targetItem = featured || showcase[0];
+  const media = getMedia(targetItem?.media);
+  return media?.url || fallback;
 }
 
 function transformModel(model: Model): ModelCardData {
   return {
-    id: model.id,
+    id: String(model.id),
     name: model.name,
-    version: model.version,
+    version: nullToUndefined(model.version),
     modelType: model.modelType,
     thumbnail: getThumbnail(model.showcase),
-    isActive: model.isActive,
+    isActive: nullToUndefined(model.isActive),
     specs: model.technicalSpecs
       ? {
-          polyCount: model.technicalSpecs.polyCount,
-          blendshapes: model.technicalSpecs.blendshapes,
+          polyCount: nullToUndefined(model.technicalSpecs.polyCount),
+          blendshapes: nullToUndefined(model.technicalSpecs.blendshapes),
         }
       : undefined,
   };
 }
 
 function VTuberModelsLeft() {
-  return <ModelShowcase />;
+  const model = useModelShowcaseStore((state) => state.selectedModel);
+  return <ModelShowcase model={model} />;
 }
 
 function VTuberModelsRight() {
@@ -249,11 +130,11 @@ function VTuberModelsRight() {
                 onClick={() => setSelectedModel(model)}
                 className={cn(
                   "group cursor-pointer overflow-hidden rounded-xl bg-white/5 transition-colors hover:bg-white/10",
-                  selectedModel?.id === model.id && "ring-2 ring-[var(--primary)]",
+                  selectedModel?.id === model.id && "ring-2 ring-primary",
                 )}
               >
                 {/* Thumbnail */}
-                <div className="relative aspect-[3/4] w-full overflow-hidden">
+                <div className="relative aspect-3/4 w-full overflow-hidden">
                   <Image
                     src={cardData.thumbnail}
                     alt={model.name}

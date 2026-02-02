@@ -1,12 +1,19 @@
 'use client'
 
-import { useInteractiveMedia, type InteractiveMediaData } from '@/hooks/useCMS'
+import { useInteractiveMedia, type InteractiveMedia as InteractiveMediaType, type Media } from '@/hooks/useCMS'
+
+// Helper to get Media object from union type (handles depth=0 vs depth>0)
+function getMediaUrl(media: number | Media | null | undefined): string | undefined {
+  if (!media || typeof media === 'number') return undefined
+  return media.url ?? undefined
+}
 import { InteractiveMedia, type MediaState, type CursorEffect } from './InteractiveMedia'
 import { cn } from '@/lib/utils'
 
 interface InteractiveMediaFromCMSProps {
   location: string
   className?: string
+  imageClass?: string
   fallback?: {
     defaultMedia: MediaState
     hoverMedia?: MediaState
@@ -19,7 +26,7 @@ interface InteractiveMediaFromCMSProps {
   onHoverEnd?: () => void
 }
 
-function LoadingSkeleton({ className }: { className?: string }) {
+function LoadingSkeleton({ className }: Readonly<{ className?: string }>) {
   return (
     <div className={cn('relative animate-pulse', className)}>
       <div className="h-full w-full rounded-lg bg-white/10" />
@@ -27,15 +34,15 @@ function LoadingSkeleton({ className }: { className?: string }) {
   )
 }
 
-function EmptySkeleton({ className }: { className?: string }) {
+function EmptySkeleton({ className }: Readonly<{ className?: string }>) {
   return (
     <div className={cn('relative', className)}>
-      <div className="h-full w-full rounded-lg bg-[var(--bg-surface)]/60" />
+      <div className="h-full w-full rounded-lg bg-(--primary)/60" />
     </div>
   )
 }
 
-function transformCMSData(data: InteractiveMediaData): {
+function transformCMSData(data: InteractiveMediaType): {
   defaultMedia: MediaState
   hoverMedia?: MediaState
   clickMedia?: MediaState
@@ -43,7 +50,8 @@ function transformCMSData(data: InteractiveMediaData): {
   depth?: number
 } | null {
   // If no media URL, return null - don't render anything
-  if (!data.defaultState?.media?.url) {
+  const defaultMediaUrl = getMediaUrl(data.defaultState?.media)
+  if (!defaultMediaUrl) {
     return null
   }
 
@@ -55,34 +63,37 @@ function transformCMSData(data: InteractiveMediaData): {
     depth?: number
   } = {
     defaultMedia: {
-      src: data.defaultState.media.url,
-      alt: data.defaultState?.alt,
-      sound: data.defaultState?.sound?.url,
+      src: defaultMediaUrl,
+      alt: data.defaultState?.alt ?? undefined,
+      sound: getMediaUrl(data.defaultState?.sound),
     },
-    depth: data.depth,
+    depth: data.depth ?? undefined,
   }
 
-  if (data.hoverState?.enabled && data.hoverState.media?.url) {
+  const hoverMediaUrl = getMediaUrl(data.hoverState?.media)
+  if (data.hoverState?.enabled && hoverMediaUrl) {
     result.hoverMedia = {
-      src: data.hoverState.media.url,
-      alt: data.hoverState.alt,
-      sound: data.hoverState.sound?.url,
+      src: hoverMediaUrl,
+      alt: data.hoverState.alt ?? undefined,
+      sound: getMediaUrl(data.hoverState.sound),
     }
   }
 
-  if (data.clickState?.enabled && data.clickState.media?.url) {
+  const clickMediaUrl = getMediaUrl(data.clickState?.media)
+  if (data.clickState?.enabled && clickMediaUrl) {
     result.clickMedia = {
-      src: data.clickState.media.url,
-      alt: data.clickState.alt,
-      sound: data.clickState.sound?.url,
+      src: clickMediaUrl,
+      alt: data.clickState.alt ?? undefined,
+      sound: getMediaUrl(data.clickState.sound),
     }
   }
 
-  if (data.cursorEffect?.enabled && data.cursorEffect.media?.url) {
+  const cursorMediaUrl = getMediaUrl(data.cursorEffect?.media)
+  if (data.cursorEffect?.enabled && cursorMediaUrl) {
     result.cursorEffect = {
-      src: data.cursorEffect.media.url,
-      duration: data.cursorEffect.duration,
-      size: data.cursorEffect.size,
+      src: cursorMediaUrl,
+      duration: data.cursorEffect.duration ?? undefined,
+      size: data.cursorEffect.size ?? undefined,
     }
   }
 
@@ -92,13 +103,14 @@ function transformCMSData(data: InteractiveMediaData): {
 export function InteractiveMediaFromCMS({
   location,
   className,
+  imageClass,
   fallback,
   depth,
   showEmpty,
   onClick,
   onHoverStart,
   onHoverEnd,
-}: InteractiveMediaFromCMSProps) {
+}: Readonly<InteractiveMediaFromCMSProps>) {
   const { data, loading, error } = useInteractiveMedia(location)
 
   // Show loading skeleton
@@ -136,6 +148,7 @@ export function InteractiveMediaFromCMS({
   return (
     <InteractiveMedia
       className={className}
+      imageClass={imageClass}
       depth={depth ?? transformed.depth}
       defaultMedia={transformed.defaultMedia}
       hoverMedia={transformed.hoverMedia}
@@ -150,8 +163,9 @@ export function InteractiveMediaFromCMS({
 
 // Alternative: Direct props version that accepts pre-fetched data
 interface InteractiveMediaWithDataProps {
-  data: InteractiveMediaData | null
+  data: InteractiveMediaType | null
   className?: string
+  imageClass?: string
   fallback?: {
     defaultMedia: MediaState
     hoverMedia?: MediaState
@@ -166,6 +180,7 @@ interface InteractiveMediaWithDataProps {
 export function InteractiveMediaWithData({
   data,
   className,
+  imageClass,
   fallback,
   depth,
   onClick,
@@ -177,6 +192,7 @@ export function InteractiveMediaWithData({
       return (
         <InteractiveMedia
           className={className}
+      imageClass={imageClass}
           depth={depth}
           defaultMedia={fallback.defaultMedia}
           hoverMedia={fallback.hoverMedia}
@@ -200,6 +216,7 @@ export function InteractiveMediaWithData({
   return (
     <InteractiveMedia
       className={className}
+      imageClass={imageClass}
       depth={depth ?? transformed.depth}
       defaultMedia={transformed.defaultMedia}
       hoverMedia={transformed.hoverMedia}

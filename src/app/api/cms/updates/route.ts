@@ -1,18 +1,5 @@
 import { NextResponse } from 'next/server'
-
-interface UpdateItem {
-  id: string
-  type: 'announcement' | 'blog-post'
-  title: string
-  excerpt?: string
-  image?: string
-  date?: string
-  eventDate?: string
-  location?: string
-  announcementType?: string
-  isPinned?: boolean
-  externalLink?: string
-}
+import type { UpdateItem } from '@/constants/content'
 
 export async function GET(request: Request) {
   try {

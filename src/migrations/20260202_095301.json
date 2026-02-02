@@ -6114,19 +6114,22 @@
           "name": "primary_color",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "'#3b82f6'"
         },
-        "secondary_color": {
-          "name": "secondary_color",
+        "phone_screen_color": {
+          "name": "phone_screen_color",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "'#ffffff'"
         },
-        "accent_color": {
-          "name": "accent_color",
+        "page_surface_color": {
+          "name": "page_surface_color",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "'#ffffff'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -6537,6 +6540,7 @@
         "main-character",
         "landing-left",
         "landing-bottom-right",
+        "landing-bg",
         "page-artworks",
         "page-discography",
         "page-about",
@@ -6557,6 +6561,7 @@
       "values": [
         "main-character",
         "landing-left",
+        "landing-bg",
         "landing-bottom-right",
         "page-artworks",
         "page-discography",
@@ -6585,6 +6590,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "5b838595-7b42-48d1-978c-7c5f62249e70",
+  "id": "0ccf98cc-1bbc-4e0c-85d9-1a3eb4d9a855",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

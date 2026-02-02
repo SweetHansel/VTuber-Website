@@ -24,7 +24,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const variants = {
       primary:
-        'bg-[var(--primary)] text-white hover:brightness-110 active:brightness-90',
+        'bg-primary text-white hover:brightness-110 active:brightness-90',
       secondary:
         'bg-white/10 text-white hover:bg-white/20 active:bg-white/30',
       ghost: 'text-white/70 hover:bg-white/10 hover:text-white active:bg-white/20',
@@ -41,7 +41,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          'inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] disabled:pointer-events-none disabled:opacity-50',
+          'inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50',
           variants[variant],
           sizes[size],
           className

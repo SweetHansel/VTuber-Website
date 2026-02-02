@@ -17,7 +17,7 @@ interface MainLayoutProps {
   children?: React.ReactNode;
 }
 
-export function MainLayout({ children: _children }: MainLayoutProps) {
+export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
   const { focusState, setFocus } = useLayoutStore();
   const config = layoutConfig[focusState];
 
@@ -30,6 +30,13 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
   return (
     <div className="relative h-screen w-full overflow-hidden bg-white">
       {/* Main Layout Container */}
+
+      <InteractiveMediaFromCMS
+        showEmpty
+        location="landing-bg"
+        className="h-full w-full absolute bottom-0"
+        imageClass="object-cover"
+      />
       <AspectLock
         aspectRatio={16 / 9}
         anchorX="center"
@@ -72,7 +79,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
                   className="h-full w-full object-contain absolute bottom-0"
                 />
                 <div
-                  className="bg-[var(--bg-primary)] absolute top-[5%] left-[5%] h-[70%] w-[90%]"
+                  className="absolute top-[5%] left-[5%] h-[70%] w-[90%]"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <UpdatesPage />
@@ -96,7 +103,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
           >
             {/* Top Right */}
             <motion.div
-              className="relative w-full"
+              className="relative w-full z-10"
               initial={false}
               animate={{
                 height: `${topRightHeight}%`,
@@ -112,12 +119,8 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
               >
                 <InteractiveMediaFromCMS
                   location="main-character"
-                  className="absolute h-[120%] w-[120%] left-[20%] top-0"
+                  className="absolute h-full w-full left-[20%] top-0"
                 />
-                {/* <div
-                  className="absolute h-full w-full left-[30%] bg-[var(--bg-surface)]/80 backdrop-blur-lg -z-10"
-                  onClick={(e) => e.stopPropagation()}
-                /> */}
               </AspectLock>
             </motion.div>
 

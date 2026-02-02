@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 import { SongCard, type SongCardProps } from './SongCard'
-import { useMusicTracks, type MusicTrack } from '@/hooks/useCMS'
+import { useMusicTracks, type MusicTrack, getMedia, nullToUndefined } from '@/hooks/useCMS'
 import { useAudioStore, type Track } from '@/stores/audioStore'
 
 interface SongGridProps {
@@ -12,15 +12,20 @@ interface SongGridProps {
 }
 
 function transformTrack(track: MusicTrack): SongCardProps {
+  const coverArt = getMedia(track.coverArt)
+  const audioFile = getMedia(track.audioFile)
   return {
-    id: track.id,
+    id: String(track.id),
     title: track.title,
     trackType: track.trackType,
-    coverArt: track.coverArt?.url || '/placeholder-cover-1.jpg',
-    audioUrl: track.audioFile?.url,
-    duration: track.duration,
-    originalArtist: track.originalArtist,
-    streamingLinks: track.streamingLinks,
+    coverArt: coverArt?.url || '/placeholder-cover-1.jpg',
+    audioUrl: audioFile?.url ?? undefined,
+    duration: track.duration ?? undefined,
+    originalArtist: track.originalArtist ?? undefined,
+    streamingLinks: track.streamingLinks?.map(link => ({
+      platform: link.platform,
+      url: link.url,
+    })),
   }
 }
 

@@ -1,22 +1,21 @@
-'use client'
+"use client";
 
-import { motion } from 'framer-motion'
-import Image from 'next/image'
-import { useAudioStore, type Track } from '@/stores/audioStore'
-import { useModalStore } from '@/stores/modalStore'
-import { cn } from '@/lib/utils'
-import { formatDuration } from '@/lib/utils'
-import { Play, Pause, Music, ExternalLink } from 'lucide-react'
+import { motion } from "framer-motion";
+import Image from "next/image";
+import { useAudioStore, type Track } from "@/stores/audioStore";
+import { useModalStore } from "@/stores/modalStore";
+import { cn, formatDuration } from "@/lib/utils";
+import { Play, Pause, Music, ExternalLink } from "lucide-react";
 
 export interface SongCardProps {
-  id: string
-  title: string
-  trackType: 'cover' | 'original' | 'remix' | 'karaoke' | 'other'
-  coverArt: string
-  audioUrl?: string
-  duration?: number
-  originalArtist?: string
-  streamingLinks?: { platform: string; url: string }[]
+  id: string;
+  title: string;
+  trackType: "cover" | "original" | "remix" | "karaoke" | "other";
+  coverArt: string;
+  audioUrl?: string;
+  duration?: number;
+  originalArtist?: string;
+  streamingLinks?: { platform: string; url: string }[];
 }
 
 export function SongCard({
@@ -29,19 +28,19 @@ export function SongCard({
   originalArtist,
   streamingLinks,
 }: SongCardProps) {
-  const { currentTrack, isPlaying, setTrack, play, pause } = useAudioStore()
-  const openModal = useModalStore((state) => state.openModal)
+  const { currentTrack, isPlaying, setTrack, play, pause } = useAudioStore();
+  const openModal = useModalStore((state) => state.openModal);
 
-  const isCurrentTrack = currentTrack?.id === id
-  const isCurrentlyPlaying = isCurrentTrack && isPlaying
+  const isCurrentTrack = currentTrack?.id === id;
+  const isCurrentlyPlaying = isCurrentTrack && isPlaying;
 
   const handlePlayClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
+    e.stopPropagation();
 
-    if (!audioUrl) return
+    if (!audioUrl) return;
 
     if (isCurrentTrack) {
-      isPlaying ? pause() : play()
+      isPlaying ? pause() : play();
     } else {
       const track: Track = {
         id,
@@ -50,14 +49,14 @@ export function SongCard({
         audioUrl,
         duration: duration || 0,
         artist: originalArtist,
-      }
-      setTrack(track)
-      play()
+      };
+      setTrack(track);
+      play();
     }
-  }
+  };
 
   const handleCardClick = () => {
-    openModal('song', id, {
+    openModal("song", id, {
       title,
       trackType,
       coverArt,
@@ -65,21 +64,23 @@ export function SongCard({
       duration,
       originalArtist,
       streamingLinks,
-    })
-  }
+    });
+  };
 
   return (
     <motion.div
       onClick={handleCardClick}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      className={cn(
-        'group cursor-pointer overflow-hidden rounded-xl bg-white/5 transition-colors hover:bg-white/10',
-        isCurrentTrack && 'ring-2 ring-[var(--primary)]'
-      )}
+      className="group cursor-pointer overflow-hidden"
     >
       {/* Cover Art */}
-      <div className="relative aspect-square overflow-hidden">
+      <div
+        className={cn(
+          "relative aspect-square overflow-hidden",
+          isCurrentTrack && "ring-2 ring-primary",
+        )}
+      >
         <Image
           src={coverArt}
           alt={title}
@@ -111,14 +112,14 @@ export function SongCard({
         <div className="absolute left-2 top-2">
           <span
             className={cn(
-              'rounded-full px-2 py-0.5 text-xs font-medium capitalize',
-              trackType === 'original'
-                ? 'bg-green-500/80 text-white'
-                : trackType === 'cover' || trackType === 'karaoke'
-                ? 'bg-blue-500/80 text-white'
-                : trackType === 'remix'
-                ? 'bg-purple-500/80 text-white'
-                : 'bg-gray-500/80 text-white'
+              "rounded-full px-2 py-0.5 text-xs font-medium capitalize",
+              trackType === "original"
+                ? "bg-green-500/80 text-white"
+                : trackType === "cover" || trackType === "karaoke"
+                  ? "bg-blue-500/80 text-white"
+                  : trackType === "remix"
+                    ? "bg-purple-500/80 text-white"
+                    : "bg-gray-500/80 text-white",
             )}
           >
             {trackType}
@@ -132,7 +133,7 @@ export function SongCard({
               {[1, 2, 3].map((bar) => (
                 <motion.span
                   key={bar}
-                  className="w-1 rounded-full bg-[var(--primary)]"
+                  className="w-1 rounded-full bg-primary"
                   animate={{
                     height: [4, 12, 4],
                   }}
@@ -181,5 +182,5 @@ export function SongCard({
         )}
       </div>
     </motion.div>
-  )
+  );
 }

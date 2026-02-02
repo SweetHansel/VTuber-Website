@@ -19,6 +19,7 @@ export interface CursorEffect {
 
 interface InteractiveMediaProps {
   className?: string
+  imageClass?: string
   depth?: number
 
   // Media states
@@ -45,6 +46,7 @@ interface CursorSpawn {
 
 export function InteractiveMedia({
   className,
+  imageClass,
   depth = -20,
   defaultMedia,
   hoverMedia,
@@ -153,7 +155,7 @@ export function InteractiveMedia({
             src={currentMedia.src}
             alt={currentMedia.alt || 'Interactive media'}
             fill
-            className="object-contain"
+            className={imageClass??"object-contain"}
             unoptimized // Allow GIFs to animate
           />
 

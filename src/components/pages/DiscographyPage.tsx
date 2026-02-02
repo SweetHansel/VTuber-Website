@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+// import { useState } from "react";
 import { motion, useTransform } from "framer-motion";
 import { SongGrid } from "@/components/discography/SongGrid";
 import { InteractiveMediaFromCMS } from "@/components/layout/InteractiveMediaFromCMS";
 import { staggerContainerVariants, staggerItemVariants } from "@/animations";
-import { cn } from "@/lib/utils";
+// import { cn } from "@/lib/utils";
 import type { LRProps, PageContent } from "@/components/layout/BookLayout";
 
 type MusicFilter = "all" | "covers" | "originals";
@@ -16,12 +16,15 @@ const filters: { label: string; value: MusicFilter }[] = [
   { label: "Originals", value: "originals" },
 ];
 
-function DiscographyRight({ index }: LRProps) {
+function DiscographyRight({ index }: Readonly<LRProps>) {
   const width = useTransform(index, (v) => {
     return (v <= 0.5 ? (1 + v * 2) * 100 : (3 - v * 2) * 100) + "%";
   });
   return (
-    <motion.div className="absolute h-full w-full" style={{ width }}>
+    <motion.div
+      className="absolute h-full w-full right-0 pointer-events-none"
+      style={{ width }}
+    >
       <InteractiveMediaFromCMS
         location="page-discography"
         className="absolute h-full w-full"
@@ -32,47 +35,32 @@ function DiscographyRight({ index }: LRProps) {
 }
 
 function DiscographyLeft() {
-  const [filter, setFilter] = useState<MusicFilter>("all");
+  // const [filter, setFilter] = useState<MusicFilter>("all");
 
   return (
     <motion.div
       variants={staggerContainerVariants}
       initial="initial"
       animate="enter"
-      className="flex h-full w-full flex-col p-6"
+      className="flex h-full w-full flex-col p-4 gap-2"
     >
-      {/* Header */}
+      <div className="p-2 bg-(--primary)/90">
+        <h1 className="text-base text-white">Cover</h1>
+      </div>
       <motion.div
         variants={staggerItemVariants}
-        className="mb-4 flex items-center justify-between"
+        className="flex-1 overflow-y-auto bg-(--primary)/90 p-2"
       >
-        <h1 className="text-2xl font-bold text-white">Discography</h1>
-
-        {/* Filters */}
-        <div className="flex gap-1 rounded-lg bg-white/5 p-1">
-          {filters.map(({ label, value }) => (
-            <button
-              key={value}
-              onClick={() => setFilter(value)}
-              className={cn(
-                "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-                filter === value
-                  ? "bg-white/20 text-white"
-                  : "text-white/60 hover:text-white",
-              )}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+        <SongGrid filter={filters[1].value} />
       </motion.div>
-
-      {/* Song Grid */}
+      <div className="p-2 bg-(--primary)/90">
+        <h1 className="text-base text-white">Originals</h1>
+      </div>
       <motion.div
         variants={staggerItemVariants}
-        className="flex-1 overflow-y-auto"
+        className="flex-1 overflow-y-auto bg-(--primary)/90 p-2"
       >
-        <SongGrid filter={filter} />
+        <SongGrid filter={filters[2].value} />
       </motion.div>
     </motion.div>
   );

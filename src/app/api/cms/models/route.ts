@@ -1,9 +1,5 @@
 import { NextResponse } from 'next/server'
-
-// 2D model types
-const MODEL_2D_TYPES = ['live2d', 'pngtuber', '2d-other']
-// 3D model types
-const MODEL_3D_TYPES = ['vrm', 'mmd', 'fbx', '3d-other']
+import { MODEL_2D_TYPES, MODEL_3D_TYPES } from '@/constants/models'
 
 export async function GET(request: Request) {
   try {

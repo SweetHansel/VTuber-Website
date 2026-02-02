@@ -18,7 +18,7 @@ const filters: { label: string; value: ArtworkFilter }[] = [
 
 function ArtworksLeft({ index }: LRProps) {
   const width = useTransform(index, (v) => {
-    return (v <= 0.5 ? (1 + v) *2/1.5* 100 : (2 - v) *2/1.5* 100) + "%";
+    return (v <= 0.5 ? (1 + v) * 100 : (2 - v) * 100) + "%";
   });
 
   return (
@@ -33,7 +33,7 @@ function ArtworksLeft({ index }: LRProps) {
 }
 
 function ArtworksRight({ index }: LRProps) {
-  const [filter, setFilter] = useState<ArtworkFilter>("all");
+  // const [filter, setFilter] = useState<ArtworkFilter>("all");
 
   const width = useTransform(index, (v) => {
     return (v <= 0.5 ? (1 + v) * 100 : (2 - v) * 100) + "%";
@@ -48,11 +48,11 @@ function ArtworksRight({ index }: LRProps) {
       style={{ width }}
     >
       {/* Header */}
-      <motion.div
+      {/* <motion.div
         variants={staggerItemVariants}
         className="mb-4 flex items-center justify-between"
       >
-        {/* Filters */}
+        Filters
         <div className="flex gap-1 rounded-lg bg-white/5 p-1">
           {filters.map(({ label, value }) => (
             <button
@@ -69,10 +69,10 @@ function ArtworksRight({ index }: LRProps) {
             </button>
           ))}
         </div>
-      </motion.div>
+      </motion.div> */}
 
       {/* Gallery */}
-      <MasonryGallery filter={filter} />
+      <MasonryGallery filter={"all"} />
     </motion.div>
   );
 }

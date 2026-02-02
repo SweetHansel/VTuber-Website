@@ -1,15 +1,5 @@
 import { NextResponse } from 'next/server'
-
-interface LiveStream {
-  channelId: string
-  channelName: string
-  platform: 'twitch' | 'youtube'
-  streamUrl: string
-  title: string
-  thumbnail?: string
-  viewerCount?: number
-  priority: number
-}
+import type { LiveStream } from '@/constants/livestream'
 
 interface Social {
   id: number
@@ -116,6 +106,7 @@ export async function GET() {
         streamUrl: override.streamUrl || '',
         title: override.streamTitle || 'Live Now!',
         thumbnail: override.thumbnail?.url,
+        isOwner: true,
         priority: 999,
       })
     }
@@ -215,6 +206,7 @@ async function checkTwitchStreams(socials: Social[]): Promise<LiveStream[]> {
         .replace('{width}', '440')
         .replace('{height}', '248') || undefined,
       viewerCount: Number(stream.viewer_count) || 0,
+      isOwner: true,
       priority: index + 1,
     }
   })
@@ -267,6 +259,7 @@ async function checkYouTubeStreams(socials: Social[]): Promise<LiveStream[]> {
           streamUrl: `https://youtube.com/watch?v=${liveVideo.id.videoId}`,
           title: liveVideo.snippet.title,
           thumbnail: liveVideo.snippet.thumbnails?.high?.url,
+          isOwner: true,
           priority: streams.length + 1,
         })
       }

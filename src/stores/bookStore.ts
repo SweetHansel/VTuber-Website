@@ -1,14 +1,9 @@
 import { create } from "zustand";
+import { BOOK_SECTIONS, type BookSection } from "@/constants/sections";
 
-export const sections = [
-  "toc",
-  "about",
-  "artworks",
-  "discography",
-  "vtuber-models",
-] as const;
-
-export type Section = (typeof sections)[number];
+// Re-export for backwards compatibility
+export const sections = BOOK_SECTIONS;
+export type Section = BookSection;
 
 interface BookState {
   index: number;

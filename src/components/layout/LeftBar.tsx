@@ -1,7 +1,7 @@
 "use client";
 
 import { Twitter, Youtube, Twitch, MessageCircle, Instagram, LucideIcon, ExternalLink, Loader2 } from "lucide-react";
-import { useProfile, Social } from "@/hooks/useCMS";
+import { useProfile, getPerson, type Social } from "@/hooks/useCMS";
 
 // Platform to icon mapping
 const platformIcons: Record<string, LucideIcon> = {
@@ -28,7 +28,9 @@ export function LeftBar() {
   const { data: profile, loading, error } = useProfile();
 
   // Get social links from profile.person.socials
-  const socials: Social[] = profile?.person?.socials || [];
+  const person = getPerson(profile?.person);
+  // Filter out unpopulated social IDs (numbers) and keep only populated Social objects
+  const socials: Social[] = (person?.socials || []).filter((s): s is Social => typeof s !== 'number');
 
   const socialLinks: SocialLink[] = socials.map((social) => ({
     name: social.name,

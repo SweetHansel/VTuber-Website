@@ -1,10 +1,88 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { CACHE_DURATION_MS } from '@/constants/config'
+
+// Import types from payload-types.ts (single source of truth)
+import type {
+  Tag,
+  Social,
+  Person,
+  Model,
+  MusicTrack,
+  Album,
+  Artwork,
+  Announcement,
+  BlogPost,
+  Video,
+  Media,
+  InteractiveMedia,
+  Profile,
+  Theme,
+  SiteSetting,
+  LivestreamSetting,
+} from '@/payload-types'
+
+// Re-export types for consumers
+export type {
+  Tag,
+  Social,
+  Person,
+  Model,
+  MusicTrack,
+  Album,
+  Artwork,
+  Announcement,
+  BlogPost,
+  Video,
+  Media,
+  InteractiveMedia,
+  Profile,
+  Theme,
+  SiteSetting,
+  LivestreamSetting,
+}
+
+// ============================================
+// Type Helpers for Payload Union Types
+// ============================================
+// Payload generates union types like `number | Media` for relations.
+// When fetching with depth > 0, we get objects, but TypeScript doesn't know that.
+
+/**
+ * Extract Media object from Payload union type
+ * Returns undefined if the value is a number (unpopulated ID) or null/undefined
+ */
+export function getMedia(media: number | Media | null | undefined): Media | undefined {
+  if (!media || typeof media === 'number') return undefined
+  return media
+}
+
+/**
+ * Extract Person object from Payload union type
+ */
+export function getPerson(person: number | Person | null | undefined): Person | undefined {
+  if (!person || typeof person === 'number') return undefined
+  return person
+}
+
+/**
+ * Extract Model object from Payload union type
+ */
+export function getModel(model: number | Model | null | undefined): Model | null {
+  if (!model || typeof model === 'number') return null
+  return model
+}
+
+/**
+ * Convert null to undefined (Payload uses null, but many React patterns prefer undefined)
+ */
+export function nullToUndefined<T>(value: T | null | undefined): T | undefined {
+  return value ?? undefined
+}
 
 // Generic fetch hook with caching
 const cache = new Map<string, { data: unknown; timestamp: number }>()
-const CACHE_DURATION = 60000 // 1 minute
 
 interface UseFetchResult<T> {
   data: T | null
@@ -23,7 +101,7 @@ function useFetch<T>(url: string, options?: { skip?: boolean }): UseFetchResult<
 
     // Check cache
     const cached = cache.get(url)
-    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION_MS) {
       setData(cached.data as T)
       setLoading(false)
       return
@@ -58,132 +136,18 @@ function useFetch<T>(url: string, options?: { skip?: boolean }): UseFetchResult<
   return { data, loading, error, refetch: fetchData }
 }
 
-// Social interface (from Socials collection)
-export interface Social {
-  id: string
-  name: string
-  platform: 'twitter' | 'bluesky' | 'youtube' | 'twitch' | 'instagram' | 'tiktok' | 'pixiv' | 'vgen' | 'website' | 'other'
-  url: string
-  avatar?: { url?: string }
+// Types are already imported and re-exported at the top of this file
+
+// ============================================
+// Collection Hooks
+// ============================================
+
+export function useTags() {
+  return useFetch<Tag[]>('/api/cms/tags')
 }
 
-// Person interface (from People collection)
-export interface Person {
-  id: string
-  name: string
-  roles?: string
-  avatar?: { url?: string }
-  bio?: string
-  socials?: Social[]
-}
-
-// Profile hook
-export interface ProfileData {
-  name?: string
-  alternateName?: string
-  tagline?: string
-  shortBio?: string
-  debutDate?: string
-  birthday?: string
-  height?: string
-  traits?: Array<{
-    category: string
-    icon?: string
-    color?: string
-    items?: Array<{ value: string }>
-  }>
-  hashtags?: Array<{
-    label: string
-    value: string
-  }>
-  person?: Person
-  currentModel?: Model
-}
-
-export function useProfile() {
-  return useFetch<ProfileData>('/api/cms/profile')
-}
-
-// Music tracks hook
-export interface MusicTrack {
-  id: string
-  title: string
-  trackType: 'cover' | 'original' | 'remix' | 'karaoke' | 'other'
-  coverArt?: { url?: string }
-  audioFile?: { url?: string }
-  duration?: number
-  originalArtist?: string
-  streamingLinks?: Array<{
-    platform: string
-    url: string
-  }>
-  releaseDate?: string
-}
-
-export function useMusicTracks(filter?: 'all' | 'covers' | 'originals') {
-  const queryParam = filter && filter !== 'all' ? `?type=${filter}` : ''
-  return useFetch<MusicTrack[]>(`/api/cms/music-tracks${queryParam}`)
-}
-
-// Artworks hook
-export interface Artwork {
-  id: string
-  title?: string
-  image?: { url?: string; width?: number; height?: number }
-  artworkType: 'fanart' | 'official' | 'commissioned' | 'other'
-  credits?: Array<{
-    role: string
-    person?: { name?: string }
-    name?: string
-  }>
-  sourceUrl?: string
-  isFeatured?: boolean
-}
-
-export function useArtworks(filter?: 'all' | 'fanart' | 'official' | 'meme') {
-  const queryParam = filter && filter !== 'all' ? `?type=${filter}` : ''
-  return useFetch<Artwork[]>(`/api/cms/artworks${queryParam}`)
-}
-
-// Updates hook (announcements + blog posts)
-export interface UpdateItem {
-  id: string
-  type: 'announcement' | 'blog-post'
-  title: string
-  excerpt?: string
-  image?: string
-  date?: string
-  eventDate?: string
-  location?: string
-  announcementType?: string
-  isPinned?: boolean
-  externalLink?: string
-}
-
-export function useUpdates(filter?: 'all' | 'announcements' | 'blogs') {
-  const queryParam = filter && filter !== 'all' ? `?filter=${filter}` : ''
-  return useFetch<UpdateItem[]>(`/api/cms/updates${queryParam}`)
-}
-
-// Models hook
-export interface Model {
-  id: string
-  name: string
-  version?: string
-  modelType: 'live2d' | 'pngtuber' | '2d-other' | 'vrm' | 'mmd' | 'fbx' | '3d-other'
-  showcase?: Array<{
-    media?: { url?: string }
-    caption?: string
-    isFeatured?: boolean
-  }>
-  isActive?: boolean
-  debutDate?: string
-  technicalSpecs?: {
-    polyCount?: number
-    textureResolution?: string
-    blendshapes?: number
-    boneCount?: number
-  }
+export function usePeople() {
+  return useFetch<Person[]>('/api/cms/people')
 }
 
 export function useModels(type?: '2d' | '3d') {
@@ -191,69 +155,70 @@ export function useModels(type?: '2d' | '3d') {
   return useFetch<Model[]>(`/api/cms/models${queryParam}`)
 }
 
-// Interactive media hook
-export interface InteractiveMediaData {
-  id: string
-  name: string
-  location: string
-  defaultState: {
-    media?: { url?: string }
-    alt?: string
-    sound?: { url?: string }
-  }
-  hoverState?: {
-    enabled?: boolean
-    media?: { url?: string }
-    alt?: string
-    sound?: { url?: string }
-  }
-  clickState?: {
-    enabled?: boolean
-    media?: { url?: string }
-    alt?: string
-    sound?: { url?: string }
-  }
-  cursorEffect?: {
-    enabled?: boolean
-    media?: { url?: string }
-    duration?: number
-    size?: number
-  }
-  depth?: number
+export function useMusicTracks(filter?: 'all' | 'covers' | 'originals') {
+  const queryParam = filter && filter !== 'all' ? `?type=${filter}` : ''
+  return useFetch<MusicTrack[]>(`/api/cms/music-tracks${queryParam}`)
+}
+
+export function useAlbums() {
+  return useFetch<Album[]>('/api/cms/albums')
+}
+
+export function useArtworks(filter?: 'all' | 'fanart' | 'official' | 'commissioned') {
+  const queryParam = filter && filter !== 'all' ? `?type=${filter}` : ''
+  return useFetch<Artwork[]>(`/api/cms/artworks${queryParam}`)
+}
+
+export function useAnnouncements() {
+  return useFetch<Announcement[]>('/api/cms/announcements')
+}
+
+export function useBlogPosts(status?: 'all' | 'published' | 'draft') {
+  const queryParam = status && status !== 'all' ? `?status=${status}` : ''
+  return useFetch<BlogPost[]>(`/api/cms/blog-posts${queryParam}`)
+}
+
+export function useVideos(type?: 'all' | 'music-video' | 'stream-archive' | 'clip' | 'short') {
+  const queryParam = type && type !== 'all' ? `?type=${type}` : ''
+  return useFetch<Video[]>(`/api/cms/videos${queryParam}`)
 }
 
 export function useInteractiveMedia(location?: string) {
   const url = location
     ? `/api/cms/interactive-media?location=${encodeURIComponent(location)}`
     : '/api/cms/interactive-media'
-  return useFetch<InteractiveMediaData | InteractiveMediaData[]>(url, { skip: !location && false })
+  return useFetch<InteractiveMedia | InteractiveMedia[]>(url, { skip: !location && false })
 }
 
-// Themes hook
-export interface ThemesData {
-  // Base colors
-  backgroundColor?: string
-  foregroundColor?: string
-  // Brand colors
-  primaryColor?: string
-  primaryHoverColor?: string
-  secondaryColor?: string
-  accentColor?: string
-  // Surface colors
-  bgPrimaryColor?: string
-  bgSurfaceColor?: string
-  // Interactive media slots
-  interactiveMedia?: Array<{
-    slot: string
-    configuration?: InteractiveMediaData
-  }>
+// ============================================
+// Global Hooks
+// ============================================
+
+export function useProfile() {
+  return useFetch<Profile>('/api/cms/profile')
 }
 
 export function useThemes() {
-  return useFetch<ThemesData>('/api/cms/themes')
+  return useFetch<Theme>('/api/cms/themes')
 }
 
-// Helper to clear cache (useful for admin refresh)
+// ============================================
+// Combined/Transformed Types (for API endpoints that transform data)
+// ============================================
+
+// Re-export UpdateItem from constants (single source of truth)
+export type { UpdateItem } from '@/constants/content'
+import type { UpdateItem } from '@/constants/content'
+
+export function useUpdates(filter?: 'all' | 'announcements' | 'blogs') {
+  const queryParam = filter && filter !== 'all' ? `?filter=${filter}` : ''
+  return useFetch<UpdateItem[]>(`/api/cms/updates${queryParam}`)
+}
+
+// ============================================
+// Cache Utilities
+// ============================================
+
 export function clearCMSCache() {
   cache.clear()
 }

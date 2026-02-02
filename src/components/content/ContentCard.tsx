@@ -3,31 +3,11 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useModalStore } from '@/stores/modalStore'
-import { cn } from '@/lib/utils'
-import { formatDate } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import { Calendar, MapPin, ExternalLink } from 'lucide-react'
+import { ANNOUNCEMENT_TYPE_COLORS, type ContentCardProps } from '@/constants/content'
 
-export interface ContentCardProps {
-  id: string
-  type: 'announcement' | 'blog-post'
-  title: string
-  excerpt?: string
-  image?: string
-  date?: string
-  eventDate?: string
-  location?: string
-  announcementType?: string
-  isPinned?: boolean
-  externalLink?: string
-}
-
-const typeColors: Record<string, string> = {
-  stream: 'bg-blue-500/20 text-blue-300',
-  event: 'bg-blue-500/20 text-blue-300',
-  release: 'bg-green-500/20 text-green-300',
-  collab: 'bg-pink-500/20 text-pink-300',
-  general: 'bg-gray-500/20 text-gray-300',
-}
+export type { ContentCardProps }
 
 export function ContentCard({
   id,
@@ -41,7 +21,7 @@ export function ContentCard({
   announcementType,
   isPinned,
   externalLink,
-}: ContentCardProps) {
+}: Readonly<ContentCardProps>) {
   const openModal = useModalStore((state) => state.openModal)
 
   const handleClick = () => {
@@ -60,8 +40,8 @@ export function ContentCard({
     <motion.article
       onClick={handleClick}
       className={cn(
-        'group cursor-pointer overflow-hidden rounded-xl bg-white/5 transition-colors hover:bg-white/10',
-        isPinned && 'ring-1 ring-yellow-500/30'
+        'group cursor-pointer overflow-hidden border-t border-primary',
+        // isPinned && 'ring-2 ring-yellow-500'
       )}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
@@ -90,7 +70,7 @@ export function ContentCard({
           <span
             className={cn(
               'mb-2 inline-block rounded-full px-2 py-0.5 text-xs font-medium capitalize',
-              typeColors[announcementType] || typeColors.general
+              ANNOUNCEMENT_TYPE_COLORS[announcementType] || ANNOUNCEMENT_TYPE_COLORS.general
             )}
           >
             {announcementType}

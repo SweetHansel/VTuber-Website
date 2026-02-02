@@ -13,6 +13,7 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
+import { CONTENT_SECTIONS } from "@/constants/sections";
 
 // Page content type - components receive isActive prop
 
@@ -35,19 +36,20 @@ interface PageProps {
   Page: PageContent;
 }
 
-function LeftPage({ index, pageIndex, Page }: PageProps) {
+function LeftPage({ index, pageIndex, Page }: Readonly<PageProps>) {
   const rotateY = useTransform(
     index,
     (v) => 180 - (clamp(v - pageIndex, 0.25, 0.75) - 0.25) * 2 * 180,
   );
   const innerPageTransforms = useTransform(index, (v) => {
-    return v - pageIndex < 0.5
-      ? clamp(v - pageIndex, 0, 0.25) * 2
-      : clamp(v - pageIndex, 0.75, 1) * 2 - 1;
+    return v - pageIndex -1 <= 0
+      ? clamp(v - pageIndex - 1, -0.25, 0) * 2 +0.5 
+      : clamp(v - pageIndex - 1, 0, 0.25) * 2 +0.5 ;
   });
+
   return (
     <motion.div
-      className="absolute bg-[var(--bg-primary)] w-[50%] h-full top-0 origin-bottom-right backface-hidden transform-flat"
+      className="absolute bg-(--page-surface) w-[50%] h-full top-0 origin-bottom-right backface-hidden transform-flat"
       style={{ rotateY }}
       transition={{ duration: 0.3, bounce: 0 }}
     >
@@ -56,7 +58,7 @@ function LeftPage({ index, pageIndex, Page }: PageProps) {
   );
 }
 
-function RightPage({ index, pageIndex, Page }: PageProps) {
+function RightPage({ index, pageIndex, Page }: Readonly<PageProps>) {
   const rotateY = useTransform(
     index,
     (v) => (clamp(v - pageIndex - 1, 0.25, 0.75) - 0.25) * 2 * -180,
@@ -69,7 +71,7 @@ function RightPage({ index, pageIndex, Page }: PageProps) {
 
   return (
     <motion.div
-      className="absolute bg-[var(--bg-primary)] w-[50%] h-full top-0 origin-bottom-left backface-hidden transform-flat"
+      className="absolute bg-(--page-surface) w-[50%] h-full top-0 origin-bottom-left backface-hidden transform-flat"
       style={{ rotateY, translateX: "100%" }}
       transition={{ duration: 0.3, bounce: 0 }}
     >
@@ -78,7 +80,7 @@ function RightPage({ index, pageIndex, Page }: PageProps) {
   );
 }
 
-const sections = ["about", "artworks", "discography", "vtuber-models"];
+const sections = CONTENT_SECTIONS;
 
 // Page mapping
 const pages: Record<string, PageContent> = {
@@ -208,23 +210,23 @@ export function BookLayout() {
         <button
           onClick={prevPage}
           className="absolute bottom-0 left-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
-            border-b-[60px] border-b-white/20
-            border-r-[60px] border-r-transparent
+            border-b-60 border-b-white/20
+            border-r-60 border-r-transparent
             hover:border-b-white/40 transition-colors"
           aria-label="Previous page"
         >
-          <ChevronLeft className="absolute bottom-[-50px] left-[5px] w-4 h-4 text-white/60" />
+          <ChevronLeft className="absolute bottom-50 left-5 w-4 h-4 text-white/60" />
         </button>
 
         <button
           onClick={() => setIndexAnimated(0)}
           className="absolute top-0 left-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
-            border-t-[60px] border-t-white/20
-            border-r-[60px] border-r-transparent
+            border-t-60 border-t-white/20
+            border-r-60 border-r-transparent
             hover:border-t-white/40 transition-colors"
           aria-label="ToC"
         >
-          <ListTree className="absolute top-[-50px] left-[5px] w-4 h-4 text-white/60" />
+          <ListTree className="absolute top-50 left-5 w-4 h-4 text-white/60" />
         </button>
       </motion.div>
 
@@ -235,12 +237,12 @@ export function BookLayout() {
         <button
           onClick={nextPage}
           className="absolute bottom-0 right-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
-            border-b-[60px] border-b-white/20
-            border-l-[60px] border-l-transparent
+            border-b-60 border-b-white/20
+            border-l-60 border-l-transparent
             hover:border-b-white/40 transition-colors"
           aria-label="Next page"
         >
-          <ChevronRight className="absolute bottom-[-50px] right-[5px] w-4 h-4 text-white/60" />
+          <ChevronRight className="absolute bottom-50 right-5 w-4 h-4 text-white/60" />
         </button>
       </motion.div>
     </div>

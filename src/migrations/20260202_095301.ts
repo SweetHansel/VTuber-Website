@@ -13,9 +13,9 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TYPE "public"."enum_albums_streaming_links_platform" AS ENUM('youtube', 'spotify', 'apple-music', 'bandcamp', 'other');
   CREATE TYPE "public"."enum_albums_album_type" AS ENUM('single', 'ep', 'album', 'compilation');
   CREATE TYPE "public"."enum_socials_platform" AS ENUM('twitter', 'bluesky', 'youtube', 'twitch', 'instagram', 'tiktok', 'pixiv', 'vgen', 'website', 'other');
-  CREATE TYPE "public"."enum_interactive_media_location" AS ENUM('main-character', 'landing-left', 'landing-bottom-right', 'page-artworks', 'page-discography', 'page-about', 'page-models');
+  CREATE TYPE "public"."enum_interactive_media_location" AS ENUM('main-character', 'landing-left', 'landing-bottom-right', 'landing-bg', 'page-artworks', 'page-discography', 'page-about', 'page-models');
   CREATE TYPE "public"."enum_users_role" AS ENUM('admin', 'editor');
-  CREATE TYPE "public"."enum_themes_interactive_media_slot" AS ENUM('main-character', 'landing-left', 'landing-bottom-right', 'page-artworks', 'page-discography', 'page-about', 'page-models');
+  CREATE TYPE "public"."enum_themes_interactive_media_slot" AS ENUM('main-character', 'landing-left', 'landing-bg', 'landing-bottom-right', 'page-artworks', 'page-discography', 'page-about', 'page-models');
   CREATE TYPE "public"."enum_livestream_settings_alert_position" AS ENUM('top-right', 'top-left', 'bottom-right', 'bottom-left');
   CREATE TABLE "tags" (
   	"id" serial PRIMARY KEY NOT NULL,
@@ -486,9 +486,9 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   
   CREATE TABLE "themes" (
   	"id" serial PRIMARY KEY NOT NULL,
-  	"primary_color" varchar,
-  	"secondary_color" varchar,
-  	"accent_color" varchar,
+  	"primary_color" varchar DEFAULT '#3b82f6',
+  	"phone_screen_color" varchar DEFAULT '#ffffff',
+  	"page_surface_color" varchar DEFAULT '#ffffff',
   	"updated_at" timestamp(3) with time zone,
   	"created_at" timestamp(3) with time zone
   );

@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useLivestreamStore, getPrimaryStream } from '@/stores/livestreamStore'
 import { cn } from '@/lib/utils'
 import { Radio, X, ExternalLink, Users } from 'lucide-react'
+import { POLLING_INTERVAL_MS } from '@/constants/config'
 
 export function LivestreamAlert() {
   const { streams, showAlert, dismissStream, hideAlertBanner } = useLivestreamStore()
@@ -30,8 +31,8 @@ export function LivestreamAlert() {
     // Initial check
     checkLiveStatus()
 
-    // Poll every 60 seconds
-    const interval = setInterval(checkLiveStatus, 60000)
+    // Poll at configured interval
+    const interval = setInterval(checkLiveStatus, POLLING_INTERVAL_MS)
     return () => clearInterval(interval)
   }, [])
 
@@ -51,7 +52,7 @@ export function LivestreamAlert() {
           )}
         >
           {/* Background with gradient */}
-          <div className="relative bg-gradient-to-br from-red-600 to-blue-600 p-0.5">
+          <div className="relative bg-linear-to-br from-red-600 to-blue-600 p-0.5">
             <div className="relative bg-slate-900 p-3">
               {/* Close button */}
               <button

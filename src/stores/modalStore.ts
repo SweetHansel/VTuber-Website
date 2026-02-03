@@ -6,8 +6,7 @@ export type ModalType =
   | 'announcement'
   | 'song'
   | 'video'
-  | 'live2d-model'
-  | '3d-model'
+  | 'model'
   | null
 
 interface ModalState {

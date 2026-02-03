@@ -6,18 +6,19 @@ import { X } from "lucide-react";
 import { SongSeekbar } from "@/components/audio/SongSeekbar";
 import { LivestreamAlert } from "@/components/ui/LivestreamAlert";
 import { Modal } from "@/components/content/Modal";
-import { UpdatesPage } from "@/components/pages/UpdatesPage";
+import { UpdatesScreen } from "@/components/phone/UpdatesScreen";
 import { LeftBar } from "./LeftBar";
-import { InteractiveMediaFromCMS } from "./InteractiveMediaFromCMS";
+import { InteractiveMediaFromCMS } from "@/components/media";
 import { AspectLock } from "./AspectLock";
 import { BookLayout } from "./BookLayout";
 import { cn } from "@/lib/utils";
+import { PhoneLayout } from "./PhoneLayout";
 
 interface MainLayoutProps {
   children?: React.ReactNode;
 }
 
-export function MainLayout({ children: _children }: MainLayoutProps) {
+export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
   const { focusState, setFocus } = useLayoutStore();
   const config = layoutConfig[focusState];
 
@@ -28,8 +29,15 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
   const topRightHeight = 100 - config.B;
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div className="relative h-screen w-full overflow-hidden bg-(--modal-bg)">
       {/* Main Layout Container */}
+
+      <InteractiveMediaFromCMS
+        showEmpty
+        location="landing-bg"
+        className="h-full w-full absolute bottom-0"
+        imageClass="object-cover"
+      />
       <AspectLock
         aspectRatio={16 / 9}
         anchorX="center"
@@ -42,7 +50,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
         >
           {/* Left Section */}
           <motion.div
-            className="relative h-full overflow-visible z-30"
+            className="relative h-full z-30"
             initial={false}
             animate={{
               width: `${leftWidth}%`,
@@ -50,37 +58,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
             }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <AspectLock
-              aspectRatio={1 / 2}
-              anchorX="right"
-              anchorY="bottom"
-              className="absolute perspective-1000"
-            >
-              <div
-                className={cn(
-                  "h-full w-full overflow-hidden z-10",
-                  focusState == "default"
-                    ? "transform-3d  rotate-x-11 rotate-z-5"
-                    : "",
-                )}
-                onClick={(e) => {
-                  if (focusState == "default") setFocus("left");
-                  e.stopPropagation();
-                }}
-              >
-                <InteractiveMediaFromCMS
-                  showEmpty
-                  location="landing-left"
-                  className="h-full w-full object-contain absolute bottom-0"
-                />
-                <div
-                  className="bg-blue-900 absolute top-[5%] left-[5%] h-[70%] w-[90%]"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <UpdatesPage />
-                </div>
-              </div>
-            </AspectLock>
+            <PhoneLayout/>
           </motion.div>
 
           {/* Global Audio Player */}
@@ -98,7 +76,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
           >
             {/* Top Right */}
             <motion.div
-              className="relative w-full overflow-visible"
+              className="relative w-full z-10"
               initial={false}
               animate={{
                 height: `${topRightHeight}%`,
@@ -114,18 +92,14 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
               >
                 <InteractiveMediaFromCMS
                   location="main-character"
-                  className="absolute h-[120%] w-[120%] left-[20%] top-0"
-                />
-                <div
-                  className="absolute h-full w-full left-[30%]  bg-blue-950/80 backdrop-blur-lg -z-10"
-                  onClick={(e) => e.stopPropagation()}
+                  className="absolute h-full w-full left-[20%] top-0"
                 />
               </AspectLock>
             </motion.div>
 
             {/* Bottom Right - Main Content */}
             <motion.div
-              className="relative w-full overflow-visible"
+              className="relative w-full"
               initial={false}
               animate={{
                 height: `${bottomRightHeight}%`,
@@ -133,34 +107,7 @@ export function MainLayout({ children: _children }: MainLayoutProps) {
               }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <AspectLock
-                aspectRatio={16 / 9}
-                anchorX="left"
-                anchorY="top"
-                className="absolute perspective-1000"
-              >
-                <div
-                  className={cn(
-                    "h-full w-full",
-                    focusState == "default"
-                      ? "transform-3d  rotate-x-12 -rotate-z-5 -translate-z-1"
-                      : "",
-                  )}
-                  onClick={(e) => {
-                    if (focusState == "default") setFocus("bottom-right");
-                    e.stopPropagation();
-                  }}
-                >
-                  <InteractiveMediaFromCMS
-                    showEmpty
-                    location="landing-bottom-right"
-                    className="h-[105%] w-[105%] top-[-2.5%] left-[-5%] object-contain absolute bottom-0"
-                  />
-                  <div className="absolute h-[95%] w-[95%] top-[2.5%] left-0 ">
-                    <BookLayout />
-                  </div>
-                </div>
-              </AspectLock>
+              <BookLayout/>
             </motion.div>
           </motion.div>
         </main>

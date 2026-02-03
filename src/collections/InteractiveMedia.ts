@@ -77,11 +77,21 @@ export const InteractiveMedia: CollectionConfig = {
     },
     {
       name: 'location',
-      type: 'text',
+      type: 'select',
       required: true,
       unique: true,
+      options: [
+        { label: 'Main Character', value: 'main-character' },
+        { label: 'Landing - Left', value: 'landing-left' },
+        { label: 'Landing - Bottom Right', value: 'landing-bottom-right' },
+        { label: 'Landing - Background', value: 'landing-bg' },
+        { label: 'Page - Artworks', value: 'page-artworks' },
+        { label: 'Page - Discography', value: 'page-discography' },
+        { label: 'Page - About', value: 'page-about' },
+        { label: 'Page - Models', value: 'page-models' },
+      ],
       admin: {
-        description: 'Unique lookup key (e.g., "main-character", "page-artworks-left")',
+        description: 'Which layout slot this media appears in',
       },
     },
     // Default state (required)

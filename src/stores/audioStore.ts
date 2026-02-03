@@ -17,6 +17,7 @@ interface AudioState {
   duration: number
   queue: Track[]
   queueIndex: number
+  isExpanded: boolean
 
   // Actions
   setTrack: (track: Track) => void
@@ -32,6 +33,8 @@ interface AudioState {
   playNext: () => void
   playPrevious: () => void
   playTrackAt: (index: number) => void
+  setExpanded: (expanded: boolean) => void
+  collapse: () => void
 }
 
 export const useAudioStore = create<AudioState>((set, get) => ({
@@ -42,33 +45,36 @@ export const useAudioStore = create<AudioState>((set, get) => ({
   duration: 0,
   queue: [],
   queueIndex: -1,
+  isExpanded: false,
 
   setTrack: (track) => {
     const { queue } = get()
     const existingIndex = queue.findIndex(t => t.id === track.id)
 
     if (existingIndex >= 0) {
-      set({ currentTrack: track, queueIndex: existingIndex, playbackPosition: 0 })
+      set({ currentTrack: track, queueIndex: existingIndex, playbackPosition: 0, isExpanded: true })
     } else {
       set({
         currentTrack: track,
         queue: [...queue, track],
         queueIndex: queue.length,
-        playbackPosition: 0
+        playbackPosition: 0,
+        isExpanded: true,
       })
     }
   },
 
-  play: () => set({ isPlaying: true }),
+  play: () => set({ isPlaying: true, isExpanded: true }),
   pause: () => set({ isPlaying: false }),
-  togglePlay: () => set((state) => ({ isPlaying: !state.isPlaying })),
+  togglePlay: () => set((state) => ({ isPlaying: !state.isPlaying, isExpanded: true })),
 
   setVolume: (volume) => set({ volume: Math.max(0, Math.min(1, volume)) }),
   setPlaybackPosition: (position) => set({ playbackPosition: position }),
   setDuration: (duration) => set({ duration }),
 
   addToQueue: (track) => set((state) => ({
-    queue: [...state.queue, track]
+    queue: [...state.queue, track],
+    isExpanded: true,
   })),
 
   removeFromQueue: (index) => set((state) => {
@@ -80,7 +86,7 @@ export const useAudioStore = create<AudioState>((set, get) => ({
     }
   }),
 
-  clearQueue: () => set({ queue: [], queueIndex: -1, currentTrack: null }),
+  clearQueue: () => set({ queue: [], queueIndex: -1, currentTrack: null, isExpanded: false }),
 
   playNext: () => {
     const { queue, queueIndex } = get()
@@ -90,7 +96,8 @@ export const useAudioStore = create<AudioState>((set, get) => ({
         currentTrack: nextTrack,
         queueIndex: queueIndex + 1,
         playbackPosition: 0,
-        isPlaying: true
+        isPlaying: true,
+        isExpanded: true,
       })
     }
   },
@@ -98,14 +105,15 @@ export const useAudioStore = create<AudioState>((set, get) => ({
   playPrevious: () => {
     const { queue, queueIndex, playbackPosition } = get()
     if (playbackPosition > 3) {
-      set({ playbackPosition: 0 })
+      set({ playbackPosition: 0, isExpanded: true })
     } else if (queueIndex > 0) {
       const prevTrack = queue[queueIndex - 1]
       set({
         currentTrack: prevTrack,
         queueIndex: queueIndex - 1,
         playbackPosition: 0,
-        isPlaying: true
+        isPlaying: true,
+        isExpanded: true,
       })
     }
   },
@@ -117,8 +125,12 @@ export const useAudioStore = create<AudioState>((set, get) => ({
         currentTrack: queue[index],
         queueIndex: index,
         playbackPosition: 0,
-        isPlaying: true
+        isPlaying: true,
+        isExpanded: true,
       })
     }
   },
+
+  setExpanded: (expanded) => set({ isExpanded: expanded }),
+  collapse: () => set({ isExpanded: false }),
 }))

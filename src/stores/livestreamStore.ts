@@ -1,16 +1,7 @@
 import { create } from 'zustand'
+import type { LiveStream } from '@/constants/livestream'
 
-export interface LiveStream {
-  channelId: string
-  channelName: string
-  platform: 'twitch' | 'youtube'
-  streamUrl: string
-  title: string
-  thumbnail?: string
-  viewerCount?: number
-  isOwner: boolean
-  priority: number
-}
+export type { LiveStream }
 
 interface LivestreamState {
   streams: LiveStream[]

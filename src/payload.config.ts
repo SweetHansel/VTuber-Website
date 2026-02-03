@@ -15,17 +15,15 @@ import { Artworks } from './collections/Artworks'
 import { BlogPosts } from './collections/BlogPosts'
 import { Videos } from './collections/Videos'
 import { MusicTracks } from './collections/MusicTracks'
-import { Live2DModels } from './collections/Live2DModels'
-import { ThreeDModels } from './collections/ThreeDModels'
+import { Models } from './collections/Models'
 import { People } from './collections/People'
 import { Albums } from './collections/Albums'
-import { Channels } from './collections/Channels'
+import { Socials } from './collections/Socials'
 import { InteractiveMedia } from './collections/InteractiveMedia'
 
 // Globals
 import { Profile } from './globals/Profile'
 import { SiteSettings } from './globals/SiteSettings'
-import { Links } from './globals/Links'
 import { Themes } from './globals/Themes'
 import { LivestreamSettings } from './globals/LivestreamSettings'
 
@@ -58,11 +56,10 @@ export default buildConfig({
     BlogPosts,
     Videos,
     MusicTracks,
-    Live2DModels,
-    ThreeDModels,
+    Models,
     People,
     Albums,
-    Channels,
+    Socials,
     InteractiveMedia,
     Users,
     Media,
@@ -70,7 +67,6 @@ export default buildConfig({
   globals: [
     Profile,
     SiteSettings,
-    Links,
     Themes,
     LivestreamSettings,
   ],

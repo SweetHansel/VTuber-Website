@@ -11,34 +11,163 @@ export const Themes: GlobalConfig = {
   },
   fields: [
     {
-      name: 'primaryColor',
-      type: 'text',
+      type: 'collapsible',
+      label: 'Phone Colors',
       admin: {
-        description: 'Primary brand color (hex)',
-        components: {
-          Field: '/components/admin/ColorPicker#ColorPicker',
-        },
+        initCollapsed: false,
       },
+      fields: [
+        {
+          name: 'phoneBg',
+          type: 'text',
+          defaultValue: '#1e3a8a',
+          admin: {
+            description: 'Phone background color',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+        {
+          name: 'phoneText',
+          type: 'text',
+          defaultValue: '#ffffff',
+          admin: {
+            description: 'Phone text color',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+        {
+          name: 'phoneSurface',
+          type: 'text',
+          defaultValue: '#ffffff',
+          admin: {
+            description: 'Phone card/overlay color (used with opacity)',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+        {
+          name: 'phonePrimary',
+          type: 'text',
+          defaultValue: '#3b82f6',
+          admin: {
+            description: 'Phone accent color',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+      ],
     },
     {
-      name: 'secondaryColor',
-      type: 'text',
+      type: 'collapsible',
+      label: 'Page Colors',
       admin: {
-        description: 'Secondary color (hex)',
-        components: {
-          Field: '/components/admin/ColorPicker#ColorPicker',
-        },
+        initCollapsed: true,
       },
+      fields: [
+        {
+          name: 'pageBg',
+          type: 'text',
+          defaultValue: '#1e3a8a',
+          admin: {
+            description: 'Page background color',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+        {
+          name: 'pageText',
+          type: 'text',
+          defaultValue: '#ffffff',
+          admin: {
+            description: 'Page text color',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+        {
+          name: 'pageSurface',
+          type: 'text',
+          defaultValue: '#ffffff',
+          admin: {
+            description: 'Page card/overlay color (used with opacity)',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+        {
+          name: 'pagePrimary',
+          type: 'text',
+          defaultValue: '#3b82f6',
+          admin: {
+            description: 'Page accent color',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+      ],
     },
     {
-      name: 'accentColor',
-      type: 'text',
+      type: 'collapsible',
+      label: 'Modal Colors',
       admin: {
-        description: 'Accent color (hex)',
-        components: {
-          Field: '/components/admin/ColorPicker#ColorPicker',
-        },
+        initCollapsed: true,
       },
+      fields: [
+        {
+          name: 'modalBg',
+          type: 'text',
+          defaultValue: '#1e293b',
+          admin: {
+            description: 'Modal background color',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+        {
+          name: 'modalText',
+          type: 'text',
+          defaultValue: '#ffffff',
+          admin: {
+            description: 'Modal text color',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+        {
+          name: 'modalSurface',
+          type: 'text',
+          defaultValue: '#ffffff',
+          admin: {
+            description: 'Modal card/overlay color (used with opacity)',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+        {
+          name: 'modalPrimary',
+          type: 'text',
+          defaultValue: '#3b82f6',
+          admin: {
+            description: 'Modal accent color',
+            components: {
+              Field: '/components/admin/ColorPicker#ColorPicker',
+            },
+          },
+        },
+      ],
     },
     {
       name: 'interactiveMedia',
@@ -52,8 +181,10 @@ export const Themes: GlobalConfig = {
           type: 'select',
           required: true,
           options: [
-            { label: 'Landing - Main Character', value: 'landing-character' },
-            { label: 'Landing - Left Panel', value: 'landing-left' },
+            { label: 'Main Character', value: 'main-character' },
+            { label: 'Landing - Left', value: 'landing-left' },
+            { label: 'Landing - Background', value: 'landing-bg' },
+            { label: 'Landing - Bottom Right', value: 'landing-bottom-right' },
             { label: 'Page - Artworks', value: 'page-artworks' },
             { label: 'Page - Discography', value: 'page-discography' },
             { label: 'Page - About', value: 'page-about' },
@@ -66,8 +197,7 @@ export const Themes: GlobalConfig = {
         {
           name: 'configuration',
           type: 'relationship',
-          // Note: 'interactive-media' will be available after running payload generate:importmap
-          relationTo: 'interactive-media' as 'media',
+          relationTo: 'interactive-media',
           required: true,
           admin: {
             description: 'Interactive media configuration to use',

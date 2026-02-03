@@ -1,26 +1,14 @@
 import { NextResponse } from 'next/server'
+import type { LiveStream } from '@/constants/livestream'
 
-interface LiveStream {
-  channelId: string
-  channelName: string
-  platform: 'twitch' | 'youtube'
-  streamUrl: string
-  title: string
-  thumbnail?: string
-  viewerCount?: number
-  priority: number
-}
-
-interface Channel {
+interface Social {
+  id: number
   name: string
-  platform: 'twitch' | 'youtube' | 'tiktok'
-  channelId: string
-  channelUrl: string
-  priority?: number | null
-  trackLivestream?: boolean | null
+  platform: 'twitter' | 'bluesky' | 'youtube' | 'twitch' | 'instagram' | 'tiktok' | 'pixiv' | 'vgen' | 'website' | 'other'
+  url: string
 }
 
-async function getChannelsFromCMS(): Promise<Channel[]> {
+async function getTrackedSocialsFromCMS(): Promise<Social[]> {
   try {
     // Dynamic import to avoid module resolution issues at build time
     const { getPayload } = await import('payload')
@@ -28,24 +16,24 @@ async function getChannelsFromCMS(): Promise<Channel[]> {
 
     const payload = await getPayload({ config })
 
-    const { docs: channels } = await payload.find({
-      collection: 'channels',
-      where: {
-        trackLivestream: { equals: true },
-      },
-      limit: 50,
+    const settings = await payload.findGlobal({
+      slug: 'livestream-settings',
+      depth: 1,
     })
 
-    return channels as unknown as Channel[]
+    // Filter to only YouTube/Twitch entries for livestream checking
+    const trackedSocials = (settings?.trackedSocials || []) as Social[]
+    return trackedSocials.filter(
+      (s) => s.platform === 'youtube' || s.platform === 'twitch'
+    )
   } catch (error) {
-    console.warn('Could not fetch channels from CMS, using fallback:', error)
+    console.warn('Could not fetch tracked socials from CMS, using fallback:', error)
     return []
   }
 }
 
 async function getManualOverrideFromCMS(): Promise<{
   isLive: boolean
-  platform?: string
   streamUrl?: string
   streamTitle?: string
   thumbnail?: { url?: string }
@@ -63,7 +51,6 @@ async function getManualOverrideFromCMS(): Promise<{
     if (settings?.manualOverride?.isLive) {
       return settings.manualOverride as {
         isLive: boolean
-        platform?: string
         streamUrl?: string
         streamTitle?: string
         thumbnail?: { url?: string }
@@ -80,28 +67,25 @@ export async function GET() {
   try {
     const streams: LiveStream[] = []
 
-    // Try to get channels from CMS first
-    const channels = await getChannelsFromCMS()
+    // Get tracked socials from CMS
+    const trackedSocials = await getTrackedSocialsFromCMS()
 
-    // If no channels from CMS, the array will be empty - that's fine
-    // The frontend will just show no live streams
-
-    // Check Twitch channels
-    const twitchChannels = channels.filter((c) => c.platform === 'twitch')
-    if (twitchChannels.length > 0) {
+    // Check Twitch socials
+    const twitchSocials = trackedSocials.filter((s) => s.platform === 'twitch')
+    if (twitchSocials.length > 0) {
       try {
-        const twitchStreams = await checkTwitchStreams(twitchChannels)
+        const twitchStreams = await checkTwitchStreams(twitchSocials)
         streams.push(...twitchStreams)
       } catch (error) {
         console.error('Twitch API error:', error)
       }
     }
 
-    // Check YouTube channels
-    const youtubeChannels = channels.filter((c) => c.platform === 'youtube')
-    if (youtubeChannels.length > 0) {
+    // Check YouTube socials
+    const youtubeSocials = trackedSocials.filter((s) => s.platform === 'youtube')
+    if (youtubeSocials.length > 0) {
       try {
-        const youtubeStreams = await checkYouTubeStreams(youtubeChannels)
+        const youtubeStreams = await checkYouTubeStreams(youtubeSocials)
         streams.push(...youtubeStreams)
       } catch (error) {
         console.error('YouTube API error:', error)
@@ -111,13 +95,18 @@ export async function GET() {
     // Check for manual override from CMS
     const override = await getManualOverrideFromCMS()
     if (override?.isLive) {
+      // Determine platform from URL
+      const url = override.streamUrl || ''
+      const platform: 'twitch' | 'youtube' = url.includes('twitch') ? 'twitch' : 'youtube'
+
       streams.unshift({
         channelId: 'manual-override',
         channelName: 'Live Now',
-        platform: (override.platform as 'twitch' | 'youtube') || 'youtube',
+        platform,
         streamUrl: override.streamUrl || '',
         title: override.streamTitle || 'Live Now!',
         thumbnail: override.thumbnail?.url,
+        isOwner: true,
         priority: 999,
       })
     }
@@ -142,7 +131,25 @@ export async function GET() {
   }
 }
 
-async function checkTwitchStreams(channels: Channel[]): Promise<LiveStream[]> {
+// Extract channel/user ID from URL
+function extractChannelId(url: string, platform: string): string {
+  if (platform === 'twitch') {
+    // https://twitch.tv/username -> username
+    const match = url.match(/twitch\.tv\/([^/?]+)/)
+    return match?.[1] || ''
+  }
+  if (platform === 'youtube') {
+    // https://youtube.com/channel/UC... or https://youtube.com/@username
+    const channelMatch = url.match(/youtube\.com\/channel\/([^/?]+)/)
+    if (channelMatch) return channelMatch[1]
+    // For @username format, we'd need to resolve it via API
+    const handleMatch = url.match(/youtube\.com\/@([^/?]+)/)
+    return handleMatch?.[1] || ''
+  }
+  return ''
+}
+
+async function checkTwitchStreams(socials: Social[]): Promise<LiveStream[]> {
   const clientId = process.env.TWITCH_CLIENT_ID
   const clientSecret = process.env.TWITCH_CLIENT_SECRET
 
@@ -162,7 +169,13 @@ async function checkTwitchStreams(channels: Channel[]): Promise<LiveStream[]> {
 
   const { access_token } = await tokenRes.json()
 
-  const userLogins = channels.map((c) => c.channelId).join('&user_login=')
+  const userLogins = socials
+    .map((s) => extractChannelId(s.url, 'twitch'))
+    .filter(Boolean)
+    .join('&user_login=')
+
+  if (!userLogins) return []
+
   const streamsRes = await fetch(
     `https://api.twitch.tv/helix/streams?user_login=${userLogins}`,
     {
@@ -179,13 +192,13 @@ async function checkTwitchStreams(channels: Channel[]): Promise<LiveStream[]> {
 
   const { data: liveStreams } = await streamsRes.json()
 
-  return (liveStreams || []).map((stream: Record<string, unknown>) => {
-    const channel = channels.find(
-      (c) => c.channelId.toLowerCase() === String(stream.user_login).toLowerCase()
+  return (liveStreams || []).map((stream: Record<string, unknown>, index: number) => {
+    const social = socials.find(
+      (s) => extractChannelId(s.url, 'twitch').toLowerCase() === String(stream.user_login).toLowerCase()
     )
     return {
       channelId: String(stream.user_login),
-      channelName: String(stream.user_name),
+      channelName: social?.name || String(stream.user_name),
       platform: 'twitch' as const,
       streamUrl: `https://twitch.tv/${stream.user_login}`,
       title: String(stream.title),
@@ -193,12 +206,13 @@ async function checkTwitchStreams(channels: Channel[]): Promise<LiveStream[]> {
         .replace('{width}', '440')
         .replace('{height}', '248') || undefined,
       viewerCount: Number(stream.viewer_count) || 0,
-      priority: channel?.priority || 1,
+      isOwner: true,
+      priority: index + 1,
     }
   })
 }
 
-async function checkYouTubeStreams(channels: Channel[]): Promise<LiveStream[]> {
+async function checkYouTubeStreams(socials: Social[]): Promise<LiveStream[]> {
   const apiKey = process.env.YOUTUBE_API_KEY
 
   if (!apiKey) {
@@ -208,10 +222,28 @@ async function checkYouTubeStreams(channels: Channel[]): Promise<LiveStream[]> {
 
   const streams: LiveStream[] = []
 
-  for (const channel of channels) {
+  for (const social of socials) {
     try {
+      const channelId = extractChannelId(social.url, 'youtube')
+      if (!channelId) continue
+
+      // For @username format, we need to get the channel ID first
+      let actualChannelId = channelId
+      if (!channelId.startsWith('UC')) {
+        // This is a handle, need to resolve it
+        const channelRes = await fetch(
+          `https://www.googleapis.com/youtube/v3/channels?part=id&forHandle=${channelId}&key=${apiKey}`
+        )
+        if (channelRes.ok) {
+          const { items } = await channelRes.json()
+          if (items?.[0]?.id) {
+            actualChannelId = items[0].id
+          }
+        }
+      }
+
       const searchRes = await fetch(
-        `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channel.channelId}&eventType=live&type=video&key=${apiKey}`
+        `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${actualChannelId}&eventType=live&type=video&key=${apiKey}`
       )
 
       if (!searchRes.ok) continue
@@ -221,17 +253,18 @@ async function checkYouTubeStreams(channels: Channel[]): Promise<LiveStream[]> {
       if (items && items.length > 0) {
         const liveVideo = items[0]
         streams.push({
-          channelId: channel.channelId,
-          channelName: channel.name,
+          channelId: actualChannelId,
+          channelName: social.name,
           platform: 'youtube',
           streamUrl: `https://youtube.com/watch?v=${liveVideo.id.videoId}`,
           title: liveVideo.snippet.title,
           thumbnail: liveVideo.snippet.thumbnails?.high?.url,
-          priority: channel.priority || 1,
+          isOwner: true,
+          priority: streams.length + 1,
         })
       }
     } catch (error) {
-      console.error(`Failed to check YouTube channel ${channel.channelId}:`, error)
+      console.error(`Failed to check YouTube social ${social.name}:`, error)
     }
   }
 

@@ -18,7 +18,18 @@ export const Media: CollectionConfig = {
     // Vercel Blob adapter handles storage and URL generation
     ...(useVercelBlob ? {} : { staticDir: '../media' }),
     disableLocalStorage: useVercelBlob,
-    mimeTypes: ['image/*', 'audio/*', 'video/*'],
+    mimeTypes: [
+      'image/*',
+      'audio/*',
+      'video/*',
+      // Live2D
+      'application/json',           // model.json, physics.json
+      'application/zip',            // Packaged models
+      // 3D Models
+      'model/gltf-binary',          // .glb
+      'model/gltf+json',            // .gltf
+      'application/octet-stream',   // .vrm, .pmx, .fbx (generic binary)
+    ],
     imageSizes: [
       {
         name: 'thumbnail',

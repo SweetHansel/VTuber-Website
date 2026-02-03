@@ -20,21 +20,10 @@ export const People: CollectionConfig = {
     },
     {
       name: 'roles',
-      type: 'select',
-      hasMany: true,
-      options: [
-        { label: 'Content Creator', value: 'content-creator' },
-        { label: 'Manager', value: 'manager' },
-        { label: 'Moderator', value: 'moderator' },
-        { label: 'Other', value: 'other' },
-        { label: 'Illustrator', value: 'illustrator' },
-        { label: 'Rigger', value: 'rigger' },
-        { label: '3D Modeler', value: '3d-modeler' },
-        { label: 'Music Producer', value: 'music-producer' },
-        { label: 'Mixer', value: 'mixer' },
-        { label: 'Video Editor', value: 'video-editor' },
-        { label: 'Animator', value: 'animator' },
-      ],
+      type: 'text',
+      admin: {
+        description: 'Roles/titles (e.g., "Illustrator, Rigger, Content Creator")',
+      },
     },
     {
       name: 'avatar',
@@ -46,38 +35,13 @@ export const People: CollectionConfig = {
       type: 'textarea',
     },
     {
-      name: 'channels',
+      name: 'socials',
       type: 'relationship',
-      relationTo: 'channels',
+      relationTo: 'socials', 
       hasMany: true,
       admin: {
-        description: 'Associated channels',
+        description: 'Social links for this person',
       },
-    },
-    {
-      name: 'socialLinks',
-      type: 'array',
-      fields: [
-        {
-          name: 'platform',
-          type: 'select',
-          options: [
-            { label: 'Twitter/X', value: 'twitter' },
-            { label: 'YouTube', value: 'youtube' },
-            { label: 'Twitch', value: 'twitch' },
-            { label: 'Instagram', value: 'instagram' },
-            { label: 'Pixiv', value: 'pixiv' },
-            { label: 'Website', value: 'website' },
-            { label: 'Other', value: 'other' },
-          ],
-          required: true,
-        },
-        {
-          name: 'url',
-          type: 'text',
-          required: true,
-        },
-      ],
     },
     {
       name: 'tags',

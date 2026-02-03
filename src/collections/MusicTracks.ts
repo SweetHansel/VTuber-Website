@@ -27,6 +27,7 @@ export const MusicTracks: CollectionConfig = {
         { label: 'Original', value: 'original' },
         { label: 'Remix', value: 'remix' },
         { label: 'Karaoke/Off-vocal', value: 'karaoke' },
+        { label: 'Other', value: 'other' },
       ],
       required: true,
     },
@@ -68,18 +69,11 @@ export const MusicTracks: CollectionConfig = {
       fields: [
         {
           name: 'role',
-          type: 'select',
-          options: [
-            { label: 'Vocals', value: 'vocals' },
-            { label: 'Composer', value: 'composer' },
-            { label: 'Lyricist', value: 'lyricist' },
-            { label: 'Arranger', value: 'arranger' },
-            { label: 'Mix', value: 'mix' },
-            { label: 'Master', value: 'master' },
-            { label: 'Illustration', value: 'illustration' },
-            { label: 'Video', value: 'video' },
-          ],
+          type: 'text',
           required: true,
+          admin: {
+            description: 'e.g., "Vocals", "Composer", "Lyricist", "Arranger", "Mix", "Master", "Illustration", "Video"',
+          },
         },
         {
           name: 'artist',

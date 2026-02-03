@@ -3,7 +3,7 @@
 import { useThemes } from '@/hooks/useCMS'
 import { useEffect } from 'react'
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const { data: themes } = useThemes()
 
   useEffect(() => {

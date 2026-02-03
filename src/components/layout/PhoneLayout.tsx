@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
-import { UpdatesScreen } from "../screen/UpdatesScreen";
+import { UpdatesScreen } from "@/components/phone/UpdatesScreen";
 import { AspectLock } from "./AspectLock";
-import { InteractiveMediaFromCMS } from "./InteractiveMediaFromCMS";
+import { InteractiveMediaFromCMS } from "@/components/media";
 import { useLayoutStore } from "@/stores/layoutStore";
 
 export function PhoneLayout() {

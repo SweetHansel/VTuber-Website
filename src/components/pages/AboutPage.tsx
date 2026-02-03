@@ -23,7 +23,7 @@ import {
   getMedia,
   nullToUndefined,
 } from "@/hooks/useCMS";
-import { ModelShowcase } from "../models/ModelShowcase";
+import { ModelShowcase } from "@/components/display/ModelShowcase";
 import { useMotionValueState } from "@/hooks/useMotionValueState";
 
 // Icon mapping for dynamic traits
@@ -46,7 +46,7 @@ function LoadingSkeleton() {
   );
 }
 
-function AboutLeft({ index }: LRProps) {
+function AboutLeft({ index }: Readonly<LRProps>) {
   const currentPage = useMotionValueState(index);
   // Load data when within 1 page of visibility
   const isNearVisible = currentPage > 0;
@@ -58,7 +58,7 @@ function AboutLeft({ index }: LRProps) {
   }
 
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-4 p-6">
+    <div className="flex h-full flex-col items-center justify-center gap-4 p-4">
       <ModelShowcase model={getModel(profile?.currentModel)} />
       <button className="rounded-full bg-(--page-surface)/10 px-4 py-2 text-sm font-medium text-(--page-text) transition-colors hover:bg-(--page-surface)/20">
         View All Models →
@@ -67,10 +67,10 @@ function AboutLeft({ index }: LRProps) {
   );
 }
 
-function AboutRight({ index }: LRProps) {
+function AboutRight({ index }: Readonly<LRProps>) {
   const currentPage = useMotionValueState(index);
   // Load data when within 1 page of visibility
-  const isNearVisible = Math.abs(currentPage - 0.5) <= 1.5;
+  const isNearVisible = currentPage > 0;
 
   const { data: profile, loading } = useProfile({ skip: !isNearVisible });
 
@@ -90,7 +90,7 @@ function AboutRight({ index }: LRProps) {
   const currentModel = getModel(profile.currentModel);
 
   return (
-    <div className="h-full space-y-6 overflow-y-auto p-6">
+    <div className="h-full space-y-4 overflow-y-auto p-4 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
       <div>
         {currentModel?.refSheets?.map((v, i) => {
           const media = getMedia(v.media);

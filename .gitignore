@@ -10,7 +10,6 @@ build
 
 # Payload CMS
 src/payload-types.ts
-media
 importMap.ts
 
 # Environment variables

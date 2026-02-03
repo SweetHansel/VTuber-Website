@@ -8,7 +8,7 @@ import { User, Box, Loader2 } from "lucide-react";
 import type { LRProps, PageContent } from "@/components/layout/BookLayout";
 import { useModels, type Model, getMedia, nullToUndefined } from "@/hooks/useCMS";
 import { useModelShowcaseStore } from "@/stores/modelShowcaseStore";
-import { ModelShowcase } from "@/components/models/ModelShowcase";
+import { ModelShowcase } from "@/components/display/ModelShowcase";
 import { MODEL_2D_TYPES, MODEL_3D_TYPES } from "@/constants/models";
 import { useMotionValueState } from "@/hooks/useMotionValueState";
 
@@ -55,10 +55,14 @@ function transformModel(model: Model): ModelCardData {
 
 function VTuberModelsLeft() {
   const model = useModelShowcaseStore((state) => state.selectedModel);
-  return <ModelShowcase model={model} />;
+  return (
+    <div className="h-full w-full p-4">
+      <ModelShowcase model={model} />
+    </div>
+  );
 }
 
-function VTuberModelsRight({ index }: LRProps) {
+function VTuberModelsRight({ index }: Readonly<LRProps>) {
   const currentPage = useMotionValueState(index)
   // Load data when within 1 page of visibility (vtuber-models is page 3, so check around 0.5)
   const isNearVisible = currentPage > 0
@@ -81,7 +85,7 @@ function VTuberModelsRight({ index }: LRProps) {
   }
 
   return (
-    <div className="flex h-full flex-col p-6">
+    <div className="flex h-full flex-col p-4">
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-(--page-text)">VTuber Models</h1>
@@ -124,7 +128,7 @@ function VTuberModelsRight({ index }: LRProps) {
 
       {/* Model grid */}
       {isNearVisible && !loading && filteredModels.length > 0 && (
-        <div className="grid flex-1 grid-cols-2 gap-4 overflow-y-auto md:grid-cols-3">
+        <div className="grid flex-1 grid-cols-2 gap-4 overflow-y-auto md:grid-cols-3 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
           {filteredModels.map((model) => {
             const cardData = transformModel(model);
             return (

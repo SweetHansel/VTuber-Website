@@ -6,100 +6,22 @@ import { ArtworksPage } from "@/components/pages/ArtworksPage";
 import { DiscographyPage } from "@/components/pages/DiscographyPage";
 import { VTuberModelsPage } from "@/components/pages/VTuberModelsPage";
 import { ChevronLeft, ChevronRight, ListTree } from "lucide-react";
-import {
-  animate,
-  motion,
-  useMotionValue,
-  useTransform,
-  type MotionValue,
-} from "framer-motion";
+import { animate, motion, useMotionValue, useTransform } from "framer-motion";
 import { CONTENT_SECTIONS } from "@/constants/sections";
 import { cn } from "@/lib/utils";
 import { AspectLock } from "./AspectLock";
-import { InteractiveMediaFromCMS } from "./InteractiveMediaFromCMS";
+import { InteractiveMediaFromCMS } from "@/components/media";
 import { useLayoutStore } from "@/stores/layoutStore";
+import { LeftPage, RightPage, ToCPage, type PageContent } from "./book";
 
-// Page content type - components receive isActive prop
-
-export interface LRProps {
-  index: MotionValue<number>;
-  onNavigate: (page: number) => void;
-}
-export interface PageContent {
-  Left: React.ComponentType<LRProps>;
-  Right: React.ComponentType<LRProps>;
-}
+// Re-export types for backwards compatibility
+export { mapToFlatOnly, type LRProps, type PageContent } from "./book";
 
 // Utility
 const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(value, max));
 
-// Separate components for left and right pages
-interface PageProps {
-  index: MotionValue<number>;
-  pageIndex: number;
-  Page: PageContent;
-  onNavigate: (page: number) => void;
-}
-
-function LeftPage({ index, pageIndex, Page, onNavigate }: Readonly<PageProps>) {
-  const rotateY = useTransform(
-    index,
-    (v) => 180 - (clamp(v - pageIndex, 0.25, 0.75) - 0.25) * 2 * 180,
-  );
-  const innerPageTransforms = useTransform(index, (v) => {
-    return v - pageIndex - 1 <= 0
-      ? clamp(v - pageIndex - 1, -0.25, 0) * 2 + 0.5
-      : clamp(v - pageIndex - 1, 0, 0.25) * 2 + 0.5;
-  });
-
-  return (
-    <motion.div
-      className="absolute bg-(--page-bg) w-[50%] h-full top-0 origin-bottom-right backface-hidden transform-flat"
-      style={{ rotateY }}
-      transition={{ duration: 0.3, bounce: 0 }}
-    >
-      <Page.Left index={innerPageTransforms} onNavigate={onNavigate} />
-    </motion.div>
-  );
-}
-
-function RightPage({
-  index,
-  pageIndex,
-  Page,
-  onNavigate,
-}: Readonly<PageProps>) {
-  const rotateY = useTransform(
-    index,
-    (v) => (clamp(v - pageIndex - 1, 0.25, 0.75) - 0.25) * 2 * -180,
-  );
-  const innerPageTransforms = useTransform(index, (v) => {
-    return v - pageIndex - 1 <= 0
-      ? clamp(v - pageIndex - 1, -0.25, 0) * 2 + 0.5
-      : clamp(v - pageIndex - 1, 0, 0.25) * 2 + 0.5;
-  });
-
-  return (
-    <motion.div
-      className="absolute bg-(--page-bg) w-[50%] h-full top-0 origin-bottom-left backface-hidden transform-flat"
-      style={{ rotateY, translateX: "100%" }}
-      transition={{ duration: 0.3, bounce: 0 }}
-    >
-      <Page.Right index={innerPageTransforms} onNavigate={onNavigate} />
-    </motion.div>
-  );
-}
-
 const sections = CONTENT_SECTIONS;
-
-// Section labels for ToC
-const sectionLabels: Record<string, string> = {
-  about: "About Me",
-  artworks: "Artworks",
-  discography: "Discography",
-  "vtuber-models": "Models",
-};
 
 // Page mapping
 const pages: Record<string, PageContent> = {
@@ -107,36 +29,6 @@ const pages: Record<string, PageContent> = {
   artworks: ArtworksPage,
   discography: DiscographyPage,
   "vtuber-models": VTuberModelsPage,
-};
-
-// ToC Page - only has right side content
-function ToCLeft() {
-  return <div className="h-full w-full" />;
-}
-
-function ToCRight({ onNavigate }: Readonly<LRProps>) {
-  return (
-    <div className="flex h-full flex-col justify-center p-8">
-      <h2 className="text-2xl font-bold text-(--page-text) mb-6">Contents</h2>
-      <ul className="space-y-2">
-        {sections.map((section, i) => (
-          <li key={section}>
-            <button
-              onClick={() => onNavigate(i + 1)}
-              className="text-(--page-text)/70 hover:text-(--page-text) transition-colors text-left"
-            >
-              {sectionLabels[section]}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-const ToCPage: PageContent = {
-  Left: ToCLeft,
-  Right: ToCRight,
 };
 
 export function BookLayout() {

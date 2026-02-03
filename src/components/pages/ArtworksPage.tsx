@@ -1,13 +1,18 @@
 "use client";
 
 import { motion, useTransform } from "framer-motion";
-import { MasonryGallery } from "@/components/gallery/MasonryGallery";
-import type { LRProps, PageContent } from "@/components/layout/BookLayout";
-import { InteractiveMediaFromCMS } from "../layout/InteractiveMediaFromCMS";
+import { MasonryGallery } from "@/components/display/MasonryGallery";
+import {
+  mapToFlatOnly,
+  type LRProps,
+  type PageContent,
+} from "@/components/layout/BookLayout";
+import { InteractiveMediaFromCMS } from "@/components/media";
 import { useMotionValueState } from "@/hooks/useMotionValueState";
 
-function ArtworksLeft({ index }: LRProps) {
-  const width = useTransform(index, (v) => {
+function ArtworksLeft({ index }: Readonly<LRProps>) {
+  const width = useTransform(index, (x) => {
+    const v = mapToFlatOnly(x);
     return (v <= 0.5 ? (1 + v) * 100 : (2 - v) * 100) + "%";
   });
 
@@ -19,28 +24,28 @@ function ArtworksLeft({ index }: LRProps) {
       <InteractiveMediaFromCMS
         location="page-artworks"
         className="absolute h-full aspect-video left-0"
-        depth={-50}
       />
     </motion.div>
   );
 }
 
-function ArtworksRight({ index }: LRProps) {
+function ArtworksRight({ index }: Readonly<LRProps>) {
   const currentPage = useMotionValueState(index);
   // Load data when within 1 page of visibility (artworks is page 1, so check around 0.5)
   const isNearVisible = currentPage > 0;
 
-  const width = useTransform(index, (v) => {
+  const width = useTransform(index, (x) => {
+    const v = mapToFlatOnly(x);
     return (v <= 0.5 ? (1 + v) * 100 : (2 - v) * 100) + "%";
   });
 
   return (
     <motion.div
-      className="absolute h-full w-full p-2 right-0 mask-l-from-80% mask-l-to-95%"
+      className="absolute h-full w-full right-0 mask-l-from-80% mask-l-to-95%"
       style={{ width }}
     >
       {/* Gallery */}
-      <div className="absolute h-full p-6 aspect-11/9 right-0">
+      <div className="absolute h-full p-4 aspect-11/9 right-0">
         <MasonryGallery filter={"all"} skip={!isNearVisible} />
       </div>
     </motion.div>

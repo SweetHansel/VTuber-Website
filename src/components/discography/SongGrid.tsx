@@ -78,7 +78,7 @@ export function SongGrid({ filter = 'all', skip = false }: SongGridProps) {
   if (skip || loading) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-white/40" />
+        <Loader2 className="h-8 w-8 animate-spin text-(--page-text)/40" />
       </div>
     )
   }
@@ -101,7 +101,7 @@ export function SongGrid({ filter = 'all', skip = false }: SongGridProps) {
       ))}
 
       {filteredSongs.length === 0 && (
-        <div className="col-span-full py-12 text-center text-white/40">
+        <div className="col-span-full py-12 text-center text-(--page-text)/40">
           No songs found
         </div>
       )}

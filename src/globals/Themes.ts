@@ -197,7 +197,6 @@ export const Themes: GlobalConfig = {
         {
           name: 'configuration',
           type: 'relationship',
-          // Note: 'interactive-media' will be available after running payload generate:importmap
           relationTo: 'interactive-media',
           required: true,
           admin: {

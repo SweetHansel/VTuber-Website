@@ -119,7 +119,7 @@ export function MasonryGallery({ filter = "all", skip = false }: MasonryGalleryP
   }, [loading]);
 
   // Row height is 20% of container height
-  const rowHeight = Math.max(containerHeight * 0.2, 80); // min 80px
+  const rowHeight = Math.max(containerHeight * 0.3, 80); // min 80px
 
   // Track detected aspect ratios for images without CMS dimensions
   const [detectedRatios, setDetectedRatios] = useState<Record<string, number>>({});
@@ -170,7 +170,7 @@ export function MasonryGallery({ filter = "all", skip = false }: MasonryGalleryP
   if (skip || loading) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-white/40" />
+        <Loader2 className="h-8 w-8 animate-spin text-(--page-text)/40" />
       </div>
     );
   }
@@ -180,7 +180,7 @@ export function MasonryGallery({ filter = "all", skip = false }: MasonryGalleryP
   }
 
   return (
-    <div ref={containerRef} className="relative w-full h-full flex flex-col gap-2">
+    <div ref={containerRef} className="relative w-full h-full flex flex-col gap-2 overflow-scroll scrollbar-thin">
       {rows.map((row, rowIndex) => (
         <div key={rowIndex} className="flex flex-row-reverse justify-start gap-2">
           {row.map(({ artwork, ratio }, itemIndex) => (
@@ -256,7 +256,7 @@ export function MasonryGallery({ filter = "all", skip = false }: MasonryGalleryP
       ))}
 
       {filteredArtworks.length === 0 && (
-        <div className="w-full py-12 text-center text-white/40">
+        <div className="w-full py-12 text-center text-(--page-text)/40">
           No artworks found
         </div>
       )}

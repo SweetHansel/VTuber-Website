@@ -8,29 +8,22 @@ import { cn } from '@/lib/utils'
 export interface MediaState {
   src: string
   alt?: string
-  sound?: string // Audio file to play
+  sound?: string
 }
 
 export interface CursorEffect {
-  src: string // GIF or image to spawn at cursor
-  duration?: number // How long to show (ms)
+  src: string
+  duration?: number
   size?: number
 }
 
 interface InteractiveMediaProps {
   className?: string
   imageClass?: string
-  depth?: number
-
-  // Media states
   defaultMedia: MediaState
   hoverMedia?: MediaState
   clickMedia?: MediaState
-
-  // Cursor effects
   cursorEffect?: CursorEffect
-
-  // Callbacks
   onClick?: () => void
   onHoverStart?: () => void
   onHoverEnd?: () => void
@@ -44,10 +37,13 @@ interface CursorSpawn {
   size: number
 }
 
+function isAnimatedImage(src: string): boolean {
+  return src.toLowerCase().endsWith('.gif')
+}
+
 export function InteractiveMedia({
   className,
   imageClass,
-  depth = -20,
   defaultMedia,
   hoverMedia,
   clickMedia,
@@ -63,14 +59,12 @@ export function InteractiveMedia({
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const spawnIdRef = useRef(0)
 
-  // Determine current media based on state
   const currentMedia = isClicked && clickMedia
     ? clickMedia
     : isHovered && hoverMedia
     ? hoverMedia
     : defaultMedia
 
-  // Play sound effect
   const playSound = useCallback((soundUrl?: string) => {
     if (!soundUrl) return
 
@@ -81,12 +75,9 @@ export function InteractiveMedia({
 
     audioRef.current = new Audio(soundUrl)
     audioRef.current.volume = 0.5
-    audioRef.current.play().catch(() => {
-      // Ignore autoplay restrictions
-    })
+    audioRef.current.play().catch(() => {})
   }, [])
 
-  // Handle cursor effect spawn
   const spawnCursorEffect = useCallback((e: React.MouseEvent) => {
     if (!cursorEffect || !containerRef.current) return
 
@@ -98,13 +89,11 @@ export function InteractiveMedia({
 
     setCursorSpawns((prev) => [...prev, { id, x, y, src: cursorEffect.src, size }])
 
-    // Remove after duration
     setTimeout(() => {
       setCursorSpawns((prev) => prev.filter((spawn) => spawn.id !== id))
     }, cursorEffect.duration || 1000)
   }, [cursorEffect])
 
-  // Hover handlers
   const handleHoverStart = useCallback(() => {
     setIsHovered(true)
     if (hoverMedia?.sound) playSound(hoverMedia.sound)
@@ -117,21 +106,17 @@ export function InteractiveMedia({
     onHoverEnd?.()
   }, [onHoverEnd])
 
-  // Click handler
   const handleClick = useCallback((e: React.MouseEvent) => {
     setIsClicked(true)
     if (clickMedia?.sound) playSound(clickMedia.sound)
     spawnCursorEffect(e)
     onClick?.()
 
-    // Reset click state after animation
     setTimeout(() => setIsClicked(false), 300)
   }, [clickMedia, playSound, spawnCursorEffect, onClick])
 
-  // Handle cursor movement for continuous effects
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (isClicked && cursorEffect) {
-      // Throttle spawning
       if (Math.random() > 0.7) {
         spawnCursorEffect(e)
       }
@@ -147,16 +132,14 @@ export function InteractiveMedia({
       onClick={handleClick}
       onMouseMove={handleMouseMove}
     >
-      {/* Main media */}
-          <Image
-            src={currentMedia.src}
-            alt={currentMedia.alt || 'Interactive media'}
-            fill
-            className={imageClass??"object-contain"}
-            unoptimized // Allow GIFs to animate
-          />
+      <Image
+        src={currentMedia.src}
+        alt={currentMedia.alt || 'Interactive media'}
+        fill
+        className={imageClass ?? "object-contain"}
+        unoptimized={isAnimatedImage(currentMedia.src)}
+      />
 
-      {/* Cursor effect spawns */}
       <AnimatePresence>
         {cursorSpawns.map((spawn) => (
           <motion.div
@@ -179,7 +162,7 @@ export function InteractiveMedia({
               width={spawn.size}
               height={spawn.size}
               className="h-full w-full object-contain"
-              unoptimized
+              unoptimized={isAnimatedImage(spawn.src)}
             />
           </motion.div>
         ))}

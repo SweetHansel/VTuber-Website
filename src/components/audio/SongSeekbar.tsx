@@ -28,15 +28,16 @@ export function SongSeekbar() {
     duration,
     queue,
     queueIndex,
+    isExpanded,
     togglePlay,
     setVolume,
     playNext,
     playPrevious,
     playTrackAt,
     removeFromQueue,
+    setExpanded,
   } = useAudioStore();
 
-  const [isExpanded, setIsExpanded] = useState(false);
   const [showQueue, setShowQueue] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [prevVolume, setPrevVolume] = useState(volume);
@@ -92,7 +93,7 @@ export function SongSeekbar() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.2 }}
-                onClick={() => setIsExpanded(true)}
+                onClick={() => setExpanded(true)}
                 className="absolute bottom-4 right-4 z-10 group h-12 w-12 overflow-hidden rounded-lg shadow-lg pointer-events-auto"
               >
                 <Image
@@ -217,7 +218,7 @@ export function SongSeekbar() {
 
                   {/* Collapse toggle */}
                   <button
-                    onClick={() => setIsExpanded(false)}
+                    onClick={() => setExpanded(false)}
                     className="text-(--page-text)/60 hover:text-(--page-text)"
                   >
                     <ChevronDown className="h-5 w-5" />

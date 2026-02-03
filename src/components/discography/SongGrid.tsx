@@ -4,11 +4,12 @@ import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 import { SongCard, type SongCardProps } from './SongCard'
-import { useMusicTracks, type MusicTrack, getMedia, nullToUndefined } from '@/hooks/useCMS'
+import { useMusicTracks, type MusicTrack, getMedia } from '@/hooks/useCMS'
 import { useAudioStore, type Track } from '@/stores/audioStore'
 
 interface SongGridProps {
   filter?: 'all' | 'covers' | 'originals'
+  skip?: boolean
 }
 
 function transformTrack(track: MusicTrack): SongCardProps {
@@ -29,8 +30,8 @@ function transformTrack(track: MusicTrack): SongCardProps {
   }
 }
 
-export function SongGrid({ filter = 'all' }: SongGridProps) {
-  const { data: tracks, loading, error } = useMusicTracks(filter)
+export function SongGrid({ filter = 'all', skip = false }: SongGridProps) {
+  const { data: tracks, loading, error } = useMusicTracks(filter, { skip })
   const { currentTrack, setTrack } = useAudioStore()
   const hasAutoSelected = useRef(false)
 
@@ -51,7 +52,7 @@ export function SongGrid({ filter = 'all' }: SongGridProps) {
 
   // Auto-select a random track if no music is playing
   useEffect(() => {
-    if (hasAutoSelected.current || currentTrack || loading || filteredSongs.length === 0) return
+    if (hasAutoSelected.current || currentTrack || loading || skip || filteredSongs.length === 0) return
 
     // Find songs with audio URLs
     const playableSongs = filteredSongs.filter(song => song.audioUrl)
@@ -72,9 +73,9 @@ export function SongGrid({ filter = 'all' }: SongGridProps) {
 
     setTrack(track)
     hasAutoSelected.current = true
-  }, [loading, filteredSongs, currentTrack, setTrack])
+  }, [loading, skip, filteredSongs, currentTrack, setTrack])
 
-  if (loading) {
+  if (skip || loading) {
     return (
       <div className="flex h-40 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-white/40" />

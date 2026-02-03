@@ -1,7 +1,11 @@
+'use client'
+
+import { useEffect } from 'react'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { AudioProvider } from '@/components/audio/AudioProvider'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { MainLayout } from '@/components/layout/MainLayout'
+import { useCMSStore } from '@/stores/cmsStore'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -13,6 +17,17 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
+// Prefetch critical CMS data (themes + profile) before rendering
+function CMSPrefetcher() {
+  const prefetchCritical = useCMSStore((s) => s.prefetchCritical)
+
+  useEffect(() => {
+    prefetchCritical()
+  }, [prefetchCritical])
+
+  return null
+}
+
 export default function FrontendLayout({
   children,
 }: {
@@ -21,6 +36,7 @@ export default function FrontendLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <CMSPrefetcher />
         <ThemeProvider>
           <AudioProvider>
             <MainLayout>{children}</MainLayout>

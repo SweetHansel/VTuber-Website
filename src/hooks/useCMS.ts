@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { CACHE_DURATION_MS } from '@/constants/config'
+import { useCMSStore } from '@/stores/cmsStore'
 
 // Import types from payload-types.ts (single source of truth)
 import type {
@@ -81,7 +82,7 @@ export function nullToUndefined<T>(value: T | null | undefined): T | undefined {
   return value ?? undefined
 }
 
-// Generic fetch hook with caching
+// Generic fetch hook with caching (for hooks not using Zustand store)
 const cache = new Map<string, { data: unknown; timestamp: number }>()
 
 interface UseFetchResult<T> {
@@ -91,7 +92,11 @@ interface UseFetchResult<T> {
   refetch: () => void
 }
 
-function useFetch<T>(url: string, options?: { skip?: boolean }): UseFetchResult<T> {
+interface UseFetchOptions {
+  skip?: boolean
+}
+
+function useFetch<T>(url: string, options?: UseFetchOptions): UseFetchResult<T> {
   const [data, setData] = useState<T | null>(null)
   const [loading, setLoading] = useState(!options?.skip)
   const [error, setError] = useState<Error | null>(null)
@@ -139,8 +144,12 @@ function useFetch<T>(url: string, options?: { skip?: boolean }): UseFetchResult<
 // Types are already imported and re-exported at the top of this file
 
 // ============================================
-// Collection Hooks
+// Collection Hooks (Using Zustand Store)
 // ============================================
+
+interface UseHookOptions {
+  skip?: boolean
+}
 
 export function useTags() {
   return useFetch<Tag[]>('/api/cms/tags')
@@ -150,23 +159,81 @@ export function usePeople() {
   return useFetch<Person[]>('/api/cms/people')
 }
 
-export function useModels(type?: '2d' | '3d') {
-  const queryParam = type ? `?type=${type}` : ''
-  return useFetch<Model[]>(`/api/cms/models${queryParam}`)
+export function useModels(type?: '2d' | '3d', options?: UseHookOptions) {
+  const models = useCMSStore((s) => s.models)
+  const loading = useCMSStore((s) => s.loading.models)
+  const fetchModels = useCMSStore((s) => s.fetchModels)
+
+  useEffect(() => {
+    if (options?.skip) return
+    if (!models && !loading) {
+      fetchModels()
+    }
+  }, [models, loading, fetchModels, options?.skip])
+
+  // Filter by type if specified (client-side filtering)
+  const filteredModels = models
+    ? type
+      ? models.filter((m) => {
+          if (type === '2d') return ['live2d', 'png', 'other-2d'].includes(m.modelType)
+          if (type === '3d') return ['vrm', 'vsfavatar', 'mmd', 'other-3d'].includes(m.modelType)
+          return true
+        })
+      : models
+    : null
+
+  return {
+    data: filteredModels,
+    loading: options?.skip ? false : loading,
+    error: null,
+    refetch: fetchModels,
+  }
 }
 
-export function useMusicTracks(filter?: 'all' | 'covers' | 'originals') {
-  const queryParam = filter && filter !== 'all' ? `?type=${filter}` : ''
-  return useFetch<MusicTrack[]>(`/api/cms/music-tracks${queryParam}`)
+export function useMusicTracks(filter?: 'all' | 'covers' | 'originals', options?: UseHookOptions) {
+  const cacheKey = filter || 'all'
+  const musicTracks = useCMSStore((s) => s.musicTracks[cacheKey])
+  const loading = useCMSStore((s) => s.loading.musicTracks[cacheKey] ?? false)
+  const fetchMusicTracks = useCMSStore((s) => s.fetchMusicTracks)
+
+  useEffect(() => {
+    if (options?.skip) return
+    if (!musicTracks && !loading) {
+      fetchMusicTracks(filter)
+    }
+  }, [musicTracks, loading, fetchMusicTracks, filter, options?.skip])
+
+  return {
+    data: musicTracks ?? null,
+    loading: options?.skip ? false : loading,
+    error: null,
+    refetch: () => fetchMusicTracks(filter),
+  }
 }
 
 export function useAlbums() {
   return useFetch<Album[]>('/api/cms/albums')
 }
 
-export function useArtworks(filter?: 'all' | 'fanart' | 'official' | 'commissioned') {
-  const queryParam = filter && filter !== 'all' ? `?type=${filter}` : ''
-  return useFetch<Artwork[]>(`/api/cms/artworks${queryParam}`)
+export function useArtworks(filter?: 'all' | 'fanart' | 'official' | 'commissioned', options?: UseHookOptions) {
+  const cacheKey = filter || 'all'
+  const artworks = useCMSStore((s) => s.artworks[cacheKey])
+  const loading = useCMSStore((s) => s.loading.artworks[cacheKey] ?? false)
+  const fetchArtworks = useCMSStore((s) => s.fetchArtworks)
+
+  useEffect(() => {
+    if (options?.skip) return
+    if (!artworks && !loading) {
+      fetchArtworks(filter)
+    }
+  }, [artworks, loading, fetchArtworks, filter, options?.skip])
+
+  return {
+    data: artworks ?? null,
+    loading: options?.skip ? false : loading,
+    error: null,
+    refetch: () => fetchArtworks(filter),
+  }
 }
 
 export function useAnnouncements() {
@@ -191,15 +258,47 @@ export function useInteractiveMedia(location?: string) {
 }
 
 // ============================================
-// Global Hooks
+// Global Hooks (Using Zustand Store)
 // ============================================
 
-export function useProfile() {
-  return useFetch<Profile>('/api/cms/profile')
+export function useProfile(options?: UseHookOptions) {
+  const profile = useCMSStore((s) => s.profile)
+  const loading = useCMSStore((s) => s.loading.profile)
+  const fetchProfile = useCMSStore((s) => s.fetchProfile)
+
+  useEffect(() => {
+    if (options?.skip) return
+    if (!profile && !loading) {
+      fetchProfile()
+    }
+  }, [profile, loading, fetchProfile, options?.skip])
+
+  return {
+    data: profile,
+    loading: options?.skip ? false : loading,
+    error: null,
+    refetch: fetchProfile,
+  }
 }
 
-export function useThemes() {
-  return useFetch<Theme>('/api/cms/themes')
+export function useThemes(options?: UseHookOptions) {
+  const themes = useCMSStore((s) => s.themes)
+  const loading = useCMSStore((s) => s.loading.themes)
+  const fetchThemes = useCMSStore((s) => s.fetchThemes)
+
+  useEffect(() => {
+    if (options?.skip) return
+    if (!themes && !loading) {
+      fetchThemes()
+    }
+  }, [themes, loading, fetchThemes, options?.skip])
+
+  return {
+    data: themes,
+    loading: options?.skip ? false : loading,
+    error: null,
+    refetch: fetchThemes,
+  }
 }
 
 // ============================================
@@ -221,4 +320,5 @@ export function useUpdates(filter?: 'all' | 'announcements' | 'blogs') {
 
 export function clearCMSCache() {
   cache.clear()
+  useCMSStore.getState().clearCache()
 }

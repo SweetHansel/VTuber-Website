@@ -26,7 +26,7 @@ function transformUpdate(update: UpdateItem): ContentCardProps {
   };
 }
 
-export function UpdatesPage() {
+export function UpdatesScreen() {
   const [filter, setFilter] = useState<FilterType>("all");
   const { data: cmsUpdates, loading, error } = useUpdates(filter);
 
@@ -70,23 +70,6 @@ export function UpdatesPage() {
           <SignalHigh />
         </div>
       </div>
-      {/* Filter tabs */}
-      {/* <div className="mb-3 flex gap-1 rounded-lg bg-white/5 p-1">
-        {(['all', 'announcements', 'blogs'] as FilterType[]).map((type) => (
-          <button
-            key={type}
-            onClick={() => setFilter(type)}
-            className={cn(
-              'flex-1 rounded-md px-2 py-1.5 text-xs font-medium capitalize transition-colors',
-              filter === type
-                ? 'bg-white/20 text-white'
-                : 'text-white/60 hover:text-white'
-            )}
-          >
-            {type}
-          </button>
-        ))}
-      </div> */}
 
       {/* Loading state */}
       {loading && (

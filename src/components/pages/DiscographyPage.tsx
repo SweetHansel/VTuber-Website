@@ -1,12 +1,10 @@
 "use client";
 
-// import { useState } from "react";
 import { motion, useTransform } from "framer-motion";
 import { SongGrid } from "@/components/discography/SongGrid";
 import { InteractiveMediaFromCMS } from "@/components/layout/InteractiveMediaFromCMS";
-import { staggerContainerVariants, staggerItemVariants } from "@/animations";
-// import { cn } from "@/lib/utils";
 import type { LRProps, PageContent } from "@/components/layout/BookLayout";
+import { useMotionValueState } from "@/hooks/useMotionValueState";
 
 type MusicFilter = "all" | "covers" | "originals";
 
@@ -22,7 +20,7 @@ function DiscographyRight({ index }: Readonly<LRProps>) {
   });
   return (
     <motion.div
-      className="absolute h-full right-0 overflow-clip pointer-events-none"
+      className="absolute h-full right-0 overflow-clip pointer-events-none mask-l-from-80% mask-l-to-95%"
       style={{ width }}
     >
       <InteractiveMediaFromCMS
@@ -34,35 +32,32 @@ function DiscographyRight({ index }: Readonly<LRProps>) {
   );
 }
 
-function DiscographyLeft() {
-  // const [filter, setFilter] = useState<MusicFilter>("all");
+function DiscographyLeft({ index }: Readonly<LRProps>) {
+  const currentPage = useMotionValueState(index)
+  // Load data when within 1 page of visibility (discography is page 2, so check around 0.5)
+  const isNearVisible = currentPage > 0
 
   return (
-    <motion.div
-      variants={staggerContainerVariants}
-      initial="initial"
-      animate="enter"
+    <div
       className="flex h-full w-full flex-col p-4 gap-2"
     >
       <div className="p-2 bg-(--page-surface)/5">
         <h1 className="text-base text-(--page-text)">Cover</h1>
       </div>
-      <motion.div
-        variants={staggerItemVariants}
+      <div
         className="flex-1 overflow-y-auto bg-(--page-surface)/5 p-2"
       >
-        <SongGrid filter={filters[1].value} />
-      </motion.div>
+        <SongGrid filter={filters[1].value} skip={!isNearVisible} />
+      </div>
       <div className="p-2 bg-(--page-surface)/5">
         <h1 className="text-base text-(--page-text)">Originals</h1>
       </div>
-      <motion.div
-        variants={staggerItemVariants}
+      <div
         className="flex-1 overflow-y-auto bg-(--page-surface)/5 p-2"
       >
-        <SongGrid filter={filters[2].value} />
-      </motion.div>
-    </motion.div>
+        <SongGrid filter={filters[2].value} skip={!isNearVisible} />
+      </div>
+    </div>
   );
 }
 

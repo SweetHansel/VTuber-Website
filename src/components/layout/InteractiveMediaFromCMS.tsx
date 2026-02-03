@@ -37,7 +37,7 @@ function LoadingSkeleton({ className }: Readonly<{ className?: string }>) {
 function EmptySkeleton({ className }: Readonly<{ className?: string }>) {
   return (
     <div className={cn('relative', className)}>
-      <div className="h-full w-full rounded-lg bg-(--primary)/60" />
+      <div className="h-full w-full rounded-lg bg-(--modal-primary)/60" />
     </div>
   )
 }

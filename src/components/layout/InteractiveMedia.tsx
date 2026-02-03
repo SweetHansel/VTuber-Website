@@ -139,12 +139,9 @@ export function InteractiveMedia({
   }, [isClicked, cursorEffect, spawnCursorEffect])
 
   return (
-    <motion.div
+    <div
       ref={containerRef}
       className={cn('relative select-none', className)}
-      style={{
-        transform: `translateZ(${depth}px)`,
-      }}
       onMouseEnter={handleHoverStart}
       onMouseLeave={handleHoverEnd}
       onClick={handleClick}
@@ -187,6 +184,6 @@ export function InteractiveMedia({
           </motion.div>
         ))}
       </AnimatePresence>
-    </motion.div>
+    </div>
   )
 }

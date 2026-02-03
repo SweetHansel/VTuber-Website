@@ -4,12 +4,13 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { ChevronRight, User, Box, Loader2 } from "lucide-react";
-import type { PageContent } from "@/components/layout/BookLayout";
-import { useModels, type Model, type Media, getMedia, nullToUndefined } from "@/hooks/useCMS";
+import { User, Box, Loader2 } from "lucide-react";
+import type { LRProps, PageContent } from "@/components/layout/BookLayout";
+import { useModels, type Model, getMedia, nullToUndefined } from "@/hooks/useCMS";
 import { useModelShowcaseStore } from "@/stores/modelShowcaseStore";
 import { ModelShowcase } from "@/components/models/ModelShowcase";
 import { MODEL_2D_TYPES, MODEL_3D_TYPES } from "@/constants/models";
+import { useMotionValueState } from "@/hooks/useMotionValueState";
 
 type ModelTab = "2d" | "3d";
 
@@ -57,10 +58,14 @@ function VTuberModelsLeft() {
   return <ModelShowcase model={model} />;
 }
 
-function VTuberModelsRight() {
+function VTuberModelsRight({ index }: LRProps) {
+  const currentPage = useMotionValueState(index)
+  // Load data when within 1 page of visibility (vtuber-models is page 3, so check around 0.5)
+  const isNearVisible = currentPage > 0
+
   const [activeTab, setActiveTab] = useState<ModelTab>("2d");
   const { selectedModel, setSelectedModel } = useModelShowcaseStore();
-  const { data: allModels, loading, error } = useModels();
+  const { data: allModels, loading, error } = useModels(undefined, { skip: !isNearVisible });
 
   // Filter models by type (keep full Model objects)
   const filteredModels: Model[] = allModels
@@ -111,14 +116,14 @@ function VTuberModelsRight() {
       </div>
 
       {/* Loading state */}
-      {loading && (
+      {(!isNearVisible || loading) && (
         <div className="flex flex-1 items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-(--page-text)/40" />
         </div>
       )}
 
       {/* Model grid */}
-      {!loading && filteredModels.length > 0 && (
+      {isNearVisible && !loading && filteredModels.length > 0 && (
         <div className="grid flex-1 grid-cols-2 gap-4 overflow-y-auto md:grid-cols-3">
           {filteredModels.map((model) => {
             const cardData = transformModel(model);
@@ -166,7 +171,7 @@ function VTuberModelsRight() {
       )}
 
       {/* Empty state */}
-      {!loading && filteredModels.length === 0 && (
+      {isNearVisible && !loading && filteredModels.length === 0 && (
         <div className="flex flex-1 items-center justify-center text-(--page-text)/40">
           No models found
         </div>

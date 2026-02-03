@@ -162,24 +162,6 @@ export function SongCard({
             {formatDuration(duration)}
           </p>
         )}
-
-        {/* Streaming links */}
-        {streamingLinks && streamingLinks.length > 0 && (
-          <div className="mt-2 flex gap-1">
-            {streamingLinks.slice(0, 3).map((link) => (
-              <a
-                key={link.platform}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="rounded-full bg-(--page-surface)/10 p-1.5 text-(--page-text)/60 transition-colors hover:bg-(--page-surface)/20 hover:text-(--page-text)"
-              >
-                <ExternalLink className="h-3 w-3" />
-              </a>
-            ))}
-          </div>
-        )}
       </div>
     </motion.div>
   );

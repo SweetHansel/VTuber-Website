@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { UpdatesPage } from "../pages/UpdatesPage";
+import { UpdatesScreen } from "../screen/UpdatesScreen";
 import { AspectLock } from "./AspectLock";
 import { InteractiveMediaFromCMS } from "./InteractiveMediaFromCMS";
 import { useLayoutStore } from "@/stores/layoutStore";
@@ -32,7 +32,7 @@ export function PhoneLayout() {
           className="absolute top-[2%] left-[2%] h-[75%] w-[96%]"
           onClick={(e) => e.stopPropagation()}
         >
-          <UpdatesPage />
+          <UpdatesScreen />
         </div>
       </div>
     </AspectLock>

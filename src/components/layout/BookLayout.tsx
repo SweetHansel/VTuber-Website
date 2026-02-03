@@ -23,6 +23,7 @@ import { useLayoutStore } from "@/stores/layoutStore";
 
 export interface LRProps {
   index: MotionValue<number>;
+  onNavigate: (page: number) => void;
 }
 export interface PageContent {
   Left: React.ComponentType<LRProps>;
@@ -38,9 +39,10 @@ interface PageProps {
   index: MotionValue<number>;
   pageIndex: number;
   Page: PageContent;
+  onNavigate: (page: number) => void;
 }
 
-function LeftPage({ index, pageIndex, Page }: Readonly<PageProps>) {
+function LeftPage({ index, pageIndex, Page, onNavigate }: Readonly<PageProps>) {
   const rotateY = useTransform(
     index,
     (v) => 180 - (clamp(v - pageIndex, 0.25, 0.75) - 0.25) * 2 * 180,
@@ -57,12 +59,17 @@ function LeftPage({ index, pageIndex, Page }: Readonly<PageProps>) {
       style={{ rotateY }}
       transition={{ duration: 0.3, bounce: 0 }}
     >
-      <Page.Left index={innerPageTransforms} />
+      <Page.Left index={innerPageTransforms} onNavigate={onNavigate} />
     </motion.div>
   );
 }
 
-function RightPage({ index, pageIndex, Page }: Readonly<PageProps>) {
+function RightPage({
+  index,
+  pageIndex,
+  Page,
+  onNavigate,
+}: Readonly<PageProps>) {
   const rotateY = useTransform(
     index,
     (v) => (clamp(v - pageIndex - 1, 0.25, 0.75) - 0.25) * 2 * -180,
@@ -79,12 +86,20 @@ function RightPage({ index, pageIndex, Page }: Readonly<PageProps>) {
       style={{ rotateY, translateX: "100%" }}
       transition={{ duration: 0.3, bounce: 0 }}
     >
-      <Page.Right index={innerPageTransforms} />
+      <Page.Right index={innerPageTransforms} onNavigate={onNavigate} />
     </motion.div>
   );
 }
 
 const sections = CONTENT_SECTIONS;
+
+// Section labels for ToC
+const sectionLabels: Record<string, string> = {
+  about: "About Me",
+  artworks: "Artworks",
+  discography: "Discography",
+  "vtuber-models": "Models",
+};
 
 // Page mapping
 const pages: Record<string, PageContent> = {
@@ -94,9 +109,39 @@ const pages: Record<string, PageContent> = {
   "vtuber-models": VTuberModelsPage,
 };
 
+// ToC Page - only has right side content
+function ToCLeft() {
+  return <div className="h-full w-full" />;
+}
+
+function ToCRight({ onNavigate }: Readonly<LRProps>) {
+  return (
+    <div className="flex h-full flex-col justify-center p-8">
+      <h2 className="text-2xl font-bold text-(--page-text) mb-6">Contents</h2>
+      <ul className="space-y-2">
+        {sections.map((section, i) => (
+          <li key={section}>
+            <button
+              onClick={() => onNavigate(i + 1)}
+              className="text-(--page-text)/70 hover:text-(--page-text) transition-colors text-left"
+            >
+              {sectionLabels[section]}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+const ToCPage: PageContent = {
+  Left: ToCLeft,
+  Right: ToCRight,
+};
+
 export function BookLayout() {
   const { focusState, setFocus } = useLayoutStore();
-  const index = useMotionValue(1);
+  const index = useMotionValue(0);
 
   const isScrollingRef = useRef(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -106,9 +151,9 @@ export function BookLayout() {
     animate(index, val, { duration: 1, bounce: 0 });
   };
 
-  // Controls prev/ToC buttons (visible when index >= 1)
+  // Controls prev/ToC buttons (visible when index > 0)
   const showPrevButtons = useTransform(index, (v) =>
-    Number.isInteger(v) && v >= 1 ? "visible" : "hidden",
+    Number.isInteger(v) && v > 0 ? "visible" : "hidden",
   );
 
   // Controls next button (visible when index < sections.length)
@@ -118,7 +163,7 @@ export function BookLayout() {
 
   const handleWheel = (e: React.WheelEvent) => {
     const direction = e.deltaY > 0 ? 1 : -1;
-    animate(index, clamp(index.get() + direction * 0.1, 1, sections.length), {
+    animate(index, clamp(index.get() + direction * 0.1, 0, sections.length), {
       type: "spring",
       duration: 0.1,
       bounce: 0,
@@ -218,6 +263,7 @@ export function BookLayout() {
                 index={index}
                 pageIndex={i}
                 Page={pages[section]}
+                onNavigate={setIndexAnimated}
               />
             ))}
             {/* Right pages rendered in reverse DOM order to fix 3D stacking */}
@@ -227,8 +273,17 @@ export function BookLayout() {
                 index={index}
                 pageIndex={sections.length - i - 1}
                 Page={pages[section]}
+                onNavigate={setIndexAnimated}
               />
             ))}
+            {/* ToC Page (index 0, only has right side with content) */}
+            <RightPage
+              key="right-toc"
+              index={index}
+              pageIndex={-1}
+              Page={ToCPage}
+              onNavigate={setIndexAnimated}
+            />
 
             <motion.div
               className="absolute h-full w-full pointer-events-none"
@@ -242,18 +297,18 @@ export function BookLayout() {
             hover:border-b-(--page-surface)/40 transition-colors"
                 aria-label="Previous page"
               >
-                <ChevronLeft className="absolute bottom-50 left-5 w-4 h-4 text-(--page-text)/60" />
+                <ChevronLeft className="absolute -bottom-12.5 left-1.25 w-4 h-4 text-(--page-text)/60" />
               </button>
 
               <button
-                onClick={() => setIndexAnimated(1)}
+                onClick={() => setIndexAnimated(0)}
                 className="absolute top-0 left-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
             border-t-60 border-t-(--page-surface)/20
             border-r-60 border-r-transparent
             hover:border-t-(--page-surface)/40 transition-colors"
                 aria-label="ToC"
               >
-                <ListTree className="absolute top-50 left-5 w-4 h-4 text-(--page-text)/60" />
+                <ListTree className="absolute -top-12.5 left-1.25 w-4 h-4 text-(--page-text)/60" />
               </button>
             </motion.div>
 
@@ -269,7 +324,7 @@ export function BookLayout() {
             hover:border-b-(--page-surface)/40 transition-colors"
                 aria-label="Next page"
               >
-                <ChevronRight className="absolute bottom-50 right-5 w-4 h-4 text-(--page-text)/60" />
+                <ChevronRight className="absolute -bottom-12.5 right-1.25 w-4 h-4 text-(--page-text)/60" />
               </button>
             </motion.div>
           </div>

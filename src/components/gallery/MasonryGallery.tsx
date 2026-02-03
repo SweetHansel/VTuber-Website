@@ -90,28 +90,36 @@ function computeRows(
 
 interface MasonryGalleryProps {
   filter?: ArtworkFilter;
+  skip?: boolean;
 }
 
-export function MasonryGallery({ filter = "all" }: MasonryGalleryProps) {
+export function MasonryGallery({ filter = "all", skip = false }: MasonryGalleryProps) {
   const openModal = useModalStore((state) => state.openModal);
-  const { data: cmsArtworks, loading, error } = useArtworks(filter);
+  const { data: cmsArtworks, loading, error } = useArtworks(filter, { skip });
 
-  // Track container width for responsive masonry
+  // Track container dimensions for responsive masonry
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(800);
+  const [containerHeight, setContainerHeight] = useState(600);
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
 
     const observer = new ResizeObserver((entries) => {
-      const width = entries[0]?.contentRect.width;
-      if (width) setContainerWidth(width);
+      const rect = entries[0]?.contentRect;
+      if (rect) {
+        setContainerWidth(rect.width);
+        setContainerHeight(rect.height);
+      }
     });
 
     observer.observe(el);
     return () => observer.disconnect();
   }, [loading]);
+
+  // Row height is 20% of container height
+  const rowHeight = Math.max(containerHeight * 0.2, 80); // min 80px
 
   // Track detected aspect ratios for images without CMS dimensions
   const [detectedRatios, setDetectedRatios] = useState<Record<string, number>>({});
@@ -144,11 +152,11 @@ export function MasonryGallery({ filter = "all" }: MasonryGalleryProps) {
     [cmsArtworks, artworks, filter],
   );
 
-  // Compute rows based on actual container width
-  // Target row height of 120px, 8px gap
+  // Compute rows based on actual container dimensions
+  // Row height is 20% of container height, 8px gap
   const rows = useMemo(
-    () => computeRows(filteredArtworks, detectedRatios, containerWidth, 120, 8),
-    [filteredArtworks, detectedRatios, containerWidth],
+    () => computeRows(filteredArtworks, detectedRatios, containerWidth, rowHeight, 8),
+    [filteredArtworks, detectedRatios, containerWidth, rowHeight],
   );
 
   const handleClick = (artwork: Artwork) => {
@@ -159,7 +167,7 @@ export function MasonryGallery({ filter = "all" }: MasonryGalleryProps) {
     );
   };
 
-  if (loading) {
+  if (skip || loading) {
     return (
       <div className="flex h-40 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-white/40" />
@@ -171,19 +179,17 @@ export function MasonryGallery({ filter = "all" }: MasonryGalleryProps) {
     console.warn("Failed to fetch artworks, using fallback data:", error);
   }
 
-  const ROW_HEIGHT = 120;
-
   return (
-    <div ref={containerRef} className="relative w-full flex flex-col gap-2">
+    <div ref={containerRef} className="relative w-full h-full flex flex-col gap-2">
       {rows.map((row, rowIndex) => (
         <div key={rowIndex} className="flex flex-row-reverse justify-start gap-2">
           {row.map(({ artwork, ratio }, itemIndex) => (
             <motion.div
               key={artwork.id}
               transition={{ delay: (rowIndex * row.length + itemIndex) * 0.02 }}
-              className="relative shrink-0 cursor-pointer overflow-y-scroll group"
+              className="relative shrink-0 cursor-pointer overflow-hidden group"
               style={{
-                height: ROW_HEIGHT,
+                height: rowHeight,
                 aspectRatio: ratio,
               }}
               onClick={() => handleClick(artwork)}

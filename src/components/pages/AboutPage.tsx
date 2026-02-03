@@ -1,13 +1,30 @@
-'use client'
+"use client";
 
-import { motion } from 'framer-motion'
-import Image from 'next/image'
-import { staggerContainerVariants, staggerItemVariants } from '@/animations'
-import { cn } from '@/lib/utils'
-import { Heart, ThumbsDown, Gamepad, Hash, Calendar, Ruler, LucideIcon, Star, Music, Sparkles, Coffee, Loader2 } from 'lucide-react'
-import type { PageContent } from '@/components/layout/BookLayout'
-import { useProfile, type Profile, getModel, getMedia, nullToUndefined } from '@/hooks/useCMS'
-import { ModelShowcase } from '../models/ModelShowcase'
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+import {
+  Heart,
+  ThumbsDown,
+  Gamepad,
+  Hash,
+  Calendar,
+  Ruler,
+  LucideIcon,
+  Star,
+  Music,
+  Sparkles,
+  Coffee,
+  Loader2,
+} from "lucide-react";
+import type { LRProps, PageContent } from "@/components/layout/BookLayout";
+import {
+  useProfile,
+  getModel,
+  getMedia,
+  nullToUndefined,
+} from "@/hooks/useCMS";
+import { ModelShowcase } from "../models/ModelShowcase";
+import { useMotionValueState } from "@/hooks/useMotionValueState";
 
 // Icon mapping for dynamic traits
 const iconMap: Record<string, LucideIcon> = {
@@ -19,98 +36,106 @@ const iconMap: Record<string, LucideIcon> = {
   Sparkles,
   Coffee,
   Hash,
-}
+};
 
 function LoadingSkeleton() {
   return (
     <div className="flex h-full items-center justify-center">
       <Loader2 className="h-8 w-8 animate-spin text-(--page-text)/40" />
     </div>
-  )
+  );
 }
 
-function AboutLeft() {
-  const { data: profile, loading } = useProfile()
+function AboutLeft({ index }: LRProps) {
+  const currentPage = useMotionValueState(index);
+  // Load data when within 1 page of visibility
+  const isNearVisible = currentPage > 0;
 
-  if (loading) {
-    return <LoadingSkeleton />
+  const { data: profile, loading } = useProfile({ skip: !isNearVisible });
+
+  if (!isNearVisible || loading) {
+    return <LoadingSkeleton />;
   }
 
   return (
-    <motion.div
-      variants={staggerContainerVariants}
-      initial="initial"
-      animate="enter"
-      className="flex h-full flex-col items-center justify-center gap-4 p-6"
-    >
+    <div className="flex h-full flex-col items-center justify-center gap-4 p-6">
       <ModelShowcase model={getModel(profile?.currentModel)} />
-      <motion.button
-        variants={staggerItemVariants}
-        className="rounded-full bg-(--page-surface)/10 px-4 py-2 text-sm font-medium text-(--page-text) transition-colors hover:bg-(--page-surface)/20"
-      >
+      <button className="rounded-full bg-(--page-surface)/10 px-4 py-2 text-sm font-medium text-(--page-text) transition-colors hover:bg-(--page-surface)/20">
         View All Models →
-      </motion.button>
-    </motion.div>
-  )
+      </button>
+    </div>
+  );
 }
 
-function AboutRight() {
-  const { data: profile, loading } = useProfile()
+function AboutRight({ index }: LRProps) {
+  const currentPage = useMotionValueState(index);
+  // Load data when within 1 page of visibility
+  const isNearVisible = Math.abs(currentPage - 0.5) <= 1.5;
 
-  if (loading) {
-    return <LoadingSkeleton />
+  const { data: profile, loading } = useProfile({ skip: !isNearVisible });
+
+  if (!isNearVisible || loading) {
+    return <LoadingSkeleton />;
   }
 
   if (!profile) {
-    return <div className="flex h-full items-center justify-center text-(--page-text)/60">Profile not found</div>
+    return (
+      <div className="flex h-full items-center justify-center text-(--page-text)/60">
+        Profile not found
+      </div>
+    );
   }
 
   // Get the current model from union type
-  const currentModel = getModel(profile.currentModel)
+  const currentModel = getModel(profile.currentModel);
 
   return (
-    <motion.div
-      variants={staggerContainerVariants}
-      initial="initial"
-      animate="enter"
-      className="h-full space-y-6 overflow-y-auto p-6"
-    >
-
-      <motion.div variants={staggerItemVariants}>
+    <div className="h-full space-y-6 overflow-y-auto p-6">
+      <div>
         {currentModel?.refSheets?.map((v, i) => {
-          const media = getMedia(v.media)
-          if (!media?.url) return null
-          return <Image key={media.id ?? i} alt={media.alt ?? v.label ?? ''} src={media.url} width={200} height={200} />
+          const media = getMedia(v.media);
+          if (!media?.url) return null;
+          return (
+            <Image
+              key={media.id ?? i}
+              alt={media.alt ?? v.label ?? ""}
+              src={media.url}
+              width={200}
+              height={200}
+            />
+          );
         })}
-      </motion.div>
+      </div>
 
       {/* Name & Tagline */}
-      <motion.div variants={staggerItemVariants}>
-        <h1 className="text-3xl font-bold text-(--page-text)">{profile.name}</h1>
+      <div>
+        <h1 className="text-3xl font-bold text-(--page-text)">
+          {profile.name}
+        </h1>
         {profile.alternateName && (
-          <p className="text-lg text-(--page-text)/60">{profile.alternateName}</p>
+          <p className="text-lg text-(--page-text)/60">
+            {profile.alternateName}
+          </p>
         )}
         {profile.tagline && (
           <p className="mt-1 text-primary">{profile.tagline}</p>
         )}
-      </motion.div>
+      </div>
 
       {/* Bio */}
       {profile.shortBio && (
-        <motion.p variants={staggerItemVariants} className="text-(--page-text)/80">
-          {profile.shortBio}
-        </motion.p>
+        <p className="text-(--page-text)/80">{profile.shortBio}</p>
       )}
 
       {/* Stats */}
-      <motion.div variants={staggerItemVariants} className="flex gap-6">
+      <div className="flex gap-6">
         {profile.birthday && (
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-(--page-text)/60" />
             <span className="text-sm text-(--page-text)/80">
-              {new Date(profile.birthday).toLocaleDateString('en-US', {
-                month: 'long',
-                day: 'numeric',
+              {new Date(profile.birthday).toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
               })}
             </span>
           </div>
@@ -118,17 +143,19 @@ function AboutRight() {
         {profile.height && (
           <div className="flex items-center gap-2">
             <Ruler className="h-4 w-4 text-(--page-text)/60" />
-            <span className="text-sm text-(--page-text)/80">{profile.height}</span>
+            <span className="text-sm text-(--page-text)/80">
+              {profile.height}
+            </span>
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Info sections */}
       <div className="grid gap-4 md:grid-cols-2">
         {/* Dynamic traits from CMS */}
         {profile.traits?.map((trait) => {
-          const IconComponent = iconMap[trait.icon || 'Star'] || Star
-          const items = trait.items?.map(i => i.value) || []
+          const IconComponent = iconMap[trait.icon || "Star"] || Star;
+          const items = trait.items?.map((i) => i.value) || [];
           return (
             <InfoSection
               key={trait.category}
@@ -137,15 +164,12 @@ function AboutRight() {
               items={items}
               customColor={nullToUndefined(trait.color)}
             />
-          )
+          );
         })}
 
         {/* Hashtags */}
         {profile.hashtags && profile.hashtags.length > 0 && (
-          <motion.div
-            variants={staggerItemVariants}
-            className="rounded-xl bg-(--page-surface)/5 p-4"
-          >
+          <div className="rounded-xl bg-(--page-surface)/5 p-4">
             <div className="mb-2 flex items-center gap-2">
               <Hash className="h-4 w-4 text-(--page-primary)" />
               <h3 className="font-medium text-(--page-text)">Hashtags</h3>
@@ -153,47 +177,51 @@ function AboutRight() {
             <div className="space-y-1 text-sm">
               {profile.hashtags.map((hashtag) => (
                 <p key={hashtag.label} className="text-(--page-text)/60">
-                  {hashtag.label}: <span className="text-(--page-primary)">{hashtag.value}</span>
+                  {hashtag.label}:{" "}
+                  <span className="text-(--page-primary)">{hashtag.value}</span>
                 </p>
               ))}
             </div>
-          </motion.div>
+          </div>
         )}
       </div>
-    </motion.div>
-  )
+    </div>
+  );
 }
 
 export const AboutPage: PageContent = {
   Left: AboutLeft,
   Right: AboutRight,
-}
+};
 
 interface InfoSectionProps {
-  icon: LucideIcon
-  title: string
-  items: string[]
-  color?: 'blue' | 'pink' | 'red'
-  customColor?: string
+  icon: LucideIcon;
+  title: string;
+  items: string[];
+  color?: "blue" | "pink" | "red";
+  customColor?: string;
 }
 
 const colorMap = {
-  blue: 'text-blue-400',
-  pink: 'text-pink-400',
-  red: 'text-red-400',
-}
+  blue: "text-blue-400",
+  pink: "text-pink-400",
+  red: "text-red-400",
+};
 
-function InfoSection({ icon: Icon, title, items, color, customColor }: Readonly<InfoSectionProps>) {
-  const colorClass = color ? colorMap[color] : ''
+function InfoSection({
+  icon: Icon,
+  title,
+  items,
+  color,
+  customColor,
+}: Readonly<InfoSectionProps>) {
+  const colorClass = color ? colorMap[color] : "";
 
   return (
-    <motion.div
-      variants={staggerItemVariants}
-      className="rounded-xl bg-(--page-surface)/5 p-4"
-    >
+    <div className="rounded-xl bg-(--page-surface)/5 p-4">
       <div className="mb-2 flex items-center gap-2">
         <Icon
-          className={cn('h-4 w-4', colorClass)}
+          className={cn("h-4 w-4", colorClass)}
           style={customColor ? { color: customColor } : undefined}
         />
         <h3 className="font-medium text-(--page-text)">{title}</h3>
@@ -208,6 +236,6 @@ function InfoSection({ icon: Icon, title, items, color, customColor }: Readonly<
           </span>
         ))}
       </div>
-    </motion.div>
-  )
+    </div>
+  );
 }

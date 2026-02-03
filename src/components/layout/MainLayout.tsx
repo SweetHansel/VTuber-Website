@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 import { SongSeekbar } from "@/components/audio/SongSeekbar";
 import { LivestreamAlert } from "@/components/ui/LivestreamAlert";
 import { Modal } from "@/components/content/Modal";
-import { UpdatesPage } from "@/components/pages/UpdatesPage";
+import { UpdatesScreen } from "@/components/screen/UpdatesScreen";
 import { LeftBar } from "./LeftBar";
 import { InteractiveMediaFromCMS } from "./InteractiveMediaFromCMS";
 import { AspectLock } from "./AspectLock";
@@ -29,7 +29,7 @@ export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
   const topRightHeight = 100 - config.B;
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-white">
+    <div className="relative h-screen w-full overflow-hidden bg-(--modal-bg)">
       {/* Main Layout Container */}
 
       <InteractiveMediaFromCMS

@@ -43,7 +43,7 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
 
   if (!model) {
     return (
-      <div className="flex h-full items-center justify-center p-6">
+      <div className="flex h-full w-full items-center justify-center p-6">
         <div className="text-center text-(--page-text)">
           <Box className="mx-auto h-16 w-16 mb-4 text-(--page-text)/60" />
           <h2 className="text-xl font-bold">Model Showcase</h2>
@@ -69,7 +69,7 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
   const currentMedia = getMedia(currentItem.media);
 
   return (
-    <div className="flex h-full flex-col p-4">
+    <div className="flex h-full w-full flex-col p-4">
       {/* Model name */}
       <div className="mb-3 flex items-center justify-center gap-2">
         <div className="text-center">

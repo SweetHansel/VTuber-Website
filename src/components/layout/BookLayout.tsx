@@ -6,7 +6,13 @@ import { ArtworksPage } from "@/components/pages/ArtworksPage";
 import { DiscographyPage } from "@/components/pages/DiscographyPage";
 import { VTuberModelsPage } from "@/components/pages/VTuberModelsPage";
 import { ChevronLeft, ChevronRight, ListTree } from "lucide-react";
-import { animate, motion, useMotionValue, useTransform } from "framer-motion";
+import {
+  animate,
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 import { CONTENT_SECTIONS } from "@/constants/sections";
 import { cn } from "@/lib/utils";
 import { AspectLock } from "./AspectLock";
@@ -24,7 +30,7 @@ const clamp = (value: number, min: number, max: number) =>
 const sections = CONTENT_SECTIONS;
 
 // Page mapping
-const pages: Record<string,(React.ComponentType<LRProps>)[]> = {
+const pages: Record<string, React.ComponentType<LRProps>[]> = {
   about: AboutPage,
   artworks: ArtworksPage,
   discography: DiscographyPage,
@@ -33,14 +39,15 @@ const pages: Record<string,(React.ComponentType<LRProps>)[]> = {
 
 export function BookLayout() {
   const { focusState, setFocus } = useLayoutStore();
-  const index = useMotionValue(0);
+  const rough = useMotionValue(0);
+  const index = useSpring(rough, { stiffness: 20, damping: 10 });
 
   const isScrollingRef = useRef(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const touchStartRef = useRef<number | null>(null);
 
-  const setIndexAnimated = (val: number) => {
-    animate(index, val, { duration: 1, bounce: 0 });
+  const setIndex = (val: number) => {
+    rough.set(val);
   };
 
   // Controls prev/ToC buttons (visible when index > 0)
@@ -55,11 +62,7 @@ export function BookLayout() {
 
   const handleWheel = (e: React.WheelEvent) => {
     const direction = e.deltaY > 0 ? 1 : -1;
-    animate(index, clamp(index.get() + direction * 0.1, 0, sections.length), {
-      type: "spring",
-      duration: 0.1,
-      bounce: 0,
-    });
+    rough.set(clamp(rough.get() + direction * 0.1, 0, sections.length));
 
     isScrollingRef.current = true;
 
@@ -69,14 +72,9 @@ export function BookLayout() {
 
     scrollTimeoutRef.current = setTimeout(() => {
       isScrollingRef.current = false;
-
       // Decay to nearest page when scrolling stops
-      const current = index.get();
-      const target = Math.round(current);
-      if (!Number.isInteger(current)) {
-        animate(index, target, { type: "spring", duration: 2, bounce: 0 });
-      }
-    }, 100);
+      setIndex(Math.round(index.get()));
+    }, 500);
   };
 
   // Touch/swipe handlers
@@ -88,7 +86,7 @@ export function BookLayout() {
     if (touchStartRef.current === null) return;
 
     const diff = touchStartRef.current - e.touches[0].clientX;
-    index.set(clamp(index.get() + diff * 0.01, 0, sections.length));
+    rough.set(clamp(rough.get() + diff * 0.01, 0, sections.length));
     touchStartRef.current = e.touches[0].clientX;
 
     isScrollingRef.current = true;
@@ -98,24 +96,15 @@ export function BookLayout() {
     touchStartRef.current = null;
     isScrollingRef.current = false;
 
-    // Decay to nearest page when touch ends
-    const current = index.get();
-    const target = Math.round(current);
-    if (!Number.isInteger(current)) {
-      animate(index, target, {
-        type: "spring",
-        duration: 0.3,
-        bounce: 0,
-      });
-    }
+    setIndex(Math.round(index.get()));
   };
 
   const nextPage = () => {
-    setIndexAnimated(Math.round(index.get()) + 1);
+    setIndex(Math.round(index.get()) + 1);
   };
 
   const prevPage = () => {
-    setIndexAnimated(Math.round(index.get()) - 1);
+    setIndex(Math.round(index.get()) - 1);
   };
 
   return (
@@ -155,7 +144,7 @@ export function BookLayout() {
                 index={index}
                 pageIndex={i}
                 Page={pages[section][0]}
-                onNavigate={setIndexAnimated}
+                onNavigate={setIndex}
               />
             ))}
             {/* Right pages rendered in reverse DOM order to fix 3D stacking */}
@@ -165,7 +154,7 @@ export function BookLayout() {
                 index={index}
                 pageIndex={sections.length - i - 1}
                 Page={pages[section][1]}
-                onNavigate={setIndexAnimated}
+                onNavigate={setIndex}
               />
             ))}
             {/* ToC Page (index 0, only has right side with content) */}
@@ -174,7 +163,7 @@ export function BookLayout() {
               index={index}
               pageIndex={-1}
               Page={ToCPage}
-              onNavigate={setIndexAnimated}
+              onNavigate={setIndex}
             />
 
             <motion.div
@@ -193,7 +182,7 @@ export function BookLayout() {
               </button>
 
               <button
-                onClick={() => setIndexAnimated(0)}
+                onClick={() => setIndex(0)}
                 className="absolute top-0 left-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
             border-t-60 border-t-(--page-surface)/20
             border-r-60 border-r-transparent

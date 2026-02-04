@@ -1,9 +1,11 @@
 "use client";
 
-import { motion, useTransform } from "framer-motion";
 import { SongGrid } from "@/components/discography/SongGrid";
 import { InteractiveMediaFromCMS } from "@/components/media";
-import { mapToFlatOnly, type LRProps, type PageContent } from "@/components/layout/BookLayout";
+import {
+  ExpandingPage,
+  type LRProps,
+} from "@/components/layout/BookLayout";
 import { useMotionValueState } from "@/hooks/useMotionValueState";
 
 type MusicFilter = "all" | "covers" | "originals";
@@ -15,20 +17,18 @@ const filters: { label: string; value: MusicFilter }[] = [
 ];
 
 function DiscographyRight({ index }: Readonly<LRProps>) {
-  const width = useTransform(index, (x) => {
-    const v = mapToFlatOnly(x);
-    return (v <= 0.5 ? (1 + v * 2) * 100 : (3 - v * 2) * 100) + "%";
-  });
   return (
-    <motion.div
+    <ExpandingPage
+      index={index}
+      min={100}
+      max={200}
       className="absolute h-full right-0 overflow-clip pointer-events-none mask-l-from-80% mask-l-to-95%"
-      style={{ width }}
     >
       <InteractiveMediaFromCMS
         location="page-discography"
         className="absolute h-full aspect-video right-0"
       />
-    </motion.div>
+    </ExpandingPage>
   );
 }
 
@@ -55,7 +55,4 @@ function DiscographyLeft({ index }: Readonly<LRProps>) {
   );
 }
 
-export const DiscographyPage: PageContent = {
-  Left: DiscographyLeft,
-  Right: DiscographyRight,
-};
+export const DiscographyPage = [DiscographyLeft, DiscographyRight]

@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { motion, useTransform, type MotionValue } from "framer-motion";
 
 // Utility
@@ -15,15 +16,10 @@ export interface LRProps {
   onNavigate: (page: number) => void;
 }
 
-export interface PageContent {
-  Left: React.ComponentType<LRProps>;
-  Right: React.ComponentType<LRProps>;
-}
-
 interface PageProps {
   index: MotionValue<number>;
   pageIndex: number;
-  Page: PageContent;
+  Page: React.ComponentType<LRProps>;
   onNavigate: (page: number) => void;
 }
 
@@ -48,7 +44,7 @@ export function LeftPage({
       style={{ rotateY }}
       transition={{ duration: 0.3, bounce: 0 }}
     >
-      <Page.Left index={innerPageTransforms} onNavigate={onNavigate} />
+      <Page index={innerPageTransforms} onNavigate={onNavigate} />
     </motion.div>
   );
 }
@@ -74,7 +70,32 @@ export function RightPage({
       style={{ rotateY, translateX: "100%" }}
       transition={{ duration: 0.3, bounce: 0 }}
     >
-      <Page.Right index={innerPageTransforms} onNavigate={onNavigate} />
+      <Page index={innerPageTransforms} onNavigate={onNavigate} />
+    </motion.div>
+  );
+}
+
+export function ExpandingPage({
+  index,
+  className,
+  min,
+  max,
+  children,
+}: Readonly<{
+  index: MotionValue<number>;
+  className: string;
+  min: number;
+  max: number;
+  children: React.ReactNode;
+}>) {
+  const width = useTransform(index, (x) => {
+    const v = mapToFlatOnly(x);
+    const mirrored = v < 0.5 ? v : 1 - v;
+    return min + mirrored * 2 * (max - min) + "%";
+  });
+  return (
+    <motion.div className={cn("h-full", className)} style={{ width }}>
+      {children}
     </motion.div>
   );
 }

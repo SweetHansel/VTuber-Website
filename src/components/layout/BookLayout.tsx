@@ -12,10 +12,10 @@ import { cn } from "@/lib/utils";
 import { AspectLock } from "./AspectLock";
 import { InteractiveMediaFromCMS } from "@/components/media";
 import { useLayoutStore } from "@/stores/layoutStore";
-import { LeftPage, RightPage, ToCPage, type PageContent } from "./book";
+import { LeftPage, LRProps, RightPage, ToCPage } from "./book";
 
 // Re-export types for backwards compatibility
-export { mapToFlatOnly, type LRProps, type PageContent } from "./book";
+export { mapToFlatOnly, ExpandingPage, type LRProps } from "./book";
 
 // Utility
 const clamp = (value: number, min: number, max: number) =>
@@ -24,7 +24,7 @@ const clamp = (value: number, min: number, max: number) =>
 const sections = CONTENT_SECTIONS;
 
 // Page mapping
-const pages: Record<string, PageContent> = {
+const pages: Record<string,(React.ComponentType<LRProps>)[]> = {
   about: AboutPage,
   artworks: ArtworksPage,
   discography: DiscographyPage,
@@ -154,7 +154,7 @@ export function BookLayout() {
                 key={`left-${section}`}
                 index={index}
                 pageIndex={i}
-                Page={pages[section]}
+                Page={pages[section][0]}
                 onNavigate={setIndexAnimated}
               />
             ))}
@@ -164,7 +164,7 @@ export function BookLayout() {
                 key={`right-${section}`}
                 index={index}
                 pageIndex={sections.length - i - 1}
-                Page={pages[section]}
+                Page={pages[section][1]}
                 onNavigate={setIndexAnimated}
               />
             ))}

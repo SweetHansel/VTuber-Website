@@ -1,7 +1,7 @@
 "use client";
 
 import { CONTENT_SECTIONS } from "@/constants/sections";
-import type { LRProps, PageContent } from "./Page";
+import type { LRProps } from "./Page";
 
 const sections = CONTENT_SECTIONS;
 
@@ -13,11 +13,7 @@ const sectionLabels: Record<string, string> = {
   "vtuber-models": "Models",
 };
 
-function ToCLeft() {
-  return <div className="h-full w-full" />;
-}
-
-function ToCRight({ onNavigate }: Readonly<LRProps>) {
+export function ToCPage({ onNavigate }: Readonly<LRProps>) {
   return (
     <div className="flex h-full flex-col justify-center p-8">
       <h2 className="text-2xl font-bold text-(--page-text) mb-6">Contents</h2>
@@ -36,8 +32,3 @@ function ToCRight({ onNavigate }: Readonly<LRProps>) {
     </div>
   );
 }
-
-export const ToCPage: PageContent = {
-  Left: ToCLeft,
-  Right: ToCRight,
-};

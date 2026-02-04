@@ -16,7 +16,7 @@ import {
   Coffee,
   Loader2,
 } from "lucide-react";
-import type { LRProps, PageContent } from "@/components/layout/BookLayout";
+import type { LRProps } from "@/components/layout/BookLayout";
 import {
   useProfile,
   getModel,
@@ -191,10 +191,7 @@ function AboutRight({ index }: Readonly<LRProps>) {
   );
 }
 
-export const AboutPage: PageContent = {
-  Left: AboutLeft,
-  Right: AboutRight,
-};
+export const AboutPage = [AboutLeft, AboutRight]
 
 interface InfoSectionProps {
   icon: LucideIcon;

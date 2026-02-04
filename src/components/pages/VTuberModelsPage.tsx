@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { User, Box, Loader2 } from "lucide-react";
-import type { LRProps, PageContent } from "@/components/layout/BookLayout";
+import type { LRProps } from "@/components/layout/BookLayout";
 import { useModels, type Model, getMedia, nullToUndefined } from "@/hooks/useCMS";
 import { useModelShowcaseStore } from "@/stores/modelShowcaseStore";
 import { ModelShowcase } from "@/components/display/ModelShowcase";
@@ -186,7 +186,4 @@ function VTuberModelsRight({ index }: Readonly<LRProps>) {
   );
 }
 
-export const VTuberModelsPage: PageContent = {
-  Left: VTuberModelsLeft,
-  Right: VTuberModelsRight,
-};
+export const VTuberModelsPage = [VTuberModelsLeft, VTuberModelsRight]

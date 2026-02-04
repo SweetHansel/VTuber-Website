@@ -167,7 +167,8 @@ export function MasonryGallery({ filter = "all", skip = false }: MasonryGalleryP
     );
   };
 
-  if (skip || loading) {
+  // Only show loading on first load (no cached data yet)
+  if (!cmsArtworks && loading) {
     return (
       <div className="flex h-40 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-(--page-text)/40" />

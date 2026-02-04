@@ -34,8 +34,8 @@ function DiscographyRight({ index }: Readonly<LRProps>) {
 
 function DiscographyLeft({ index }: Readonly<LRProps>) {
   const currentPage = useMotionValueState(index);
-  // Load data when within 1 page of visibility (discography is page 2, so check around 0.5)
-  const isNearVisible = currentPage > 0;
+  // Load data when visible
+  const isVisible = currentPage > 0 && currentPage < 1;
 
   return (
     <div className="flex h-full w-full flex-col p-4 gap-3">
@@ -43,13 +43,13 @@ function DiscographyLeft({ index }: Readonly<LRProps>) {
         <h1 className="text-base text-(--page-text)">Cover</h1>
       </div>
       <div className="flex-1 overflow-y-auto bg-(--page-surface)/5 p-3 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
-        <SongGrid filter={filters[1].value} skip={!isNearVisible} />
+        <SongGrid filter={filters[1].value} skip={!isVisible} />
       </div>
       <div className="px-2 py-1 bg-(--page-surface)/5">
         <h1 className="text-base text-(--page-text)">Originals</h1>
       </div>
       <div className="flex-1 overflow-y-auto bg-(--page-surface)/5 p-3 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
-        <SongGrid filter={filters[2].value} skip={!isNearVisible} />
+        <SongGrid filter={filters[2].value} skip={!isVisible} />
       </div>
     </div>
   );

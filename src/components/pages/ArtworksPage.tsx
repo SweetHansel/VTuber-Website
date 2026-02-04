@@ -31,8 +31,8 @@ function ArtworksLeft({ index }: Readonly<LRProps>) {
 
 function ArtworksRight({ index }: Readonly<LRProps>) {
   const currentPage = useMotionValueState(index);
-  // Load data when within 1 page of visibility (artworks is page 1, so check around 0.5)
-  const isNearVisible = currentPage > 0;
+  // Load data when visible
+  const isVisible = currentPage > 0 && currentPage < 1;
 
   const width = useTransform(index, (x) => {
     const v = mapToFlatOnly(x);
@@ -46,7 +46,7 @@ function ArtworksRight({ index }: Readonly<LRProps>) {
     >
       {/* Gallery */}
       <div className="absolute h-full p-4 aspect-11/9 right-0">
-        <MasonryGallery filter={"all"} skip={!isNearVisible} />
+        <MasonryGallery filter={"all"} skip={!isVisible} />
       </div>
     </motion.div>
   );

@@ -48,12 +48,13 @@ function LoadingSkeleton() {
 
 function AboutLeft({ index }: Readonly<LRProps>) {
   const currentPage = useMotionValueState(index);
-  // Load data when within 1 page of visibility
-  const isNearVisible = currentPage > 0;
+  // Load data when visible
+  const isVisible = currentPage > 0 && currentPage < 1;
 
-  const { data: profile, loading } = useProfile({ skip: !isNearVisible });
+  const { data: profile, loading } = useProfile({ skip: !isVisible });
 
-  if (!isNearVisible || loading) {
+  // Only show loading on first load (no cached data yet)
+  if (!profile && loading) {
     return <LoadingSkeleton />;
   }
 
@@ -69,12 +70,13 @@ function AboutLeft({ index }: Readonly<LRProps>) {
 
 function AboutRight({ index }: Readonly<LRProps>) {
   const currentPage = useMotionValueState(index);
-  // Load data when within 1 page of visibility
-  const isNearVisible = currentPage > 0;
+  // Load data when visible
+  const isVisible = currentPage > 0 && currentPage < 1;
 
-  const { data: profile, loading } = useProfile({ skip: !isNearVisible });
+  const { data: profile, loading } = useProfile({ skip: !isVisible });
 
-  if (!isNearVisible || loading) {
+  // Only show loading on first load (no cached data yet)
+  if (!profile && loading) {
     return <LoadingSkeleton />;
   }
 

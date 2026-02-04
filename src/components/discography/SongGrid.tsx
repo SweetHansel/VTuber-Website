@@ -75,7 +75,8 @@ export function SongGrid({ filter = 'all', skip = false }: SongGridProps) {
     hasAutoSelected.current = true
   }, [loading, skip, filteredSongs, currentTrack, setTrack])
 
-  if (skip || loading) {
+  // Only show loading on first load (no cached data yet)
+  if (!tracks && loading) {
     return (
       <div className="flex h-40 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-(--page-text)/40" />

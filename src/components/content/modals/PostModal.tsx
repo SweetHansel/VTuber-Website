@@ -29,8 +29,7 @@ export function PostModalContent({ data }: Readonly<PostModalProps>) {
 
   const tags = (data.tags ?? []).map(getTag).filter((t): t is Tag => !!t);
 
-  const content = data.content as { root: { children: unknown[] } } | null | undefined;
-  const hasRichContent = content?.root?.children && content.root.children.length > 0;
+  const hasRichContent = data.content?.root?.children && data.content.root.children.length > 0;
 
   const featuredPeople: Person[] = (data.featuredPeople ?? [])
     .map((p) => getPerson(p))
@@ -172,7 +171,7 @@ export function PostModalContent({ data }: Readonly<PostModalProps>) {
       {/* Rich content */}
       {hasRichContent && (
         <div className="mb-4 max-h-64 overflow-y-auto rounded-lg bg-(--modal-surface)/5 p-4 scrollbar-thin">
-          <RichTextRenderer content={content} />
+          <RichTextRenderer content={data.content} />
         </div>
       )}
 

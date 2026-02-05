@@ -54,8 +54,7 @@ export function SongModalContent({
 
   const tags = (data.tags ?? []).map(getTag).filter((t): t is Tag => !!t);
 
-  const lyrics = data.lyrics as { root: { children: unknown[] } } | null | undefined;
-  const hasLyrics = lyrics?.root?.children && lyrics.root.children.length > 0;
+  const hasLyrics = data.lyrics?.root?.children && data.lyrics.root.children.length > 0;
 
   const credits: Credit[] = (data.credits ?? []).map((c) => ({
     role: c.role,
@@ -207,7 +206,7 @@ export function SongModalContent({
             </button>
             {showLyrics && (
               <div className="mt-3 max-h-48 overflow-y-auto rounded-lg bg-(--modal-surface)/5 p-4 scrollbar-thin">
-                <RichTextRenderer content={lyrics} className="text-sm whitespace-pre-wrap" />
+                <RichTextRenderer content={data.lyrics} className="text-sm whitespace-pre-wrap" />
               </div>
             )}
           </div>

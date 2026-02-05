@@ -22,7 +22,6 @@ export function ModelModalContent({
 
   const showcase = data.showcase ?? [];
   const modelFile = getMedia(data.modelFile);
-  const description = data.description as { root: { children: unknown[] } } | null | undefined;
 
   const tags = (data.tags ?? []).map(getTag).filter((t): t is Tag => !!t);
 
@@ -93,9 +92,9 @@ export function ModelModalContent({
         )}
 
         {/* Description */}
-        {description && (
+        {data.description && (
           <div className="mb-4">
-            <RichTextRenderer content={description} className="text-sm" />
+            <RichTextRenderer content={data.description} className="text-sm" />
           </div>
         )}
 

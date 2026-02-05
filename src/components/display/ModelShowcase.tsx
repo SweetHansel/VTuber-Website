@@ -9,7 +9,7 @@ import { type Model, getMedia } from "@/hooks/useCMS";
 import { useModalStore } from "@/stores/modalStore";
 
 interface ModelShowcaseProps {
-  model: Model | null;
+  model: Model | null | undefined;
 }
 
 export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
@@ -18,16 +18,7 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
 
   const handleOpenDetails = () => {
     if (!model) return;
-    openModal('model', String(model.id), {
-      name: model.name,
-      version: model.version,
-      modelType: model.modelType,
-      isActive: model.isActive,
-      debutDate: model.debutDate,
-      showcase: model.showcase,
-      credits: model.credits,
-      technicalSpecs: model.technicalSpecs,
-    });
+    openModal('model', String(model.id), model);
   };
 
   const showcase = model?.showcase || [];
@@ -138,7 +129,7 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
         <div className="mt-3 flex justify-center gap-2">
           {showcase.map((_, index) => (
             <button
-              key={index}
+              key={"dot_"+index}
               onClick={() => setCurrentIndex(index)}
               className={cn(
                 "h-2 w-2 rounded-full transition-all",

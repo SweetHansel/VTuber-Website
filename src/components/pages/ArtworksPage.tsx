@@ -7,6 +7,8 @@ import {
 } from "@/components/layout/BookLayout";
 import { InteractiveMediaFromCMS } from "@/components/media";
 import { useMotionValueState } from "@/hooks/useMotionValueState";
+import { useArtworks } from "@/hooks/useCMS";
+import { Loader2 } from "lucide-react";
 
 function ArtworksLeft({ index }: Readonly<LRProps>) {
   return (
@@ -26,8 +28,10 @@ function ArtworksLeft({ index }: Readonly<LRProps>) {
 
 function ArtworksRight({ index }: Readonly<LRProps>) {
   const currentPage = useMotionValueState(index);
-  // Load data when visible
   const isVisible = currentPage > 0 && currentPage < 1;
+
+  const { data: artworks, loading } = useArtworks({ skip: !isVisible });
+
   return (
     <ExpandingPage
       index={index}
@@ -37,7 +41,13 @@ function ArtworksRight({ index }: Readonly<LRProps>) {
     >
       {/* Gallery */}
       <div className="absolute h-full p-4 aspect-11/9 right-0">
-        <MasonryGallery filter={"all"} skip={!isVisible} />
+        {loading || !artworks ? (
+          <div className="flex h-full w-full items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-(--page-text)/40" />
+          </div>
+        ) : (
+          <MasonryGallery artworks={artworks} filter="all" />
+        )}
       </div>
     </ExpandingPage>
   );

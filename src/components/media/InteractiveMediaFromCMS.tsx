@@ -1,13 +1,8 @@
 'use client'
 
-import { useInteractiveMedia, type InteractiveMedia as InteractiveMediaType, type Media } from '@/hooks/useCMS'
+import { useInteractiveMedia, getMedia, type InteractiveMedia as InteractiveMediaType } from '@/hooks/useCMS'
 import { InteractiveMedia, type MediaState, type CursorEffect } from './InteractiveMedia'
 import { cn } from '@/lib/utils'
-
-function getMediaUrl(media: number | Media | null | undefined): string | undefined {
-  if (!media || typeof media === 'number') return undefined
-  return media.url ?? undefined
-}
 
 interface InteractiveMediaFromCMSProps {
   location: string
@@ -33,7 +28,7 @@ function transformCMSData(data: InteractiveMediaType): {
   clickMedia?: MediaState
   cursorEffect?: CursorEffect
 } | null {
-  const defaultMediaUrl = getMediaUrl(data.defaultState?.media)
+  const defaultMediaUrl = getMedia(data.defaultState?.media)?.url
   if (!defaultMediaUrl) return null
 
   const result: {
@@ -45,29 +40,29 @@ function transformCMSData(data: InteractiveMediaType): {
     defaultMedia: {
       src: defaultMediaUrl,
       alt: data.defaultState?.alt ?? undefined,
-      sound: getMediaUrl(data.defaultState?.sound),
+      sound: getMedia(data.defaultState?.sound)?.url ?? undefined,
     },
   }
 
-  const hoverMediaUrl = getMediaUrl(data.hoverState?.media)
+  const hoverMediaUrl = getMedia(data.hoverState?.media)?.url
   if (data.hoverState?.enabled && hoverMediaUrl) {
     result.hoverMedia = {
       src: hoverMediaUrl,
       alt: data.hoverState.alt ?? undefined,
-      sound: getMediaUrl(data.hoverState.sound),
+      sound: getMedia(data.hoverState.sound)?.url ?? undefined,
     }
   }
 
-  const clickMediaUrl = getMediaUrl(data.clickState?.media)
+  const clickMediaUrl = getMedia(data.clickState?.media)?.url
   if (data.clickState?.enabled && clickMediaUrl) {
     result.clickMedia = {
       src: clickMediaUrl,
       alt: data.clickState.alt ?? undefined,
-      sound: getMediaUrl(data.clickState.sound),
+      sound: getMedia(data.clickState.sound)?.url ?? undefined,
     }
   }
 
-  const cursorMediaUrl = getMediaUrl(data.cursorEffect?.media)
+  const cursorMediaUrl = getMedia(data.cursorEffect?.media)?.url
   if (data.cursorEffect?.enabled && cursorMediaUrl) {
     result.cursorEffect = {
       src: cursorMediaUrl,

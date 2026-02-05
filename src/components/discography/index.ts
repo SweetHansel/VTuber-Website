@@ -1,2 +1,2 @@
-export { SongCard, type SongCardProps } from './SongCard'
+export { SongCard } from './SongCard'
 export { SongGrid } from './SongGrid'

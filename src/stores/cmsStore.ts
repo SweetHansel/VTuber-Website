@@ -10,20 +10,20 @@ import type {
 } from '@/payload-types'
 
 interface CMSStore {
-  // Data
+  // Data - single cache for all items
   profile: Profile | null
   themes: Theme | null
   models: Model[] | null
-  artworks: Record<string, Artwork[] | null> // keyed by filter
-  musicTracks: Record<string, MusicTrack[] | null> // keyed by filter
+  artworks: Artwork[] | null
+  musicTracks: MusicTrack[] | null
 
-  // Loading states (per-resource)
+  // Loading states
   loading: {
     profile: boolean
     themes: boolean
     models: boolean
-    artworks: Record<string, boolean>
-    musicTracks: Record<string, boolean>
+    artworks: boolean
+    musicTracks: boolean
   }
 
   // Timestamps for cache invalidation
@@ -31,16 +31,16 @@ interface CMSStore {
     profile: number
     themes: number
     models: number
-    artworks: Record<string, number>
-    musicTracks: Record<string, number>
+    artworks: number
+    musicTracks: number
   }
 
   // Actions
   fetchProfile: () => Promise<void>
   fetchThemes: () => Promise<void>
   fetchModels: () => Promise<void>
-  fetchArtworks: (filter?: string) => Promise<void>
-  fetchMusicTracks: (filter?: string) => Promise<void>
+  fetchArtworks: () => Promise<void>
+  fetchMusicTracks: () => Promise<void>
 
   // Prefetch critical data
   prefetchCritical: () => Promise<void>
@@ -59,23 +59,23 @@ export const useCMSStore = create<CMSStore>((set, get) => ({
   profile: null,
   themes: null,
   models: null,
-  artworks: {},
-  musicTracks: {},
+  artworks: null,
+  musicTracks: null,
 
   loading: {
     profile: false,
     themes: false,
     models: false,
-    artworks: {},
-    musicTracks: {},
+    artworks: false,
+    musicTracks: false,
   },
 
   timestamps: {
     profile: 0,
     themes: 0,
     models: 0,
-    artworks: {},
-    musicTracks: {},
+    artworks: 0,
+    musicTracks: 0,
   },
 
   fetchProfile: async () => {
@@ -163,86 +163,58 @@ export const useCMSStore = create<CMSStore>((set, get) => ({
     }
   },
 
-  fetchArtworks: async (filter = 'all') => {
+  fetchArtworks: async () => {
     const state = get()
-    const cacheKey = filter
 
-    if (state.loading.artworks[cacheKey]) return
-    if (state.artworks[cacheKey] && isCacheValid(state.timestamps.artworks[cacheKey] || 0)) return
+    if (state.loading.artworks) return
+    if (state.artworks && isCacheValid(state.timestamps.artworks)) return
 
     set((s) => ({
-      loading: {
-        ...s.loading,
-        artworks: { ...s.loading.artworks, [cacheKey]: true },
-      },
+      loading: { ...s.loading, artworks: true },
     }))
 
     try {
-      const queryParam = filter && filter !== 'all' ? `?type=${filter}` : ''
-      const response = await fetch(`/api/cms/artworks${queryParam}`)
+      const response = await fetch('/api/cms/artworks')
       if (!response.ok) throw new Error(`HTTP error: ${response.status}`)
       const result = await response.json()
 
       set((s) => ({
-        artworks: { ...s.artworks, [cacheKey]: result.data as Artwork[] },
-        loading: {
-          ...s.loading,
-          artworks: { ...s.loading.artworks, [cacheKey]: false },
-        },
-        timestamps: {
-          ...s.timestamps,
-          artworks: { ...s.timestamps.artworks, [cacheKey]: Date.now() },
-        },
+        artworks: result.data as Artwork[],
+        loading: { ...s.loading, artworks: false },
+        timestamps: { ...s.timestamps, artworks: Date.now() },
       }))
     } catch (error) {
       console.error('Failed to fetch artworks:', error)
       set((s) => ({
-        loading: {
-          ...s.loading,
-          artworks: { ...s.loading.artworks, [cacheKey]: false },
-        },
+        loading: { ...s.loading, artworks: false },
       }))
     }
   },
 
-  fetchMusicTracks: async (filter = 'all') => {
+  fetchMusicTracks: async () => {
     const state = get()
-    const cacheKey = filter
 
-    if (state.loading.musicTracks[cacheKey]) return
-    if (state.musicTracks[cacheKey] && isCacheValid(state.timestamps.musicTracks[cacheKey] || 0)) return
+    if (state.loading.musicTracks) return
+    if (state.musicTracks && isCacheValid(state.timestamps.musicTracks)) return
 
     set((s) => ({
-      loading: {
-        ...s.loading,
-        musicTracks: { ...s.loading.musicTracks, [cacheKey]: true },
-      },
+      loading: { ...s.loading, musicTracks: true },
     }))
 
     try {
-      const queryParam = filter && filter !== 'all' ? `?type=${filter}` : ''
-      const response = await fetch(`/api/cms/music-tracks${queryParam}`)
+      const response = await fetch('/api/cms/music-tracks')
       if (!response.ok) throw new Error(`HTTP error: ${response.status}`)
       const result = await response.json()
 
       set((s) => ({
-        musicTracks: { ...s.musicTracks, [cacheKey]: result.data as MusicTrack[] },
-        loading: {
-          ...s.loading,
-          musicTracks: { ...s.loading.musicTracks, [cacheKey]: false },
-        },
-        timestamps: {
-          ...s.timestamps,
-          musicTracks: { ...s.timestamps.musicTracks, [cacheKey]: Date.now() },
-        },
+        musicTracks: result.data as MusicTrack[],
+        loading: { ...s.loading, musicTracks: false },
+        timestamps: { ...s.timestamps, musicTracks: Date.now() },
       }))
     } catch (error) {
       console.error('Failed to fetch music tracks:', error)
       set((s) => ({
-        loading: {
-          ...s.loading,
-          musicTracks: { ...s.loading.musicTracks, [cacheKey]: false },
-        },
+        loading: { ...s.loading, musicTracks: false },
       }))
     }
   },
@@ -258,14 +230,14 @@ export const useCMSStore = create<CMSStore>((set, get) => ({
       profile: null,
       themes: null,
       models: null,
-      artworks: {},
-      musicTracks: {},
+      artworks: null,
+      musicTracks: null,
       timestamps: {
         profile: 0,
         themes: 0,
         models: 0,
-        artworks: {},
-        musicTracks: {},
+        artworks: 0,
+        musicTracks: 0,
       },
     })
   },

@@ -2,13 +2,15 @@
 
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useModalStore, type ModalType } from "@/stores/modalStore";
+import { useModalStore, type ModalDataMap } from "@/stores/modalStore";
 import { X } from "lucide-react";
 import { scaleFadeVariants } from "@/animations";
 import { ArtworkModalContent } from "./modals/ArtworkModal";
-import { ContentModalContent } from "./modals/ContentModal";
+import { PostModalContent } from "./modals/PostModal";
 import { ModelModalContent } from "./modals/ModelModal";
+import { PersonModalContent } from "./modals/PersonModal";
 import { SongModalContent } from "./modals/SongModal";
+import type { Artwork, Post, MusicTrack, Model, Person } from "@/payload-types";
 
 export function Modal() {
   const { isOpen, modalType, contentId, contentData, closeModal } =
@@ -80,9 +82,9 @@ export function Modal() {
 }
 
 interface ModalContentProps {
-  type: ModalType;
+  type: keyof ModalDataMap | null;
   id: string | null;
-  data: Record<string, unknown> | null;
+  data: ModalDataMap[keyof ModalDataMap] | null;
 }
 
 function ModalContent({ type, id, data }: Readonly<ModalContentProps>) {
@@ -93,18 +95,20 @@ function ModalContent({ type, id, data }: Readonly<ModalContentProps>) {
   }
 
   switch (type) {
-    case "announcement":
-    case "blog-post":
-      return <ContentModalContent type={type} data={data} />;
+    case "post":
+      return <PostModalContent data={data as Post} />;
 
     case "artwork":
-      return <ArtworkModalContent data={data} />;
+      return <ArtworkModalContent data={data as Artwork} />;
 
     case "song":
-      return <SongModalContent id={id} data={data} />;
+      return <SongModalContent id={id} data={data as MusicTrack} />;
 
     case "model":
-      return <ModelModalContent data={data} />;
+      return <ModelModalContent data={data as Model} />;
+
+    case "person":
+      return <PersonModalContent data={data as Person} />;
 
     default:
       return (

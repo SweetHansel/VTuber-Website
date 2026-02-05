@@ -3,16 +3,15 @@ import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import sharp from 'sharp'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 // Collections
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Tags } from './collections/Tags'
-import { Announcements } from './collections/Announcements'
 import { Artworks } from './collections/Artworks'
-import { BlogPosts } from './collections/BlogPosts'
+import { Posts } from './collections/Posts'
 import { Videos } from './collections/Videos'
 import { MusicTracks } from './collections/MusicTracks'
 import { Models } from './collections/Models'
@@ -51,9 +50,8 @@ export default buildConfig({
   },
   collections: [
     Tags,
-    Announcements,
+    Posts,
     Artworks,
-    BlogPosts,
     Videos,
     MusicTracks,
     Models,

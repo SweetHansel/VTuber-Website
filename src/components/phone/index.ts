@@ -1,1 +1,1 @@
-export { UpdatesScreen as UpdatesPage } from './UpdatesScreen'
+export { UpdatesScreen } from './UpdatesScreen'

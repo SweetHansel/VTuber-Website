@@ -13,8 +13,7 @@ import type {
   MusicTrack,
   Album,
   Artwork,
-  Announcement,
-  BlogPost,
+  Post,
   Video,
   Media,
   InteractiveMedia,
@@ -33,8 +32,7 @@ export type {
   MusicTrack,
   Album,
   Artwork,
-  Announcement,
-  BlogPost,
+  Post,
   Video,
   Media,
   InteractiveMedia,
@@ -70,9 +68,33 @@ export function getPerson(person: number | Person | null | undefined): Person | 
 /**
  * Extract Model object from Payload union type
  */
-export function getModel(model: number | Model | null | undefined): Model | null {
-  if (!model || typeof model === 'number') return null
+export function getModel(model: number | Model | null | undefined): Model | undefined {
+  if (!model || typeof model === 'number') return undefined
   return model
+}
+
+/**
+ * Extract Tag object from Payload union type
+ */
+export function getTag(tag: number | Tag | null | undefined): Tag | undefined {
+  if (!tag || typeof tag === 'number') return undefined
+  return tag
+}
+
+/**
+ * Extract Album object from Payload union type
+ */
+export function getAlbum(album: number | Album | null | undefined): Album | undefined {
+  if (!album || typeof album === 'number') return undefined
+  return album
+}
+
+/**
+ * Extract Social object from Payload union type
+ */
+export function getSocial(social: number | Social | null | undefined): Social | undefined {
+  if (!social || typeof social === 'number') return undefined
+  return social
 }
 
 /**
@@ -190,24 +212,26 @@ export function useModels(type?: '2d' | '3d', options?: UseHookOptions) {
   }
 }
 
-export function useMusicTracks(filter?: 'all' | 'covers' | 'originals', options?: UseHookOptions) {
-  const cacheKey = filter || 'all'
-  const musicTracks = useCMSStore((s) => s.musicTracks[cacheKey])
-  const loading = useCMSStore((s) => s.loading.musicTracks[cacheKey] ?? false)
+/**
+ * Fetch all music tracks. Returns all data - filter client-side with useMemo.
+ */
+export function useMusicTracks(options?: UseHookOptions) {
+  const musicTracks = useCMSStore((s) => s.musicTracks)
+  const loading = useCMSStore((s) => s.loading.musicTracks)
   const fetchMusicTracks = useCMSStore((s) => s.fetchMusicTracks)
 
   useEffect(() => {
     if (options?.skip) return
     if (!musicTracks && !loading) {
-      fetchMusicTracks(filter)
+      fetchMusicTracks()
     }
-  }, [musicTracks, loading, fetchMusicTracks, filter, options?.skip])
+  }, [musicTracks, loading, fetchMusicTracks, options?.skip])
 
   return {
-    data: musicTracks ?? null,
+    data: musicTracks,
     loading: options?.skip ? false : loading,
     error: null,
-    refetch: () => fetchMusicTracks(filter),
+    refetch: fetchMusicTracks,
   }
 }
 
@@ -215,34 +239,39 @@ export function useAlbums() {
   return useFetch<Album[]>('/api/cms/albums')
 }
 
-export function useArtworks(filter?: 'all' | 'fanart' | 'official' | 'commissioned', options?: UseHookOptions) {
-  const cacheKey = filter || 'all'
-  const artworks = useCMSStore((s) => s.artworks[cacheKey])
-  const loading = useCMSStore((s) => s.loading.artworks[cacheKey] ?? false)
+/**
+ * Fetch all artworks. Returns all data - filter client-side with useMemo.
+ */
+export function useArtworks(options?: UseHookOptions) {
+  const artworks = useCMSStore((s) => s.artworks)
+  const loading = useCMSStore((s) => s.loading.artworks)
   const fetchArtworks = useCMSStore((s) => s.fetchArtworks)
 
   useEffect(() => {
     if (options?.skip) return
     if (!artworks && !loading) {
-      fetchArtworks(filter)
+      fetchArtworks()
     }
-  }, [artworks, loading, fetchArtworks, filter, options?.skip])
+  }, [artworks, loading, fetchArtworks, options?.skip])
 
   return {
-    data: artworks ?? null,
+    data: artworks,
     loading: options?.skip ? false : loading,
     error: null,
-    refetch: () => fetchArtworks(filter),
+    refetch: fetchArtworks,
   }
 }
 
-export function useAnnouncements() {
-  return useFetch<Announcement[]>('/api/cms/announcements')
-}
-
-export function useBlogPosts(status?: 'all' | 'published' | 'draft') {
-  const queryParam = status && status !== 'all' ? `?status=${status}` : ''
-  return useFetch<BlogPost[]>(`/api/cms/blog-posts${queryParam}`)
+export function usePosts(options?: {
+  status?: 'all' | 'published' | 'draft'
+  postType?: 'blog' | 'stream' | 'event' | 'release' | 'collab' | 'general'
+}) {
+  const params = new URLSearchParams()
+  if (options?.status) params.set('status', options.status)
+  if (options?.postType) params.set('postType', options.postType)
+  const queryString = params.toString()
+  const url = queryString ? `/api/cms/posts?${queryString}` : '/api/cms/posts'
+  return useFetch<Post[]>(url)
 }
 
 export function useVideos(type?: 'all' | 'music-video' | 'stream-archive' | 'clip' | 'short') {
@@ -299,19 +328,6 @@ export function useThemes(options?: UseHookOptions) {
     error: null,
     refetch: fetchThemes,
   }
-}
-
-// ============================================
-// Combined/Transformed Types (for API endpoints that transform data)
-// ============================================
-
-// Re-export UpdateItem from constants (single source of truth)
-export type { UpdateItem } from '@/constants/content'
-import type { UpdateItem } from '@/constants/content'
-
-export function useUpdates(filter?: 'all' | 'announcements' | 'blogs') {
-  const queryParam = filter && filter !== 'all' ? `?filter=${filter}` : ''
-  return useFetch<UpdateItem[]>(`/api/cms/updates${queryParam}`)
 }
 
 // ============================================

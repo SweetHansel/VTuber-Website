@@ -25,6 +25,7 @@ import {
 } from "@/hooks/useCMS";
 import { ModelShowcase } from "@/components/display/ModelShowcase";
 import { useMotionValueState } from "@/hooks/useMotionValueState";
+import { ScrollContainer } from "../layout";
 
 // Icon mapping for dynamic traits
 const iconMap: Record<string, LucideIcon> = {
@@ -92,7 +93,7 @@ function AboutRight({ index }: Readonly<LRProps>) {
   const currentModel = getModel(profile.currentModel);
 
   return (
-    <div className="h-full space-y-4 overflow-y-auto p-4 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
+    <ScrollContainer className="h-full space-y-4 overflow-y-auto p-4 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
       <div>
         {currentModel?.refSheets?.map((v, i) => {
           const media = getMedia(v.media);
@@ -187,7 +188,7 @@ function AboutRight({ index }: Readonly<LRProps>) {
           </div>
         )}
       </div>
-    </div>
+    </ScrollContainer>
   );
 }
 

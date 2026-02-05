@@ -5,35 +5,60 @@ import Image from 'next/image'
 import { useModalStore } from '@/stores/modalStore'
 import { cn, formatDate } from '@/lib/utils'
 import { Calendar, MapPin, ExternalLink } from 'lucide-react'
-import { ANNOUNCEMENT_TYPE_COLORS, type ContentCardProps } from '@/constants/content'
+import { POST_TYPE_COLORS, type PostType } from '@/constants/content'
+import { getMedia, type Media } from '@/hooks/useCMS'
+import type { Post } from '@/payload-types'
 
-export type { ContentCardProps }
+interface FeaturedImage {
+  image?: number | Media | null
+  caption?: string | null
+  id?: string | null
+}
 
-export function ContentCard({
-  id,
-  type,
-  title,
-  excerpt,
-  image,
-  date,
-  eventDate,
-  location,
-  announcementType,
-  isPinned,
-  externalLink,
-}: Readonly<ContentCardProps>) {
+interface ExternalLinkItem {
+  label?: string | null
+  url?: string | null
+  id?: string | null
+}
+
+interface PostCardProps {
+  post: Post
+}
+
+export function PostCard({ post }: Readonly<PostCardProps>) {
   const openModal = useModalStore((state) => state.openModal)
 
+  // Extract display fields from post
+  const title = String(post.title || '')
+  const postType = (post.postType as PostType) || 'general'
+
+  // Get first featured image from array
+  const featuredImages = Array.isArray(post.featuredImages)
+    ? (post.featuredImages as FeaturedImage[])
+    : []
+  const firstImage = featuredImages[0]
+  const imageMedia = firstImage ? getMedia(firstImage.image) : undefined
+  const image = imageMedia?.url
+
+  // Event/date fields
+  const eventDate = post.eventDate ? String(post.eventDate) : undefined
+  const publishedAt = post.publishedAt ? String(post.publishedAt) : undefined
+  const location = post.location ? String(post.location) : undefined
+
+  // External links array
+  const externalLinks = Array.isArray(post.externalLinks)
+    ? (post.externalLinks as ExternalLinkItem[])
+    : []
+  const hasExternalLinks = externalLinks.length > 0
+
+  // Excerpt
+  const excerpt = post.excerpt ? String(post.excerpt) : undefined
+
+  // Display date
+  const date = eventDate || publishedAt || (post.createdAt ? String(post.createdAt) : undefined)
+
   const handleClick = () => {
-    openModal(type, id, {
-      title,
-      excerpt,
-      image,
-      date,
-      eventDate,
-      location,
-      announcementType,
-    })
+    openModal('post', String(post.id), post)
   }
 
   return (
@@ -41,7 +66,6 @@ export function ContentCard({
       onClick={handleClick}
       className={cn(
         'group cursor-pointer overflow-hidden border-t border-primary',
-        // isPinned && 'ring-2 ring-yellow-500'
       )}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
@@ -55,7 +79,7 @@ export function ContentCard({
             fill
             className="object-cover transition-transform group-hover:scale-105"
           />
-          {isPinned && (
+          {post.isPinned && (
             <div className="absolute left-2 top-2 rounded-full bg-yellow-500/90 px-2 py-0.5 text-xs font-medium text-black">
               Pinned
             </div>
@@ -66,16 +90,14 @@ export function ContentCard({
       {/* Content */}
       <div className="p-3">
         {/* Type badge */}
-        {type === 'announcement' && announcementType && (
-          <span
-            className={cn(
-              'mb-2 inline-block rounded-full px-2 py-0.5 text-xs font-medium capitalize',
-              ANNOUNCEMENT_TYPE_COLORS[announcementType] || ANNOUNCEMENT_TYPE_COLORS.general
-            )}
-          >
-            {announcementType}
-          </span>
-        )}
+        <span
+          className={cn(
+            'mb-2 inline-block rounded-full px-2 py-0.5 text-xs font-medium capitalize',
+            POST_TYPE_COLORS[postType] || POST_TYPE_COLORS.general
+          )}
+        >
+          {postType}
+        </span>
 
         {/* Title */}
         <h3 className="mb-1 line-clamp-2 text-sm font-medium text-(--phone-text)">
@@ -104,7 +126,7 @@ export function ContentCard({
           {date && !eventDate && (
             <span>{formatDate(date, { month: 'short', day: 'numeric' })}</span>
           )}
-          {externalLink && (
+          {hasExternalLinks && (
             <ExternalLink className="h-3 w-3 ml-auto" />
           )}
         </div>

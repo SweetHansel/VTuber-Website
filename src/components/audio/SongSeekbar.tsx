@@ -79,17 +79,19 @@ export function SongSeekbar() {
 
       <AnimatePresence>
         <motion.div
+          key="seekbar-wrapper"
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ duration: 0.2 }}
           className="fixed h-15 bottom-0 left-0 right-0 z-10 pointer-events-none"
-          onClick={(e)=>e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
         >
           {/* Minimized: album art square with expand icon */}
           <AnimatePresence>
             {!isExpanded && (
               <motion.button
+                key="seekbar-minimized"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
@@ -111,135 +113,140 @@ export function SongSeekbar() {
           </AnimatePresence>
 
           {/* Expanded: full controls bar */}
-          {isExpanded && (
-            <motion.div
-              initial={{ y: 100, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 100, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="absolute h-full w-full right-0 bottom-0  pointer-events-auto bg-linear-0 from-black"
-            >
-              <div className=" absolute h-full w-[60%] right-0">
-                {/* Controls */}
-                <div className="flex items-center gap-4 py-2 px-2">
-                  {/* Track info */}
-                  <div className="flex flex-1 items-center gap-3">
-                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md">
-                      <Image
-                        src={currentTrack.coverArt}
-                        alt={currentTrack.title}
-                        fill
-                        className="object-cover"
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.div
+                key="seekbar-bar"
+                initial={{ y: 100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 100, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="absolute h-full w-full right-0 bottom-0  pointer-events-auto bg-linear-0 from-black"
+              >
+                <div className=" absolute h-full w-[60%] right-0">
+                  {/* Controls */}
+                  <div className="flex items-center gap-4 py-2 px-2">
+                    {/* Track info */}
+                    <div className="flex flex-1 items-center gap-3">
+                      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md">
+                        <Image
+                          src={currentTrack.coverArt}
+                          alt={currentTrack.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="truncate text-sm font-medium text-(--page-text)">
+                          {currentTrack.title}
+                        </h4>
+                        {currentTrack.artist && (
+                          <p className="truncate text-xs text-(--page-text)/60">
+                            {currentTrack.artist}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Playback controls */}
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={playPrevious}
+                        className="p-2 text-(--page-text)/60 hover:text-(--page-text)"
+                      >
+                        <SkipBack className="h-5 w-5" />
+                      </button>
+
+                      <button
+                        onClick={togglePlay}
+                        className="flex h-10 w-10 items-center justify-center rounded-full bg-(--page-surface) text-black hover:scale-105"
+                      >
+                        {isPlaying ? (
+                          <Pause className="h-5 w-5" fill="currentColor" />
+                        ) : (
+                          <Play
+                            className="h-5 w-5 translate-x-0.5"
+                            fill="currentColor"
+                          />
+                        )}
+                      </button>
+
+                      <button
+                        onClick={playNext}
+                        className="p-2 text-(--page-text)/60 hover:text-(--page-text)"
+                      >
+                        <SkipForward className="h-5 w-5" />
+                      </button>
+                    </div>
+
+                    {/* Time display */}
+                    <div className="hidden w-24 text-center text-xs text-(--page-text)/60 md:block">
+                      {formatDuration(playbackPosition)} /{" "}
+                      {formatDuration(duration)}
+                    </div>
+
+                    {/* Volume */}
+                    <div className="hidden items-center gap-2 md:flex">
+                      <button
+                        onClick={handleVolumeToggle}
+                        className="p-2 text-(--page-text)/60 hover:text-(--page-text)"
+                      >
+                        {isMuted || volume === 0 ? (
+                          <VolumeX className="h-5 w-5" />
+                        ) : (
+                          <Volume2 className="h-5 w-5" />
+                        )}
+                      </button>
+                      <input
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        value={volume}
+                        onChange={(e) =>
+                          setVolume(Number.parseFloat(e.target.value))
+                        }
+                        className="h-1 w-20 appearance-none rounded-full bg-(--page-surface)/20 accent-(--page-primary)"
                       />
                     </div>
-                    <div className="min-w-0">
-                      <h4 className="truncate text-sm font-medium text-(--page-text)">
-                        {currentTrack.title}
-                      </h4>
-                      {currentTrack.artist && (
-                        <p className="truncate text-xs text-(--page-text)/60">
-                          {currentTrack.artist}
-                        </p>
-                      )}
-                    </div>
-                  </div>
 
-                  {/* Playback controls */}
-                  <div className="flex items-center gap-2">
+                    {/* Queue toggle */}
                     <button
-                      onClick={playPrevious}
-                      className="p-2 text-(--page-text)/60 hover:text-(--page-text)"
+                      onClick={() => setShowQueue(!showQueue)}
+                      className={cn(
+                        "p-2 transition-colors",
+                        showQueue
+                          ? "text-(--page-primary)"
+                          : "text-(--page-text)/60 hover:text-(--page-text)",
+                      )}
                     >
-                      <SkipBack className="h-5 w-5" />
+                      <ListMusic className="h-5 w-5" />
                     </button>
 
+                    {/* Collapse toggle */}
                     <button
-                      onClick={togglePlay}
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-(--page-surface) text-black hover:scale-105"
+                      onClick={() => setExpanded(false)}
+                      className="text-(--page-text)/60 hover:text-(--page-text)"
                     >
-                      {isPlaying ? (
-                        <Pause className="h-5 w-5" fill="currentColor" />
-                      ) : (
-                        <Play
-                          className="h-5 w-5 translate-x-0.5"
-                          fill="currentColor"
-                        />
-                      )}
-                    </button>
-
-                    <button
-                      onClick={playNext}
-                      className="p-2 text-(--page-text)/60 hover:text-(--page-text)"
-                    >
-                      <SkipForward className="h-5 w-5" />
+                      <ChevronDown className="h-5 w-5" />
                     </button>
                   </div>
 
-                  {/* Time display */}
-                  <div className="hidden w-24 text-center text-xs text-(--page-text)/60 md:block">
-                    {formatDuration(playbackPosition)} /{" "}
-                    {formatDuration(duration)}
-                  </div>
-
-                  {/* Volume */}
-                  <div className="hidden items-center gap-2 md:flex">
-                    <button
-                      onClick={handleVolumeToggle}
-                      className="p-2 text-(--page-text)/60 hover:text-(--page-text)"
-                    >
-                      {isMuted || volume === 0 ? (
-                        <VolumeX className="h-5 w-5" />
-                      ) : (
-                        <Volume2 className="h-5 w-5" />
-                      )}
-                    </button>
-                    <input
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.01"
-                      value={volume}
-                      onChange={(e) => setVolume(Number.parseFloat(e.target.value))}
-                      className="h-1 w-20 appearance-none rounded-full bg-(--page-surface)/20 accent-(--page-primary)"
+                  {/* Progress bar */}
+                  <div
+                    ref={progressRef}
+                    onClick={handleProgressClick}
+                    className="group h-2 cursor-pointer bg-(--page-surface)/10"
+                  >
+                    <motion.div
+                      className="h-full bg-(--page-primary) transition-all group-hover:h-1.5"
+                      style={{ width: `${progressPercent}%` }}
                     />
                   </div>
-
-                  {/* Queue toggle */}
-                  <button
-                    onClick={() => setShowQueue(!showQueue)}
-                    className={cn(
-                      "p-2 transition-colors",
-                      showQueue
-                        ? "text-(--page-primary)"
-                        : "text-(--page-text)/60 hover:text-(--page-text)",
-                    )}
-                  >
-                    <ListMusic className="h-5 w-5" />
-                  </button>
-
-                  {/* Collapse toggle */}
-                  <button
-                    onClick={() => setExpanded(false)}
-                    className="text-(--page-text)/60 hover:text-(--page-text)"
-                  >
-                    <ChevronDown className="h-5 w-5" />
-                  </button>
                 </div>
-
-                {/* Progress bar */}
-                <div
-                  ref={progressRef}
-                  onClick={handleProgressClick}
-                  className="group h-2 cursor-pointer bg-(--page-surface)/10"
-                >
-                  <motion.div
-                    className="h-full bg-(--page-primary) transition-all group-hover:h-1.5"
-                    style={{ width: `${progressPercent}%` }}
-                  />
-                </div>
-              </div>
-            </motion.div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </AnimatePresence>
 
@@ -247,6 +254,7 @@ export function SongSeekbar() {
       <AnimatePresence>
         {showQueue && (
           <motion.div
+            key="seekbar-queue"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}

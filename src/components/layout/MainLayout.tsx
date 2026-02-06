@@ -54,11 +54,10 @@ export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
             initial={false}
             animate={{
               width: `${leftWidth}%`,
-              opacity: leftWidth === 0 ? 0 : 1,
             }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            transition={{ type: "tween", ease: "linear", duration: 0.2 }}
           >
-            <PhoneLayout/>
+            <PhoneLayout />
           </motion.div>
 
           {/* Global Audio Player */}
@@ -70,9 +69,8 @@ export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
             initial={false}
             animate={{
               width: `${rightWidth}%`,
-              opacity: rightWidth === 0 ? 0 : 1,
             }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            transition={{ type: "tween", ease: "linear", duration: 0.2 }}
           >
             {/* Top Right */}
             <motion.div
@@ -80,9 +78,8 @@ export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
               initial={false}
               animate={{
                 height: `${topRightHeight}%`,
-                opacity: rightWidth === 0 || topRightHeight === 0 ? 0 : 1,
               }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              transition={{ type: "tween", ease: "linear", duration: 0.2 }}
             >
               <AspectLock
                 aspectRatio={1}
@@ -103,26 +100,39 @@ export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
               initial={false}
               animate={{
                 height: `${bottomRightHeight}%`,
-                opacity: rightWidth === 0 ? 0 : 1,
               }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              transition={{ type: "tween", ease: "linear", duration: 0.2 }}
             >
-              <BookLayout/>
+              <BookLayout />
             </motion.div>
           </motion.div>
         </main>
       </AspectLock>
 
-      <LeftBar />
+      <AnimatePresence>
+        {focusState == "default" && (
+          <motion.div
+            key="leftbar"
+            initial={{ translateX: -30 }}
+            animate={{ translateX: 0 }}
+            exit={{ translateX: -30 }}
+            transition={{ type: "tween", ease: "linear", duration: 0.2 }}
+            className="h-full"
+          >
+            <LeftBar />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Back to default button */}
       <AnimatePresence>
         {focusState !== "default" && (
           <motion.button
+            key="exit-button"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.2 }}
+            transition={{ type: "tween", ease: "linear", duration: 0.2 }}
             onClick={() => setFocus("default")}
             className="fixed top-4 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm text-white/70 hover:bg-white/20 hover:text-white transition-colors"
             aria-label="Back to overview"

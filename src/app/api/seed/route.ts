@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import { ARTWORK_TYPES } from '@/constants/artworks'
 
 // Protect with a secret - set SEED_SECRET env var in Vercel
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
         const media = await payload.create({
           collection: 'media',
           data: {
-            alt: baseName.replace(/_/g, ' '),
+            alt: baseName.replaceAll(/_/g, ' '),
           },
           file: {
             data: fileBuffer,
@@ -329,7 +329,7 @@ export async function POST(request: Request) {
         await payload.create({
           collection: 'artworks',
           data: {
-            title: name.replace(/_/g, ' '),
+            title: name.replaceAll(/_/g, ' '),
             image: mediaId,
             artworkType: randomPick(ARTWORK_TYPES),
             credits: [
@@ -478,7 +478,7 @@ export async function POST(request: Request) {
     await payload.updateGlobal({
       slug: 'themes',
       data: {
-        phoneBg: '#1e293b',
+        phoneBg: '#1e3a8a',
         phoneText: '#ffffff',
         phoneSurface: '#ffffff',
         phonePrimary: '#3b82f6',
@@ -518,34 +518,22 @@ export async function POST(request: Request) {
     results.push('Site Settings seeded')
 
     // ============================================
-    // STEP 12: Seed Announcements
+    // STEP 12: Seed Posts (combined announcements + blog posts)
     // ============================================
-    const announcements = [
-      { title: 'New Year Countdown Stream 2026!', type: 'stream' as const, eventDate: '2026-01-01T23:00:00.000Z', location: 'YouTube Live', externalLink: 'https://youtube.com/@loremipsum', priority: 10, isPinned: true },
-      { title: 'New Original Song Release - "Placeholder Dreams"', type: 'release' as const, priority: 9, isPinned: true },
-      { title: 'Collaboration Stream with Friends', type: 'collab' as const, eventDate: '2026-01-20T20:00:00.000Z', location: 'Twitch', priority: 7, isPinned: false },
-      { title: 'Milestone Celebration: 100k Subscribers!', type: 'event' as const, eventDate: '2026-02-01T19:00:00.000Z', location: 'YouTube Live', priority: 8, isPinned: false },
-      { title: 'Weekly Gaming Stream Schedule Update', type: 'general' as const, priority: 5, isPinned: false },
-      { title: 'Fan Art Contest Announcement', type: 'event' as const, eventDate: '2026-02-14T00:00:00.000Z', externalLink: 'https://twitter.com/loremipsum', priority: 6, isPinned: false },
-      { title: 'Birthday Stream Coming Soon!', type: 'stream' as const, eventDate: '2026-03-15T20:00:00.000Z', location: 'YouTube Live', priority: 10, isPinned: false },
-    ]
-
-    for (const ann of announcements) {
-      try {
-        await payload.create({ collection: 'announcements', data: ann })
-      } catch {
-        // Skip duplicates
-      }
-    }
-    results.push(`Announcements seeded (${announcements.length} items)`)
-
-    // ============================================
-    // STEP 13: Seed Blog Posts
-    // ============================================
-    const blogPosts = [
+    const posts = [
+      // Stream/Event type posts (former announcements)
+      { title: 'New Year Countdown Stream 2026!', postType: 'stream' as const, status: 'published' as const, eventDate: '2026-01-01T23:00:00.000Z', publishedAt: '2025-12-20T12:00:00.000Z', location: 'YouTube Live', externalLinks: [{ label: 'YouTube', url: 'https://youtube.com/@loremipsum' }], isPinned: true },
+      { title: 'New Original Song Release - "Placeholder Dreams"', postType: 'release' as const, status: 'published' as const, publishedAt: '2026-01-08T12:00:00.000Z', isPinned: true },
+      { title: 'Collaboration Stream with Friends', postType: 'collab' as const, status: 'published' as const, eventDate: '2026-01-20T20:00:00.000Z', publishedAt: '2026-01-15T12:00:00.000Z', location: 'Twitch', isPinned: false },
+      { title: 'Milestone Celebration: 100k Subscribers!', postType: 'event' as const, status: 'published' as const, eventDate: '2026-02-01T19:00:00.000Z', publishedAt: '2026-01-25T12:00:00.000Z', location: 'YouTube Live', isPinned: false },
+      { title: 'Weekly Gaming Stream Schedule Update', postType: 'general' as const, status: 'published' as const, publishedAt: '2026-01-12T12:00:00.000Z', isPinned: false },
+      { title: 'Fan Art Contest Announcement', postType: 'event' as const, status: 'published' as const, eventDate: '2026-02-14T00:00:00.000Z', publishedAt: '2026-02-01T12:00:00.000Z', externalLinks: [{ label: 'Twitter', url: 'https://twitter.com/loremipsum' }], isPinned: false },
+      { title: 'Birthday Stream Coming Soon!', postType: 'stream' as const, status: 'published' as const, eventDate: '2026-03-15T20:00:00.000Z', publishedAt: '2026-03-01T12:00:00.000Z', location: 'YouTube Live', isPinned: false },
+      // Blog type posts
       {
         title: 'My Journey as a Virtual Content Creator',
         slug: 'my-journey-as-virtual-content-creator',
+        postType: 'blog' as const,
         excerpt: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Reflecting on the past year.',
         content: {
           root: {
@@ -563,6 +551,7 @@ export async function POST(request: Request) {
       {
         title: 'Behind the Scenes: Making My First Original Song',
         slug: 'behind-the-scenes-first-original-song',
+        postType: 'blog' as const,
         excerpt: 'A look into the creative process behind my debut original song.',
         content: {
           root: {
@@ -578,15 +567,15 @@ export async function POST(request: Request) {
       },
     ]
 
-    for (const post of blogPosts) {
+    for (const post of posts) {
       try {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await payload.create({ collection: 'blog-posts', data: post as any })
+        await payload.create({ collection: 'posts', data: post as any })
       } catch {
         // Skip duplicates
       }
     }
-    results.push(`Blog Posts seeded (${blogPosts.length} items)`)
+    results.push(`Posts seeded (${posts.length} items)`)
 
     // ============================================
     // STEP 14: Seed Livestream Settings

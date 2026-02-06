@@ -1,33 +1,16 @@
 import { NextResponse } from 'next/server'
-import type { Where } from 'payload'
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    const { searchParams } = new URL(request.url)
-    const trackType = searchParams.get('type')
-    const limit = parseInt(searchParams.get('limit') || '50')
-
     const { getPayload } = await import('payload')
     const config = await import('@payload-config').then((m) => m.default)
     const payload = await getPayload({ config })
 
-    const whereClause: Where = {}
-
-    if (trackType && trackType !== 'all') {
-      if (trackType === 'covers') {
-        whereClause.trackType = { equals: 'cover' }
-      } else if (trackType === 'originals') {
-        whereClause.trackType = { in: ['original', 'remix'] }
-      } else {
-        whereClause.trackType = { equals: trackType }
-      }
-    }
-
+    // Fetch all music tracks - filtering happens client-side
     const { docs } = await payload.find({
       collection: 'music-tracks',
-      where: whereClause,
       depth: 2, // Resolve media and album relationships
-      limit,
+      limit: 100, // Increased limit for all data
       sort: '-releaseDate',
     })
 

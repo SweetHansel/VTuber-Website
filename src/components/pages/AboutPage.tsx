@@ -16,7 +16,7 @@ import {
   Coffee,
   Loader2,
 } from "lucide-react";
-import type { LRProps, PageContent } from "@/components/layout/BookLayout";
+import type { LRProps } from "@/components/layout/BookLayout";
 import {
   useProfile,
   getModel,
@@ -25,6 +25,7 @@ import {
 } from "@/hooks/useCMS";
 import { ModelShowcase } from "@/components/display/ModelShowcase";
 import { useMotionValueState } from "@/hooks/useMotionValueState";
+import { ScrollContainer } from "../layout";
 
 // Icon mapping for dynamic traits
 const iconMap: Record<string, LucideIcon> = {
@@ -46,21 +47,22 @@ function LoadingSkeleton() {
   );
 }
 
-function AboutLeft({ index }: Readonly<LRProps>) {
+function AboutLeft({ index, onNavigate }: Readonly<LRProps>) {
   const currentPage = useMotionValueState(index);
-  // Load data when within 1 page of visibility
-  const isNearVisible = currentPage > 0;
+  // Load data when visible
+  const isVisible = currentPage > 0 && currentPage < 1;
 
-  const { data: profile, loading } = useProfile({ skip: !isNearVisible });
+  const { data: profile, loading } = useProfile({ skip: !isVisible });
 
-  if (!isNearVisible || loading) {
+  // Only show loading on first load (no cached data yet)
+  if (!profile && loading) {
     return <LoadingSkeleton />;
   }
 
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4 p-4">
       <ModelShowcase model={getModel(profile?.currentModel)} />
-      <button className="rounded-full bg-(--page-surface)/10 px-4 py-2 text-sm font-medium text-(--page-text) transition-colors hover:bg-(--page-surface)/20">
+      <button onClick={()=>{onNavigate(4)}} className="rounded-full bg-(--page-surface)/10 px-4 py-2 text-sm font-medium text-(--page-text) transition-colors hover:bg-(--page-surface)/20">
         View All Models →
       </button>
     </div>
@@ -69,12 +71,13 @@ function AboutLeft({ index }: Readonly<LRProps>) {
 
 function AboutRight({ index }: Readonly<LRProps>) {
   const currentPage = useMotionValueState(index);
-  // Load data when within 1 page of visibility
-  const isNearVisible = currentPage > 0;
+  // Load data when visible
+  const isVisible = currentPage > 0 && currentPage < 1;
 
-  const { data: profile, loading } = useProfile({ skip: !isNearVisible });
+  const { data: profile, loading } = useProfile({ skip: !isVisible });
 
-  if (!isNearVisible || loading) {
+  // Only show loading on first load (no cached data yet)
+  if (!profile && loading) {
     return <LoadingSkeleton />;
   }
 
@@ -90,7 +93,7 @@ function AboutRight({ index }: Readonly<LRProps>) {
   const currentModel = getModel(profile.currentModel);
 
   return (
-    <div className="h-full space-y-4 overflow-y-auto p-4 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
+    <ScrollContainer className="h-full space-y-4 overflow-y-auto p-4 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
       <div>
         {currentModel?.refSheets?.map((v, i) => {
           const media = getMedia(v.media);
@@ -185,14 +188,11 @@ function AboutRight({ index }: Readonly<LRProps>) {
           </div>
         )}
       </div>
-    </div>
+    </ScrollContainer>
   );
 }
 
-export const AboutPage: PageContent = {
-  Left: AboutLeft,
-  Right: AboutRight,
-};
+export const AboutPage = [AboutLeft, AboutRight]
 
 interface InfoSectionProps {
   icon: LucideIcon;

@@ -1,4 +1,5 @@
 export { ArtworkModalContent } from './ArtworkModal'
-export { ContentModalContent } from './ContentModal'
+export { PostModalContent } from './PostModal'
 export { ModelModalContent } from './ModelModal'
+export { PersonModalContent } from './PersonModal'
 export { SongModalContent } from './SongModal'

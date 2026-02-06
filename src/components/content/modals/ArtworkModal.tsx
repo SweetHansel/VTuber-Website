@@ -3,19 +3,39 @@
 import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PeopleDisplay } from "@/components/people";
+import { getMedia, getPerson, getTag, type Tag } from "@/hooks/useCMS";
+import { getPersonFromCredit, type Credit } from "@/lib/people";
+import type { Artwork, Person } from "@/payload-types";
 
 interface ArtworkModalProps {
-  data: Record<string, unknown>;
+  data: Artwork;
 }
 
 export function ArtworkModalContent({
   data,
 }: Readonly<ArtworkModalProps>) {
-  const title = data.title ? String(data.title) : undefined;
-  const image = String(data.image || "/placeholder-art.jpg");
-  const artworkType = String(data.artworkType || "fanart");
-  const artistName = data.artistName ? String(data.artistName) : undefined;
-  const sourceUrl = data.sourceUrl ? String(data.sourceUrl) : undefined;
+  const image = getMedia(data.image)?.url || "/placeholder-art.jpg";
+
+  const credits: Credit[] = (data.credits ?? []).map((c) => ({
+    role: c.role,
+    person: c.person as Credit['person'],
+    name: c.name ?? undefined,
+    id: c.id ?? undefined,
+  }));
+
+  const featuredPeople: Person[] = (data.featuredPeople ?? [])
+    .map((p) => getPerson(p))
+    .filter((p): p is Person => !!p);
+
+  const tags = (data.tags ?? []).map(getTag).filter((t): t is Tag => !!t);
+
+  // Get artist name from credits
+  const artistCredit = credits.find(c =>
+    c.role?.toLowerCase() === 'artist' || c.role?.toLowerCase() === 'illustrator'
+  );
+  const artistPerson = artistCredit ? getPersonFromCredit(artistCredit) : undefined;
+  const artistName = artistPerson?.name ?? artistCredit?.name;
 
   return (
     <div>
@@ -24,7 +44,7 @@ export function ArtworkModalContent({
         <div className="relative aspect-4/3 w-full">
           <Image
             src={image}
-            alt={title || "Artwork"}
+            alt={data.title || "Artwork"}
             fill
             className="object-contain bg-black/50"
           />
@@ -35,32 +55,68 @@ export function ArtworkModalContent({
       <span
         className={cn(
           "mb-3 inline-block rounded-full px-3 py-1 text-sm font-medium capitalize",
-          artworkType === "official"
+          data.artworkType === "official"
             ? "bg-blue-500/20 text-blue-300"
-            : artworkType === "fanart"
+            : data.artworkType === "fanart"
               ? "bg-cyan-500/20 text-cyan-300"
-              : artworkType === "commissioned"
+              : data.artworkType === "commissioned"
                 ? "bg-purple-500/20 text-purple-300"
                 : "bg-gray-500/20 text-gray-300",
         )}
       >
-        {artworkType}
+        {data.artworkType}
       </span>
 
       {/* Title */}
-      {title && (
-        <h2 className="mb-2 text-2xl font-bold text-(--modal-text)">{title}</h2>
+      {data.title && (
+        <h2 className="mb-2 text-2xl font-bold text-(--modal-text)">{data.title}</h2>
       )}
 
-      {/* Artist */}
-      {artistName && (
+      {/* Artist (simple display when no full credits) */}
+      {artistName && credits.length === 0 && (
         <p className="mb-4 text-(--modal-text)/60">by {artistName}</p>
       )}
 
+      {/* Credits */}
+      {credits.length > 0 && (
+        <div className="mb-4">
+          <p className="mb-2 text-sm text-(--modal-text)/40">Credits</p>
+          <PeopleDisplay credits={credits} />
+        </div>
+      )}
+
+      {/* Featured People */}
+      {featuredPeople.length > 0 && (
+        <div className="mb-4">
+          <p className="mb-2 text-sm text-(--modal-text)/40">Featured</p>
+          <PeopleDisplay people={featuredPeople} size="md" />
+        </div>
+      )}
+
+      {/* Tags */}
+      {tags.length > 0 && (
+        <div className="mb-4">
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <span
+                key={tag.id}
+                className="rounded-full px-2.5 py-1 text-xs font-medium"
+                style={{
+                  backgroundColor: tag.color ? `${tag.color}20` : 'var(--modal-surface)',
+                  color: tag.color || 'var(--modal-text)',
+                }}
+              >
+                {tag.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Source link */}
-      {sourceUrl && (
+      {data.sourceUrl && (
         <a
-          href={sourceUrl}
+          href={data.sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-full bg-(--modal-surface)/10 px-4 py-2 text-sm text-(--modal-text)/70 transition-colors hover:bg-(--modal-surface)/20 hover:text-(--modal-text)"

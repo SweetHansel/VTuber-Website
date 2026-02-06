@@ -5,31 +5,27 @@ import Image from "next/image";
 import { useAudioStore, type Track } from "@/stores/audioStore";
 import { useModalStore } from "@/stores/modalStore";
 import { cn, formatDuration } from "@/lib/utils";
-import { Play, Pause, Music, ExternalLink } from "lucide-react";
+import { Play, Pause, Music } from "lucide-react";
+import { type MusicTrack, getMedia } from "@/hooks/useCMS";
 
-export interface SongCardProps {
-  id: string;
-  title: string;
-  trackType: "cover" | "original" | "remix" | "karaoke" | "other";
-  coverArt: string;
-  audioUrl?: string;
-  duration?: number;
-  originalArtist?: string;
-  streamingLinks?: { platform: string; url: string }[];
+interface SongCardProps {
+  track: MusicTrack;
 }
 
-export function SongCard({
-  id,
-  title,
-  trackType,
-  coverArt,
-  audioUrl,
-  duration,
-  originalArtist,
-  streamingLinks,
-}: Readonly<SongCardProps>) {
+export function SongCard({ track }: Readonly<SongCardProps>) {
   const { currentTrack, isPlaying, setTrack, play, pause } = useAudioStore();
   const openModal = useModalStore((state) => state.openModal);
+
+  // Extract display values from track
+  const id = String(track.id);
+  const title = track.title;
+  const trackType = track.trackType;
+  const coverArtMedia = getMedia(track.coverArt);
+  const coverArt = coverArtMedia?.url || "/placeholder-cover-1.jpg";
+  const audioFileMedia = getMedia(track.audioFile);
+  const audioUrl = audioFileMedia?.url;
+  const duration = track.duration ?? undefined;
+  const originalArtist = track.originalArtist ?? undefined;
 
   const isCurrentTrack = currentTrack?.id === id;
   const isCurrentlyPlaying = isCurrentTrack && isPlaying;
@@ -42,7 +38,7 @@ export function SongCard({
     if (isCurrentTrack) {
       isPlaying ? pause() : play();
     } else {
-      const track: Track = {
+      const audioTrack: Track = {
         id,
         title,
         coverArt,
@@ -50,21 +46,13 @@ export function SongCard({
         duration: duration || 0,
         artist: originalArtist,
       };
-      setTrack(track);
+      setTrack(audioTrack);
       play();
     }
   };
 
   const handleCardClick = () => {
-    openModal("song", id, {
-      title,
-      trackType,
-      coverArt,
-      audioUrl,
-      duration,
-      originalArtist,
-      streamingLinks,
-    });
+    openModal("song", id, track);
   };
 
   return (

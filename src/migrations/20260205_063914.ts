@@ -2,9 +2,9 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
-   CREATE TYPE "public"."enum_announcements_type" AS ENUM('stream', 'event', 'release', 'collab', 'general');
+   CREATE TYPE "public"."enum_posts_status" AS ENUM('draft', 'published');
+  CREATE TYPE "public"."enum_posts_post_type" AS ENUM('blog', 'stream', 'event', 'release', 'collab', 'general');
   CREATE TYPE "public"."enum_artworks_artwork_type" AS ENUM('fanart', 'official', 'commissioned', 'other');
-  CREATE TYPE "public"."enum_blog_posts_status" AS ENUM('draft', 'published');
   CREATE TYPE "public"."enum_videos_video_type" AS ENUM('music-video', 'stream-archive', 'clip', 'short', 'animation', 'other');
   CREATE TYPE "public"."enum_videos_platform" AS ENUM('youtube', 'twitch', 'tiktok', 'bilibili', 'other');
   CREATE TYPE "public"."enum_music_tracks_streaming_links_platform" AS ENUM('youtube', 'youtube-music', 'spotify', 'apple-music', 'soundcloud', 'bandcamp', 'other');
@@ -26,20 +26,54 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
   
-  CREATE TABLE "announcements" (
+  CREATE TABLE "posts_featured_images" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"image_id" integer NOT NULL,
+  	"caption" varchar
+  );
+  
+  CREATE TABLE "posts_external_links" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"label" varchar NOT NULL,
+  	"url" varchar NOT NULL
+  );
+  
+  CREATE TABLE "posts_credits" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"role" varchar NOT NULL,
+  	"person_id" integer,
+  	"name" varchar
+  );
+  
+  CREATE TABLE "posts" (
   	"id" serial PRIMARY KEY NOT NULL,
   	"title" varchar NOT NULL,
-  	"type" "enum_announcements_type" NOT NULL,
-  	"description" jsonb,
-  	"featured_image_id" integer,
+  	"slug" varchar,
+  	"status" "enum_posts_status" DEFAULT 'draft' NOT NULL,
+  	"is_pinned" boolean DEFAULT false,
+  	"post_type" "enum_posts_post_type" DEFAULT 'general' NOT NULL,
+  	"content" jsonb,
+  	"excerpt" varchar,
+  	"published_at" timestamp(3) with time zone,
   	"event_date" timestamp(3) with time zone,
   	"location" varchar,
-  	"external_link" varchar,
-  	"priority" numeric DEFAULT 1,
-  	"is_pinned" boolean DEFAULT false,
-  	"expires_at" timestamp(3) with time zone,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+  );
+  
+  CREATE TABLE "posts_rels" (
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"order" integer,
+  	"parent_id" integer NOT NULL,
+  	"path" varchar NOT NULL,
+  	"tags_id" integer,
+  	"people_id" integer
   );
   
   CREATE TABLE "artworks_credits" (
@@ -69,27 +103,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"parent_id" integer NOT NULL,
   	"path" varchar NOT NULL,
   	"people_id" integer,
-  	"tags_id" integer
-  );
-  
-  CREATE TABLE "blog_posts" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"title" varchar NOT NULL,
-  	"slug" varchar NOT NULL,
-  	"featured_image_id" integer,
-  	"excerpt" varchar,
-  	"content" jsonb NOT NULL,
-  	"status" "enum_blog_posts_status" DEFAULT 'draft' NOT NULL,
-  	"published_at" timestamp(3) with time zone,
-  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
-  );
-  
-  CREATE TABLE "blog_posts_rels" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"order" integer,
-  	"parent_id" integer NOT NULL,
-  	"path" varchar NOT NULL,
   	"tags_id" integer
   );
   
@@ -378,9 +391,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"parent_id" integer NOT NULL,
   	"path" varchar NOT NULL,
   	"tags_id" integer,
-  	"announcements_id" integer,
+  	"posts_id" integer,
   	"artworks_id" integer,
-  	"blog_posts_id" integer,
   	"videos_id" integer,
   	"music_tracks_id" integer,
   	"models_id" integer,
@@ -486,7 +498,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   
   CREATE TABLE "themes" (
   	"id" serial PRIMARY KEY NOT NULL,
-  	"phone_bg" varchar DEFAULT '#1e293b',
+  	"phone_bg" varchar DEFAULT '#1e3a8a',
   	"phone_text" varchar DEFAULT '#ffffff',
   	"phone_surface" varchar DEFAULT '#ffffff',
   	"phone_primary" varchar DEFAULT '#3b82f6',
@@ -525,16 +537,20 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"socials_id" integer
   );
   
-  ALTER TABLE "announcements" ADD CONSTRAINT "announcements_featured_image_id_media_id_fk" FOREIGN KEY ("featured_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "posts_featured_images" ADD CONSTRAINT "posts_featured_images_image_id_media_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "posts_featured_images" ADD CONSTRAINT "posts_featured_images_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "posts_external_links" ADD CONSTRAINT "posts_external_links_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "posts_credits" ADD CONSTRAINT "posts_credits_person_id_people_id_fk" FOREIGN KEY ("person_id") REFERENCES "public"."people"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "posts_credits" ADD CONSTRAINT "posts_credits_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "posts_rels" ADD CONSTRAINT "posts_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "posts_rels" ADD CONSTRAINT "posts_rels_tags_fk" FOREIGN KEY ("tags_id") REFERENCES "public"."tags"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "posts_rels" ADD CONSTRAINT "posts_rels_people_fk" FOREIGN KEY ("people_id") REFERENCES "public"."people"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "artworks_credits" ADD CONSTRAINT "artworks_credits_person_id_people_id_fk" FOREIGN KEY ("person_id") REFERENCES "public"."people"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "artworks_credits" ADD CONSTRAINT "artworks_credits_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."artworks"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "artworks" ADD CONSTRAINT "artworks_image_id_media_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "artworks_rels" ADD CONSTRAINT "artworks_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."artworks"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "artworks_rels" ADD CONSTRAINT "artworks_rels_people_fk" FOREIGN KEY ("people_id") REFERENCES "public"."people"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "artworks_rels" ADD CONSTRAINT "artworks_rels_tags_fk" FOREIGN KEY ("tags_id") REFERENCES "public"."tags"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "blog_posts" ADD CONSTRAINT "blog_posts_featured_image_id_media_id_fk" FOREIGN KEY ("featured_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
-  ALTER TABLE "blog_posts_rels" ADD CONSTRAINT "blog_posts_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."blog_posts"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "blog_posts_rels" ADD CONSTRAINT "blog_posts_rels_tags_fk" FOREIGN KEY ("tags_id") REFERENCES "public"."tags"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "videos_credits" ADD CONSTRAINT "videos_credits_person_id_people_id_fk" FOREIGN KEY ("person_id") REFERENCES "public"."people"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "videos_credits" ADD CONSTRAINT "videos_credits_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."videos"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "videos" ADD CONSTRAINT "videos_thumbnail_id_media_id_fk" FOREIGN KEY ("thumbnail_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
@@ -580,9 +596,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "users" ADD CONSTRAINT "users_person_id_people_id_fk" FOREIGN KEY ("person_id") REFERENCES "public"."people"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."payload_locked_documents"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_tags_fk" FOREIGN KEY ("tags_id") REFERENCES "public"."tags"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_announcements_fk" FOREIGN KEY ("announcements_id") REFERENCES "public"."announcements"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_posts_fk" FOREIGN KEY ("posts_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_artworks_fk" FOREIGN KEY ("artworks_id") REFERENCES "public"."artworks"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_blog_posts_fk" FOREIGN KEY ("blog_posts_id") REFERENCES "public"."blog_posts"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_videos_fk" FOREIGN KEY ("videos_id") REFERENCES "public"."videos"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_music_tracks_fk" FOREIGN KEY ("music_tracks_id") REFERENCES "public"."music_tracks"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_models_fk" FOREIGN KEY ("models_id") REFERENCES "public"."models"("id") ON DELETE cascade ON UPDATE no action;
@@ -611,9 +626,22 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE UNIQUE INDEX "tags_slug_idx" ON "tags" USING btree ("slug");
   CREATE INDEX "tags_updated_at_idx" ON "tags" USING btree ("updated_at");
   CREATE INDEX "tags_created_at_idx" ON "tags" USING btree ("created_at");
-  CREATE INDEX "announcements_featured_image_idx" ON "announcements" USING btree ("featured_image_id");
-  CREATE INDEX "announcements_updated_at_idx" ON "announcements" USING btree ("updated_at");
-  CREATE INDEX "announcements_created_at_idx" ON "announcements" USING btree ("created_at");
+  CREATE INDEX "posts_featured_images_order_idx" ON "posts_featured_images" USING btree ("_order");
+  CREATE INDEX "posts_featured_images_parent_id_idx" ON "posts_featured_images" USING btree ("_parent_id");
+  CREATE INDEX "posts_featured_images_image_idx" ON "posts_featured_images" USING btree ("image_id");
+  CREATE INDEX "posts_external_links_order_idx" ON "posts_external_links" USING btree ("_order");
+  CREATE INDEX "posts_external_links_parent_id_idx" ON "posts_external_links" USING btree ("_parent_id");
+  CREATE INDEX "posts_credits_order_idx" ON "posts_credits" USING btree ("_order");
+  CREATE INDEX "posts_credits_parent_id_idx" ON "posts_credits" USING btree ("_parent_id");
+  CREATE INDEX "posts_credits_person_idx" ON "posts_credits" USING btree ("person_id");
+  CREATE UNIQUE INDEX "posts_slug_idx" ON "posts" USING btree ("slug");
+  CREATE INDEX "posts_updated_at_idx" ON "posts" USING btree ("updated_at");
+  CREATE INDEX "posts_created_at_idx" ON "posts" USING btree ("created_at");
+  CREATE INDEX "posts_rels_order_idx" ON "posts_rels" USING btree ("order");
+  CREATE INDEX "posts_rels_parent_idx" ON "posts_rels" USING btree ("parent_id");
+  CREATE INDEX "posts_rels_path_idx" ON "posts_rels" USING btree ("path");
+  CREATE INDEX "posts_rels_tags_id_idx" ON "posts_rels" USING btree ("tags_id");
+  CREATE INDEX "posts_rels_people_id_idx" ON "posts_rels" USING btree ("people_id");
   CREATE INDEX "artworks_credits_order_idx" ON "artworks_credits" USING btree ("_order");
   CREATE INDEX "artworks_credits_parent_id_idx" ON "artworks_credits" USING btree ("_parent_id");
   CREATE INDEX "artworks_credits_person_idx" ON "artworks_credits" USING btree ("person_id");
@@ -625,14 +653,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "artworks_rels_path_idx" ON "artworks_rels" USING btree ("path");
   CREATE INDEX "artworks_rels_people_id_idx" ON "artworks_rels" USING btree ("people_id");
   CREATE INDEX "artworks_rels_tags_id_idx" ON "artworks_rels" USING btree ("tags_id");
-  CREATE UNIQUE INDEX "blog_posts_slug_idx" ON "blog_posts" USING btree ("slug");
-  CREATE INDEX "blog_posts_featured_image_idx" ON "blog_posts" USING btree ("featured_image_id");
-  CREATE INDEX "blog_posts_updated_at_idx" ON "blog_posts" USING btree ("updated_at");
-  CREATE INDEX "blog_posts_created_at_idx" ON "blog_posts" USING btree ("created_at");
-  CREATE INDEX "blog_posts_rels_order_idx" ON "blog_posts_rels" USING btree ("order");
-  CREATE INDEX "blog_posts_rels_parent_idx" ON "blog_posts_rels" USING btree ("parent_id");
-  CREATE INDEX "blog_posts_rels_path_idx" ON "blog_posts_rels" USING btree ("path");
-  CREATE INDEX "blog_posts_rels_tags_id_idx" ON "blog_posts_rels" USING btree ("tags_id");
   CREATE INDEX "videos_credits_order_idx" ON "videos_credits" USING btree ("_order");
   CREATE INDEX "videos_credits_parent_id_idx" ON "videos_credits" USING btree ("_parent_id");
   CREATE INDEX "videos_credits_person_idx" ON "videos_credits" USING btree ("person_id");
@@ -726,9 +746,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "payload_locked_documents_rels_parent_idx" ON "payload_locked_documents_rels" USING btree ("parent_id");
   CREATE INDEX "payload_locked_documents_rels_path_idx" ON "payload_locked_documents_rels" USING btree ("path");
   CREATE INDEX "payload_locked_documents_rels_tags_id_idx" ON "payload_locked_documents_rels" USING btree ("tags_id");
-  CREATE INDEX "payload_locked_documents_rels_announcements_id_idx" ON "payload_locked_documents_rels" USING btree ("announcements_id");
+  CREATE INDEX "payload_locked_documents_rels_posts_id_idx" ON "payload_locked_documents_rels" USING btree ("posts_id");
   CREATE INDEX "payload_locked_documents_rels_artworks_id_idx" ON "payload_locked_documents_rels" USING btree ("artworks_id");
-  CREATE INDEX "payload_locked_documents_rels_blog_posts_id_idx" ON "payload_locked_documents_rels" USING btree ("blog_posts_id");
   CREATE INDEX "payload_locked_documents_rels_videos_id_idx" ON "payload_locked_documents_rels" USING btree ("videos_id");
   CREATE INDEX "payload_locked_documents_rels_music_tracks_id_idx" ON "payload_locked_documents_rels" USING btree ("music_tracks_id");
   CREATE INDEX "payload_locked_documents_rels_models_id_idx" ON "payload_locked_documents_rels" USING btree ("models_id");
@@ -773,12 +792,14 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
   await db.execute(sql`
    DROP TABLE "tags" CASCADE;
-  DROP TABLE "announcements" CASCADE;
+  DROP TABLE "posts_featured_images" CASCADE;
+  DROP TABLE "posts_external_links" CASCADE;
+  DROP TABLE "posts_credits" CASCADE;
+  DROP TABLE "posts" CASCADE;
+  DROP TABLE "posts_rels" CASCADE;
   DROP TABLE "artworks_credits" CASCADE;
   DROP TABLE "artworks" CASCADE;
   DROP TABLE "artworks_rels" CASCADE;
-  DROP TABLE "blog_posts" CASCADE;
-  DROP TABLE "blog_posts_rels" CASCADE;
   DROP TABLE "videos_credits" CASCADE;
   DROP TABLE "videos" CASCADE;
   DROP TABLE "videos_rels" CASCADE;
@@ -817,9 +838,9 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "themes" CASCADE;
   DROP TABLE "livestream_settings" CASCADE;
   DROP TABLE "livestream_settings_rels" CASCADE;
-  DROP TYPE "public"."enum_announcements_type";
+  DROP TYPE "public"."enum_posts_status";
+  DROP TYPE "public"."enum_posts_post_type";
   DROP TYPE "public"."enum_artworks_artwork_type";
-  DROP TYPE "public"."enum_blog_posts_status";
   DROP TYPE "public"."enum_videos_video_type";
   DROP TYPE "public"."enum_videos_platform";
   DROP TYPE "public"."enum_music_tracks_streaming_links_platform";

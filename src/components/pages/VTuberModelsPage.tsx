@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { User, Box, Loader2 } from "lucide-react";
-import type { LRProps, PageContent } from "@/components/layout/BookLayout";
+import type { LRProps } from "@/components/layout/BookLayout";
 import { useModels, type Model, getMedia, nullToUndefined } from "@/hooks/useCMS";
 import { useModelShowcaseStore } from "@/stores/modelShowcaseStore";
 import { ModelShowcase } from "@/components/display/ModelShowcase";
@@ -64,12 +64,12 @@ function VTuberModelsLeft() {
 
 function VTuberModelsRight({ index }: Readonly<LRProps>) {
   const currentPage = useMotionValueState(index)
-  // Load data when within 1 page of visibility (vtuber-models is page 3, so check around 0.5)
-  const isNearVisible = currentPage > 0
+  // Load data when visible
+  const isVisible = currentPage > 0 && currentPage < 1;
 
   const [activeTab, setActiveTab] = useState<ModelTab>("2d");
   const { selectedModel, setSelectedModel } = useModelShowcaseStore();
-  const { data: allModels, loading, error } = useModels(undefined, { skip: !isNearVisible });
+  const { data: allModels, loading, error } = useModels(undefined, { skip: !isVisible });
 
   // Filter models by type (keep full Model objects)
   const filteredModels: Model[] = allModels
@@ -85,7 +85,7 @@ function VTuberModelsRight({ index }: Readonly<LRProps>) {
   }
 
   return (
-    <div className="flex h-full flex-col p-4">
+    <div className="relative flex h-full w-full flex-col p-4">
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-(--page-text)">VTuber Models</h1>
@@ -119,21 +119,22 @@ function VTuberModelsRight({ index }: Readonly<LRProps>) {
         </div>
       </div>
 
-      {/* Loading state */}
-      {(!isNearVisible || loading) && (
+      {/* Loading state - only on first load */}
+      {!allModels && loading && (
         <div className="flex flex-1 items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-(--page-text)/40" />
         </div>
       )}
 
       {/* Model grid */}
-      {isNearVisible && !loading && filteredModels.length > 0 && (
-        <div className="grid flex-1 grid-cols-2 gap-4 overflow-y-auto md:grid-cols-3 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
-          {filteredModels.map((model) => {
+      {allModels && filteredModels.length > 0 && (
+        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
+          <div className="grid grid-cols-4 gap-2 md:grid-cols-3">
+          {filteredModels.map((model, i) => {
             const cardData = transformModel(model);
             return (
               <motion.div
-                key={model.id}
+                key={`${model.id}-${i}`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setSelectedModel(model)}
@@ -171,11 +172,12 @@ function VTuberModelsRight({ index }: Readonly<LRProps>) {
               </motion.div>
             );
           })}
+          </div>
         </div>
       )}
 
       {/* Empty state */}
-      {isNearVisible && !loading && filteredModels.length === 0 && (
+      {allModels && filteredModels.length === 0 && (
         <div className="flex flex-1 items-center justify-center text-(--page-text)/40">
           No models found
         </div>
@@ -184,7 +186,4 @@ function VTuberModelsRight({ index }: Readonly<LRProps>) {
   );
 }
 
-export const VTuberModelsPage: PageContent = {
-  Left: VTuberModelsLeft,
-  Right: VTuberModelsRight,
-};
+export const VTuberModelsPage = [VTuberModelsLeft, VTuberModelsRight]

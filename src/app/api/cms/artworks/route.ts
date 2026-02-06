@@ -4,9 +4,7 @@ import type { Where } from 'payload'
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
-    const artworkType = searchParams.get('type')
     const featured = searchParams.get('featured')
-    const limit = parseInt(searchParams.get('limit') || '50')
 
     const { getPayload } = await import('payload')
     const config = await import('@payload-config').then((m) => m.default)
@@ -16,19 +14,16 @@ export async function GET(request: Request) {
       isNsfw: { equals: false }, // Filter out NSFW by default
     }
 
-    if (artworkType && artworkType !== 'all') {
-      whereClause.artworkType = { equals: artworkType }
-    }
-
     if (featured === 'true') {
       whereClause.isFeatured = { equals: true }
     }
 
+    // Fetch all artworks - filtering happens client-side
     const { docs } = await payload.find({
       collection: 'artworks',
       where: whereClause,
       depth: 2, // Resolve media and relationships
-      limit,
+      limit: 100, // Increased limit for all data
       sort: '-createdAt',
     })
 

@@ -1,58 +1,56 @@
 "use client";
 
-import { motion, useTransform } from "framer-motion";
 import { MasonryGallery } from "@/components/display/MasonryGallery";
 import {
-  mapToFlatOnly,
+  ExpandingPage,
   type LRProps,
-  type PageContent,
 } from "@/components/layout/BookLayout";
 import { InteractiveMediaFromCMS } from "@/components/media";
 import { useMotionValueState } from "@/hooks/useMotionValueState";
+import { useArtworks } from "@/hooks/useCMS";
+import { Loader2 } from "lucide-react";
 
 function ArtworksLeft({ index }: Readonly<LRProps>) {
-  const width = useTransform(index, (x) => {
-    const v = mapToFlatOnly(x);
-    return (v <= 0.5 ? (1 + v) * 100 : (2 - v) * 100) + "%";
-  });
-
   return (
-    <motion.div
+    <ExpandingPage
+      index={index}
+      min={100}
+      max={200}
       className="absolute h-full oveflow-clip mask-r-from-80% mask-r-to-95%"
-      style={{ width }}
     >
       <InteractiveMediaFromCMS
         location="page-artworks"
         className="absolute h-full aspect-video left-0"
       />
-    </motion.div>
+    </ExpandingPage>
   );
 }
 
 function ArtworksRight({ index }: Readonly<LRProps>) {
   const currentPage = useMotionValueState(index);
-  // Load data when within 1 page of visibility (artworks is page 1, so check around 0.5)
-  const isNearVisible = currentPage > 0;
+  const isVisible = currentPage > 0 && currentPage < 1;
 
-  const width = useTransform(index, (x) => {
-    const v = mapToFlatOnly(x);
-    return (v <= 0.5 ? (1 + v) * 100 : (2 - v) * 100) + "%";
-  });
+  const { data: artworks, loading } = useArtworks({ skip: !isVisible });
 
   return (
-    <motion.div
-      className="absolute h-full w-full right-0 mask-l-from-80% mask-l-to-95%"
-      style={{ width }}
+    <ExpandingPage
+      index={index}
+      min={100}
+      max={200}
+      className="absolute h-full right-0 mask-l-from-80% mask-l-to-95%"
     >
       {/* Gallery */}
       <div className="absolute h-full p-4 aspect-11/9 right-0">
-        <MasonryGallery filter={"all"} skip={!isNearVisible} />
+        {loading || !artworks ? (
+          <div className="flex h-full w-full items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-(--page-text)/40" />
+          </div>
+        ) : (
+          <MasonryGallery artworks={artworks} filter="all" />
+        )}
       </div>
-    </motion.div>
+    </ExpandingPage>
   );
 }
 
-export const ArtworksPage: PageContent = {
-  Left: ArtworksLeft,
-  Right: ArtworksRight,
-};
+export const ArtworksPage = [ArtworksLeft, ArtworksRight]

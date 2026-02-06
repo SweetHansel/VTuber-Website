@@ -1,106 +1,77 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useMemo, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { Loader2 } from 'lucide-react'
-import { SongCard, type SongCardProps } from './SongCard'
-import { useMusicTracks, type MusicTrack, getMedia } from '@/hooks/useCMS'
+import { SongCard } from './SongCard'
+import { type MusicTrack, getMedia } from '@/hooks/useCMS'
 import { useAudioStore, type Track } from '@/stores/audioStore'
 
+type MusicFilter = 'all' | 'covers' | 'originals'
+
 interface SongGridProps {
-  filter?: 'all' | 'covers' | 'originals'
-  skip?: boolean
+  tracks: MusicTrack[]
+  filter?: MusicFilter
 }
 
-function transformTrack(track: MusicTrack): SongCardProps {
-  const coverArt = getMedia(track.coverArt)
-  const audioFile = getMedia(track.audioFile)
-  return {
-    id: String(track.id),
-    title: track.title,
-    trackType: track.trackType,
-    coverArt: coverArt?.url || '/placeholder-cover-1.jpg',
-    audioUrl: audioFile?.url ?? undefined,
-    duration: track.duration ?? undefined,
-    originalArtist: track.originalArtist ?? undefined,
-    streamingLinks: track.streamingLinks?.map(link => ({
-      platform: link.platform,
-      url: link.url,
-    })),
-  }
-}
-
-export function SongGrid({ filter = 'all', skip = false }: SongGridProps) {
-  const { data: tracks, loading, error } = useMusicTracks(filter, { skip })
+export function SongGrid({
+  tracks,
+  filter = 'all',
+}: Readonly<SongGridProps>) {
   const { currentTrack, setTrack } = useAudioStore()
   const hasAutoSelected = useRef(false)
 
-  // Use CMS data if available, otherwise use mock data
-  const songs: SongCardProps[] = tracks && tracks.length > 0
-    ? tracks.map(transformTrack)
-    : []
-
-  // Apply filter for fallback data (CMS data is already filtered)
-  const filteredSongs = tracks && tracks.length > 0
-    ? songs
-    : songs.filter((song) => {
-        if (filter === 'all') return true
-        if (filter === 'covers') return song.trackType === 'cover'
-        if (filter === 'originals') return song.trackType === 'original' || song.trackType === 'remix'
-        return true
-      })
+  // Client-side filtering
+  const filteredTracks = useMemo(() => {
+    if (filter === 'all') return tracks
+    if (filter === 'covers') return tracks.filter(t => t.trackType === 'cover')
+    if (filter === 'originals') return tracks.filter(t => t.trackType === 'original' || t.trackType === 'remix')
+    return tracks
+  }, [tracks, filter])
 
   // Auto-select a random track if no music is playing
   useEffect(() => {
-    if (hasAutoSelected.current || currentTrack || loading || skip || filteredSongs.length === 0) return
+    if (hasAutoSelected.current || currentTrack || filteredTracks.length === 0) return
 
-    // Find songs with audio URLs
-    const playableSongs = filteredSongs.filter(song => song.audioUrl)
-    if (playableSongs.length === 0) return
+    // Find tracks with audio files
+    const playableTracks = filteredTracks.filter(t => {
+      const audioFile = getMedia(t.audioFile)
+      return !!audioFile?.url
+    })
+    if (playableTracks.length === 0) return
 
-    // Select a random song
-    const randomIndex = Math.floor(Math.random() * playableSongs.length)
-    const randomSong = playableSongs[randomIndex]
+    // Select a random track
+    const randomIndex = Math.floor(Math.random() * playableTracks.length)
+    const randomTrack = playableTracks[randomIndex]
+    const coverArt = getMedia(randomTrack.coverArt)
+    const audioFile = getMedia(randomTrack.audioFile)
 
     const track: Track = {
-      id: randomSong.id,
-      title: randomSong.title,
-      coverArt: randomSong.coverArt,
-      audioUrl: randomSong.audioUrl!,
-      duration: randomSong.duration || 0,
-      artist: randomSong.originalArtist,
+      id: String(randomTrack.id),
+      title: randomTrack.title,
+      coverArt: coverArt?.url || '/placeholder-cover-1.jpg',
+      audioUrl: audioFile!.url!,
+      duration: randomTrack.duration || 0,
+      artist: randomTrack.originalArtist ?? undefined,
     }
 
     setTrack(track)
     hasAutoSelected.current = true
-  }, [loading, skip, filteredSongs, currentTrack, setTrack])
-
-  if (skip || loading) {
-    return (
-      <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-(--page-text)/40" />
-      </div>
-    )
-  }
-
-  if (error) {
-    console.warn('Failed to fetch music tracks, using fallback data:', error)
-  }
+  }, [filteredTracks, currentTrack, setTrack])
 
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-      {filteredSongs.map((song, index) => (
+      {filteredTracks.map((track, index) => (
         <motion.div
-          key={song.id}
+          key={track.id}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.05 }}
         >
-          <SongCard {...song} />
+          <SongCard track={track} />
         </motion.div>
       ))}
 
-      {filteredSongs.length === 0 && (
+      {filteredTracks.length === 0 && (
         <div className="col-span-full py-12 text-center text-(--page-text)/40">
           No songs found
         </div>

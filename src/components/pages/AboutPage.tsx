@@ -47,7 +47,7 @@ function LoadingSkeleton() {
   );
 }
 
-function AboutLeft({ index }: Readonly<LRProps>) {
+function AboutLeft({ index, onNavigate }: Readonly<LRProps>) {
   const currentPage = useMotionValueState(index);
   // Load data when visible
   const isVisible = currentPage > 0 && currentPage < 1;
@@ -62,7 +62,7 @@ function AboutLeft({ index }: Readonly<LRProps>) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4 p-4">
       <ModelShowcase model={getModel(profile?.currentModel)} />
-      <button className="rounded-full bg-(--page-surface)/10 px-4 py-2 text-sm font-medium text-(--page-text) transition-colors hover:bg-(--page-surface)/20">
+      <button onClick={()=>{onNavigate(4)}} className="rounded-full bg-(--page-surface)/10 px-4 py-2 text-sm font-medium text-(--page-text) transition-colors hover:bg-(--page-surface)/20">
         View All Models →
       </button>
     </div>

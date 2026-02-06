@@ -1,42 +1,43 @@
-'use client'
+"use client";
 
-import { useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import Image from 'next/image'
-import { useLivestreamStore, getPrimaryStream } from '@/stores/livestreamStore'
-import { cn } from '@/lib/utils'
-import { Radio, X, ExternalLink, Users } from 'lucide-react'
-import { POLLING_INTERVAL_MS } from '@/constants/config'
+import { useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import { useLivestreamStore, getPrimaryStream } from "@/stores/livestreamStore";
+import { cn } from "@/lib/utils";
+import { Radio, X, ExternalLink, Users } from "lucide-react";
+import { POLLING_INTERVAL_MS } from "@/constants/config";
 
 export function LivestreamAlert() {
-  const { streams, showAlert, dismissStream, hideAlertBanner } = useLivestreamStore()
+  const { streams, showAlert, dismissStream, hideAlertBanner } =
+    useLivestreamStore();
 
-  const primaryStream = getPrimaryStream(streams.filter(s => showAlert))
+  const primaryStream = getPrimaryStream(streams.filter((s) => showAlert));
 
   // Auto-poll for livestream status
   useEffect(() => {
     const checkLiveStatus = async () => {
       try {
-        const res = await fetch('/api/livestream/status')
+        const res = await fetch("/api/livestream/status");
         if (res.ok) {
-          const data = await res.json()
-          useLivestreamStore.getState().setStreams(data.streams || [])
-          useLivestreamStore.getState().setLastChecked(new Date())
+          const data = await res.json();
+          useLivestreamStore.getState().setStreams(data.streams || []);
+          useLivestreamStore.getState().setLastChecked(new Date());
         }
       } catch (error) {
-        console.error('Failed to check livestream status:', error)
+        console.error("Failed to check livestream status:", error);
       }
-    }
+    };
 
     // Initial check
-    checkLiveStatus()
+    checkLiveStatus();
 
     // Poll at configured interval
-    const interval = setInterval(checkLiveStatus, POLLING_INTERVAL_MS)
-    return () => clearInterval(interval)
-  }, [])
+    const interval = setInterval(checkLiveStatus, POLLING_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, []);
 
-  if (!primaryStream) return null
+  if (!primaryStream) return null;
 
   return (
     <AnimatePresence>
@@ -45,19 +46,32 @@ export function LivestreamAlert() {
           initial={{ x: 100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: 100, opacity: 0 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          transition={{ type: "spring", damping: 25, stiffness: 200 }}
           className={cn(
-            'fixed z-50 overflow-hidden rounded-xl shadow-2xl',
-            'bottom-24 right-4 w-72 md:bottom-20 md:w-80'
+            "fixed z-50 overflow-hidden rounded-xl shadow-2xl",
+            "bottom-24 right-4 w-72 md:bottom-20 md:w-80",
           )}
         >
-          {/* Background with gradient */}
+          {/* Pulse animation */}
+          <motion.div
+            className="absolute inset-0 rounded-xl border-2 border-red-500"
+            animate={{
+              opacity: [0.5, 0, 0.5],
+              scale: [1, 1.02, 1],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+          {/* Background with gradient border */}
           <div className="relative bg-linear-to-br from-red-600 to-blue-600 p-0.5">
-            <div className="relative bg-slate-900 p-3">
+            <div className="relative bg-(--modal-bg) p-3">
               {/* Close button */}
               <button
-                onClick={() => dismissStream(primaryStream.channelId)}
-                className="absolute right-2 top-2 rounded-full p-1 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+                onClick={() => hideAlertBanner()}
+                className="absolute right-2 top-2 rounded-full p-1 text-(--modal-text)/60 transition-colors hover:bg-(--modal-text)/10 hover:text-(--modal-text)"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -70,7 +84,7 @@ export function LivestreamAlert() {
                     Live
                   </span>
                 </span>
-                <span className="text-xs capitalize text-white/60">
+                <span className="text-xs capitalize text-(--modal-text)/60">
                   on {primaryStream.platform}
                 </span>
               </div>
@@ -86,7 +100,7 @@ export function LivestreamAlert() {
                   />
                   {/* Viewer count overlay */}
                   {primaryStream.viewerCount !== undefined && (
-                    <div className="absolute bottom-1 right-1 flex items-center gap-1 rounded bg-black/70 px-1.5 py-0.5 text-xs text-white">
+                    <div className="absolute bottom-1 right-1 flex items-center gap-1 rounded bg-(--modal-bg)/70 px-1.5 py-0.5 text-xs text-(--modal-text)">
                       <Users className="h-3 w-3" />
                       {primaryStream.viewerCount.toLocaleString()}
                     </div>
@@ -95,12 +109,12 @@ export function LivestreamAlert() {
               )}
 
               {/* Stream info */}
-              <h3 className="mb-1 line-clamp-2 text-sm font-medium text-white">
+              <h3 className="mb-1 line-clamp-2 text-sm font-medium text-(--modal-text)">
                 {primaryStream.title}
               </h3>
-              <p className="mb-3 text-xs text-white/60">
+              <p className="mb-3 text-xs text-(--modal-text)/60">
                 {primaryStream.channelName}
-                {!primaryStream.isOwner && ' (Friend)'}
+                {!primaryStream.isOwner && " (Friend)"}
               </p>
 
               {/* Watch button */}
@@ -115,22 +129,8 @@ export function LivestreamAlert() {
               </a>
             </div>
           </div>
-
-          {/* Pulse animation */}
-          <motion.div
-            className="absolute inset-0 rounded-xl border-2 border-red-500"
-            animate={{
-              opacity: [0.5, 0, 0.5],
-              scale: [1, 1.02, 1],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }

@@ -33,10 +33,6 @@ body {
   overflow-x: hidden;
 }
 
-* {
-  transition: all 0s
-}
-
 /* Custom scrollbar */
 .scrollbar-thin {
   scrollbar-width: thin;

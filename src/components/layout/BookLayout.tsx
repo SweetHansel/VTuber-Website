@@ -47,6 +47,7 @@ export function BookLayout() {
   const touchStartRef = useRef<number | null>(null);
 
   const setIndex = (val: number) => {
+    setFocus('bottom-right')
     rough.set(val);
   };
 
@@ -73,7 +74,7 @@ export function BookLayout() {
     scrollTimeoutRef.current = setTimeout(() => {
       isScrollingRef.current = false;
       // Decay to nearest page when scrolling stops
-      setIndex(Math.round(index.get()));
+      rough.set(Math.round(index.get()));
     }, 500);
   };
 
@@ -96,7 +97,7 @@ export function BookLayout() {
     touchStartRef.current = null;
     isScrollingRef.current = false;
 
-    setIndex(Math.round(index.get()));
+    rough.set(Math.round(index.get()));
   };
 
   const nextPage = () => {

@@ -122,7 +122,7 @@ export function MasonryGallery({
   );
 
   const handleClick = (artwork: Artwork) => {
-    openModal("artwork", String(artwork.id), artwork);
+    openModal("artwork", artwork);
   };
 
   return (
@@ -132,7 +132,7 @@ export function MasonryGallery({
     >
       {rows.map((row, rowIndex) => (
         <div
-          key={"row_"+rowIndex}
+          key={"row_" + rowIndex}
           className="flex flex-row-reverse justify-start gap-2"
         >
           {row.map(({ artwork, ratio }, itemIndex) => {
@@ -143,7 +143,9 @@ export function MasonryGallery({
             return (
               <motion.div
                 key={artwork.id}
-                transition={{ delay: (rowIndex * row.length + itemIndex) * 0.02 }}
+                transition={{
+                  delay: (rowIndex * row.length + itemIndex) * 0.02,
+                }}
                 className="relative shrink-0 cursor-pointer overflow-hidden group"
                 style={{
                   height: rowHeight,

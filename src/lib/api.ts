@@ -149,7 +149,7 @@ export function buildWhereClause(
 
   // Date range filter
   if (params.dateFrom || params.dateTo) {
-    const dateCondition: Where = {}
+    const dateCondition: Record<string, string> = {}
 
     if (params.dateFrom) {
       dateCondition.greater_than_equal = params.dateFrom
@@ -158,7 +158,7 @@ export function buildWhereClause(
       dateCondition.less_than_equal = params.dateTo
     }
 
-    andConditions.push({ [columns.date]: dateCondition })
+    andConditions.push({ [columns.date]: dateCondition } as Where)
   }
 
   // Tags filter (any tag matches)

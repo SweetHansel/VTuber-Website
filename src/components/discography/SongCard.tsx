@@ -52,7 +52,7 @@ export function SongCard({ track }: Readonly<SongCardProps>) {
   };
 
   const handleCardClick = () => {
-    openModal("song", id, track);
+    openModal("song", track);
   };
 
   return (

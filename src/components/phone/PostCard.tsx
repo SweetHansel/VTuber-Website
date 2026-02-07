@@ -58,7 +58,7 @@ export function PostCard({ post }: Readonly<PostCardProps>) {
   const date = eventDate || publishedAt || (post.createdAt ? String(post.createdAt) : undefined)
 
   const handleClick = () => {
-    openModal('post', String(post.id), post)
+    openModal('post', post)
   }
 
   return (

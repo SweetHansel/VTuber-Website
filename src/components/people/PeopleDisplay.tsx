@@ -78,7 +78,7 @@ function Avatar({ person, size, showRole, className, onClick }: Readonly<AvatarP
     if (onClick) {
       onClick()
     } else {
-      openModal('person', String(person.id), person as Person)
+      openModal('person', person as Person)
     }
   }
 

@@ -12,7 +12,6 @@ import type { Credit } from "@/lib/people";
 import type { MusicTrack, Tag } from "@/payload-types";
 
 interface SongModalProps {
-  id: string | null;
   data: MusicTrack;
 }
 
@@ -37,13 +36,12 @@ const PLATFORM_LABELS: Record<string, string> = {
 };
 
 export function SongModalContent({
-  id,
   data,
 }: Readonly<SongModalProps>) {
   const { currentTrack, isPlaying, setTrack, play, pause } = useAudioStore();
   const [showLyrics, setShowLyrics] = useState(false);
 
-  const trackId = id || String(data.id);
+  const trackId = String(data.id);
   const coverArtMedia = getMedia(data.coverArt);
   const coverArt = coverArtMedia?.url || "/placeholder-cover.jpg";
   const audioFileMedia = getMedia(data.audioFile);

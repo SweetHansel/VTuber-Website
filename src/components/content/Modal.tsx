@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useModalStore, type ModalDataMap } from "@/stores/modalStore";
 import { X } from "lucide-react";
-import { scaleFadeVariants } from "@/animations";
 import { ArtworkModalContent } from "./modals/ArtworkModal";
 import { PostModalContent } from "./modals/PostModal";
 import { ModelModalContent } from "./modals/ModelModal";
@@ -13,7 +12,7 @@ import { SongModalContent } from "./modals/SongModal";
 import type { Artwork, Post, MusicTrack, Model, Person } from "@/payload-types";
 
 export function Modal() {
-  const { isOpen, modalType, contentId, contentData, closeModal } =
+  const { isOpen, modalType, contentData, closeModal } =
     useModalStore();
 
   // Close on escape
@@ -69,7 +68,6 @@ export function Modal() {
               {/* Content based on type */}
               <ModalContent
                 type={modalType}
-                id={contentId}
                 data={contentData}
               />
             </div>
@@ -82,11 +80,10 @@ export function Modal() {
 
 interface ModalContentProps {
   type: keyof ModalDataMap | null;
-  id: string | null;
   data: ModalDataMap[keyof ModalDataMap] | null;
 }
 
-function ModalContent({ type, id, data }: Readonly<ModalContentProps>) {
+function ModalContent({ type, data }: Readonly<ModalContentProps>) {
   if (!data) {
     return (
       <div className="py-8 text-center text-(--modal-text)/60">Loading...</div>
@@ -101,7 +98,7 @@ function ModalContent({ type, id, data }: Readonly<ModalContentProps>) {
       return <ArtworkModalContent data={data as Artwork} />;
 
     case "song":
-      return <SongModalContent id={id} data={data as MusicTrack} />;
+      return <SongModalContent data={data as MusicTrack} />;
 
     case "model":
       return <ModelModalContent data={data as Model} />;

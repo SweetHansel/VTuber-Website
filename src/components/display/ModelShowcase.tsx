@@ -18,7 +18,7 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
 
   const handleOpenDetails = () => {
     if (!model) return;
-    openModal('model', String(model.id), model);
+    openModal("model", model);
   };
 
   const showcase = model?.showcase || [];
@@ -38,7 +38,9 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
         <div className="text-center text-(--page-text)">
           <Box className="mx-auto h-16 w-16 mb-4 text-(--page-text)/60" />
           <h2 className="text-xl font-bold">Model Showcase</h2>
-          <p className="text-sm text-(--page-text)/60 mt-2">Select a model to view</p>
+          <p className="text-sm text-(--page-text)/60 mt-2">
+            Select a model to view
+          </p>
         </div>
       </div>
     );
@@ -50,7 +52,9 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
         <div className="text-center text-(--page-text)">
           <Box className="mx-auto h-16 w-16 mb-4 text-(--page-text)/60" />
           <h2 className="text-xl font-bold">{model.name}</h2>
-          <p className="text-sm text-(--page-text)/60 mt-2">No showcase images</p>
+          <p className="text-sm text-(--page-text)/60 mt-2">
+            No showcase images
+          </p>
         </div>
       </div>
     );
@@ -81,10 +85,7 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
       {/* Image container */}
       <div className="relative flex-1 min-h-0">
         <AnimatePresence mode="wait">
-          <motion.div
-            key={currentIndex}
-            className="absolute inset-0"
-          >
+          <motion.div key={currentIndex} className="absolute inset-0">
             <Image
               src={currentMedia?.url || "/placeholder-model.png"}
               alt={currentItem.caption || model.name}
@@ -125,13 +126,13 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
         <div className="mt-3 flex justify-center gap-2">
           {showcase.map((_, index) => (
             <button
-              key={"dot_"+index}
+              key={"dot_" + index}
               onClick={() => setCurrentIndex(index)}
               className={cn(
                 "h-2 w-2 rounded-full transition-all",
                 index === currentIndex
                   ? "bg-(--page-surface) w-4"
-                  : "bg-(--page-surface)/40 hover:bg-(--page-surface)/60"
+                  : "bg-(--page-surface)/40 hover:bg-(--page-surface)/60",
               )}
             />
           ))}

@@ -14,7 +14,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { CONTENT_SECTIONS } from "@/constants/sections";
-import { cn } from "@/lib/utils";
+import { cn, clamp } from "@/lib/utils";
 import { AspectLock } from "./AspectLock";
 import { InteractiveMediaFromCMS } from "@/components/media";
 import { useLayoutStore } from "@/stores/layoutStore";
@@ -22,10 +22,6 @@ import { LeftPage, LRProps, RightPage, ToCPage } from "./book";
 
 // Re-export types for backwards compatibility
 export { mapToFlatOnly, ExpandingPage, type LRProps } from "./book";
-
-// Utility
-const clamp = (value: number, min: number, max: number) =>
-  Math.max(min, Math.min(value, max));
 
 const sections = CONTENT_SECTIONS;
 

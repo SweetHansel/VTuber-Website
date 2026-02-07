@@ -1,38 +1,55 @@
 import { NextResponse } from 'next/server'
 import type { Where } from 'payload'
+import {
+  parseQueryParams,
+  buildWhereClause,
+  buildSort,
+  getPagination,
+  buildPaginatedResponse,
+  COLLECTION_COLUMNS,
+} from '@/lib/api'
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
+    const queryParams = parseQueryParams(searchParams)
+
+    // Legacy params
     const status = searchParams.get('status') || 'published'
     const postType = searchParams.get('postType')
-    const limit = Number.parseInt(searchParams.get('limit') || '50')
 
     const { getPayload } = await import('payload')
     const config = await import('@payload-config').then((m) => m.default)
     const payload = await getPayload({ config })
 
-    const where: Where = {}
+    // Base where clause
+    const baseWhere: Where = {}
 
-    // Filter by status unless 'all' is specified
     if (status !== 'all') {
-      where.status = { equals: status }
+      baseWhere.status = { equals: status }
     }
 
-    // Filter by postType if specified
     if (postType) {
-      where.postType = { equals: postType }
+      baseWhere.postType = { equals: postType }
     }
 
-    const { docs } = await payload.find({
+    const columns = COLLECTION_COLUMNS.posts
+    const where = buildWhereClause(queryParams, columns, baseWhere)
+    const sort = buildSort(queryParams, '-publishedAt')
+    const { limit, page } = getPagination(queryParams)
+
+    const result = await payload.find({
       collection: 'posts',
       where,
       depth: 2,
       limit,
-      sort: '-publishedAt',
+      page,
+      sort,
     })
 
-    return NextResponse.json({ data: docs })
+    return NextResponse.json(
+      buildPaginatedResponse(result.docs, result.totalDocs, page, limit)
+    )
   } catch (error) {
     console.error('Failed to fetch posts:', error)
     return NextResponse.json(

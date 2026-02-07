@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { clamp } from '@/lib/utils'
 
 interface AnimationPreferences {
   idleAnimationsEnabled: boolean
@@ -33,7 +34,7 @@ export const useAnimationStore = create<AnimationPreferences>()(
         idleAnimationsEnabled: reduced ? false : true,
         parallaxEnabled: reduced ? false : true,
       }),
-      setAnimationSpeed: (speed) => set({ animationSpeed: Math.max(0.5, Math.min(2, speed)) }),
+      setAnimationSpeed: (speed) => set({ animationSpeed: clamp(speed, 0.5, 2) }),
       setParallaxEnabled: (enabled) => set({ parallaxEnabled: enabled }),
       resetToDefaults: () => set(defaultPreferences),
     }),

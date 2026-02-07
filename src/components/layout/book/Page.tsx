@@ -1,16 +1,12 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, clamp } from "@/lib/utils";
 import {
   motion,
   MotionStyle,
   useTransform,
   type MotionValue,
 } from "framer-motion";
-
-// Utility
-const clamp = (value: number, min: number, max: number) =>
-  Math.max(min, Math.min(value, max));
 
 export function mapToFlatOnly(v: number) {
   return (clamp(v, 0.25, 0.75) - 0.25) * 2;

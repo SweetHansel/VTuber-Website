@@ -80,10 +80,6 @@ export function SongSeekbar() {
       <AnimatePresence>
         <motion.div
           key="seekbar-wrapper"
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          transition={{ duration: 0.2 }}
           className="fixed h-15 bottom-0 left-0 right-0 z-10 pointer-events-none"
           onClick={(e) => e.stopPropagation()}
         >
@@ -92,10 +88,6 @@ export function SongSeekbar() {
             {!isExpanded && (
               <motion.button
                 key="seekbar-minimized"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.2 }}
                 onClick={() => setExpanded(true)}
                 className="absolute bottom-4 right-4 z-10 group h-12 w-12 overflow-hidden rounded-lg shadow-lg pointer-events-auto"
               >
@@ -117,10 +109,6 @@ export function SongSeekbar() {
             {isExpanded && (
               <motion.div
                 key="seekbar-bar"
-                initial={{ y: 100, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: 100, opacity: 0 }}
-                transition={{ duration: 0.2 }}
                 className="absolute h-full w-full right-0 bottom-0  pointer-events-auto bg-linear-0 from-black"
               >
                 <div className=" absolute h-full w-[60%] right-0">
@@ -255,10 +243,6 @@ export function SongSeekbar() {
         {showQueue && (
           <motion.div
             key="seekbar-queue"
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className="fixed bottom-16 right-0 top-0 z-20 w-80 bg-black/90 backdrop-blur-lg"
           >
             <div className="flex h-full flex-col">

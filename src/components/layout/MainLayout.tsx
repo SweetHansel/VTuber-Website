@@ -113,10 +113,6 @@ export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
         {focusState == "default" && (
           <motion.div
             key="leftbar"
-            initial={{ translateX: -30 }}
-            animate={{ translateX: 0 }}
-            exit={{ translateX: -30 }}
-            transition={{ type: "tween", ease: "linear", duration: 0.2 }}
             className="h-full"
           >
             <LeftBar />
@@ -129,13 +125,8 @@ export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
         {focusState !== "default" && (
           <motion.button
             key="exit-button"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ type: "tween", ease: "linear", duration: 0.2 }}
             onClick={() => setFocus("default")}
             className="fixed top-4 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm text-white/70 hover:bg-white/20 hover:text-white transition-colors"
-            aria-label="Back to overview"
           >
             <X className="h-5 w-5" />
           </motion.button>

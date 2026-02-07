@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { clamp } from '@/lib/utils'
 
 export interface Track {
   id: string
@@ -68,7 +69,7 @@ export const useAudioStore = create<AudioState>((set, get) => ({
   pause: () => set({ isPlaying: false }),
   togglePlay: () => set((state) => ({ isPlaying: !state.isPlaying, isExpanded: true })),
 
-  setVolume: (volume) => set({ volume: Math.max(0, Math.min(1, volume)) }),
+  setVolume: (volume) => set({ volume: clamp(volume, 0, 1) }),
   setPlaybackPosition: (position) => set({ playbackPosition: position }),
   setDuration: (duration) => set({ duration }),
 

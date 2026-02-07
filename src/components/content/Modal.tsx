@@ -44,10 +44,6 @@ export function Modal() {
         {isOpen && (
           <motion.div
             key="modal-backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: "linear" }}
             onClick={closeModal}
             className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
           />
@@ -59,10 +55,6 @@ export function Modal() {
         {isOpen && (
           <motion.div
             key="modal-content"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: "linear" }}
             className="fixed left-1/2 top-1/2 z-50 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 px-4"
           >
             <div className="relative rounded-2xl bg-(--modal-bg) p-6 shadow-2xl">

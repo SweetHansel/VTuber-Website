@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { BOOK_SECTIONS, type BookSection } from "@/constants/sections";
+import { clamp } from "@/lib/utils";
 
 // Re-export for backwards compatibility
 export const sections = BOOK_SECTIONS;
@@ -12,9 +13,6 @@ interface BookState {
   nextPage: () => void;
   prevPage: () => void;
 }
-
-const clamp = (value: number, min: number, max: number) =>
-  Math.max(min, Math.min(value, max));
 
 export const useBookStore = create<BookState>((set) => ({
   index: 1,

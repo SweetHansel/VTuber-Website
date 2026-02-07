@@ -43,10 +43,6 @@ export function LivestreamAlert() {
     <AnimatePresence>
       {showAlert && (
         <motion.div
-          initial={{ x: 100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: 100, opacity: 0 }}
-          transition={{ type: "spring", damping: 25, stiffness: 200 }}
           className={cn(
             "fixed z-50 overflow-hidden rounded-xl shadow-2xl",
             "bottom-24 right-4 w-72 md:bottom-20 md:w-80",
@@ -55,15 +51,6 @@ export function LivestreamAlert() {
           {/* Pulse animation */}
           <motion.div
             className="absolute inset-0 rounded-xl border-2 border-red-500"
-            animate={{
-              opacity: [0.5, 0, 0.5],
-              scale: [1, 1.02, 1],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
           />
           {/* Background with gradient border */}
           <div className="relative bg-linear-to-br from-red-600 to-blue-600 p-0.5">

@@ -28,3 +28,7 @@ export function slugify(text: string) {
     .replace(/[\s_-]+/g, '-')
     .replace(/^-+|-+$/g, '')
 }
+
+export function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(value, max))
+}

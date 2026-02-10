@@ -102,9 +102,11 @@ function AboutRight({ index }: Readonly<LRProps>) {
   const currentModel = getModel(profile.currentModel);
 
   return (
-    <ScrollContainer className="h-full flex flex-col space-y-4 overflow-y-auto p-4 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20 justify-center items-center">
-      <RefSheetCarousel refSheets={currentModel?.refSheets} />
-      <div className="flex flex-col max-w-lg  gap-4 ">
+    <ScrollContainer className="h-full flex flex-col overflow-y-auto p-4 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20 items-center">
+      <div className="flex flex-col w-full max-w-3xl gap-4 my-auto">
+        <RefSheetCarousel refSheets={currentModel?.refSheets} />
+
+        <div className="flex flex-col w-full max-w-lg gap-4 mx-auto">
         {/* Name & Tagline */}
         <div>
           <h1 className="text-4xl font-bold text-(--page-text)">
@@ -170,7 +172,9 @@ function AboutRight({ index }: Readonly<LRProps>) {
             <div className="rounded-xl bg-(--page-surface)/5 p-4 ">
               <div className="mb-2 flex items-center  gap-4 ">
                 <Hash className="h-4 w-4 text-(--page-primary)" />
-                <h3 className="font-medium text-lg text-(--page-text)">Hashtags</h3>
+                <h3 className="font-medium text-lg text-(--page-text)">
+                  Hashtags
+                </h3>
               </div>
               <div className="space-y-1 text-base">
                 {profile.hashtags.map((hashtag) => (
@@ -185,6 +189,9 @@ function AboutRight({ index }: Readonly<LRProps>) {
             </div>
           )}
         </div>
+
+
+        </div>
       </div>
     </ScrollContainer>
   );
@@ -193,7 +200,13 @@ function AboutRight({ index }: Readonly<LRProps>) {
 export const AboutPage = [AboutLeft, AboutRight];
 
 interface RefSheetCarouselProps {
-  refSheets?: { media: number | import("@/payload-types").Media; label?: string | null; id?: string | null }[] | null;
+  refSheets?:
+    | {
+        media: number | import("@/payload-types").Media;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
 }
 
 function RefSheetCarousel({ refSheets }: Readonly<RefSheetCarouselProps>) {
@@ -209,11 +222,15 @@ function RefSheetCarousel({ refSheets }: Readonly<RefSheetCarouselProps>) {
   const current = validSheets[currentIndex % validSheets.length];
   const media = current.mediaObj!;
 
-  const goNext = () => setCurrentIndex((prev) => (prev + 1) % validSheets.length);
-  const goPrev = () => setCurrentIndex((prev) => (prev - 1 + validSheets.length) % validSheets.length);
+  const goNext = () =>
+    setCurrentIndex((prev) => (prev + 1) % validSheets.length);
+  const goPrev = () =>
+    setCurrentIndex(
+      (prev) => (prev - 1 + validSheets.length) % validSheets.length,
+    );
 
   return (
-    <div className="relative w-full h-full rounded-xl bg-(--page-surface)/5 overflow-hidden">
+    <div className="relative w-full aspect-video rounded-xl bg-(--page-surface)/5 overflow-visible">
       {/* Image container */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -222,13 +239,13 @@ function RefSheetCarousel({ refSheets }: Readonly<RefSheetCarouselProps>) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="flex justify-center max-h-[100%] max-w-[100%]"
+          className="flex justify-center w-full h-full"
         >
           <Image
             src={media.url!}
             alt={media.alt ?? current.label ?? "Reference sheet"}
             fill
-            className="h-auto w-full object-contain"
+            className="object-contain"
           />
         </motion.div>
       </AnimatePresence>

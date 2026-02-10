@@ -85,7 +85,7 @@ export function ModelCard({ model, selected, onClick }: ModelCardProps) {
         <Badge
           label={model.modelType}
           colorClass={MODEL_TYPE_COLORS[model.modelType as ModelType]}
-          className="absolute left-2 top-4 uppercase"
+          className="top-4 left-2 relative"
         />
       </div>
 

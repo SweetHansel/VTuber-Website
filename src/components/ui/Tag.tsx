@@ -79,7 +79,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center  gap-4 .5 rounded-full font-medium capitalize",
+        "inline-flex items-center gap-4 rounded-full font-medium capitalize",
         "px-3 py-1 text-base",
         colorClass,
         className,
@@ -102,7 +102,7 @@ export function Tags({ tags, variant, size, className }: TagsProps) {
   if (tags.length === 0) return null;
 
   return (
-    <div className={cn("flex flex-wrap  gap-4 ", className)}>
+    <div className={cn("flex flex-wrap  gap-4", className)}>
       {tags.map((tag) => (
         <Tag key={tag.id} tag={tag} variant={variant} size={size} />
       ))}

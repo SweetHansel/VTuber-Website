@@ -42,7 +42,7 @@ function VTuberModelsRight({ index }: Readonly<LRProps>) {
     <div className="relative flex h-full w-full flex-col p-4 gap-4">
       {/* Header */}
       <div className="flex items-center justify-between rounded-xl bg-(--page-surface)/5 px-4 py-3">
-        <h1 className="text-2xl font-bold text-(--page-text)">VTuber Models</h1>
+        <h1 className="text-2xl font-bold text-(--page-text)">Models</h1>
 
         {/* Tab switcher */}
         <div className="flex gap-2">

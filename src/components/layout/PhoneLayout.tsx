@@ -18,7 +18,7 @@ export function PhoneLayout() {
         <InteractiveMediaFromCMS
           showEmpty
           location="landing-left"
-          className="h-[133%] w-full top-4 object-contain absolute"
+          className="h-[133%] w-full top-0 object-contain absolute"
         />
         <div
           className="absolute top-[2%] left-[2%] h-[96%] w-[96%]"

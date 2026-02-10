@@ -137,7 +137,7 @@ export function MasonryGallery({
                 <Badge
                   label={artwork.artworkType}
                   colorClass={ARTWORK_TYPE_COLORS[artwork.artworkType as ArtworkType]}
-                  className="absolute left-1 top-1 px-1.5 py-0.5 text-[10px]"
+                  className="absolute top-2 left-2 z-10"
                 />
               </div>
             );

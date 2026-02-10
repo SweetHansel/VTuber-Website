@@ -88,7 +88,7 @@ export function getComponentTransform(
 }
 
 export const useLayoutStore = create<LayoutState>((set, get) => ({
-  focusState: "no-item",
+  focusState: "default",
   isTransitioning: false,
 
   setFocus: (state) => {

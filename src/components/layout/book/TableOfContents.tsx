@@ -15,14 +15,14 @@ const sectionLabels: Record<string, string> = {
 
 export function ToCPage({ onNavigate }: Readonly<LRProps>) {
   return (
-    <div className="flex h-full flex-col justify-center p-4 ">
+    <div className="flex h-full flex-col justify-center p-4 items-center">
       <h2 className="text-5xl font-bold text-(--page-text) mb-6">Contents</h2>
       <ul className="space-y-2">
         {sections.map((section, i) => (
           <li key={section}>
             <button
               onClick={() => onNavigate(i + 1)}
-              className="text-(--page-text)/70 hover:text-(--page-text) text-2xl transition-colors text-left"
+              className="text-(--page-text)/70 hover:text-(--page-text) text-3xl transition-colors text-left"
             >
               {sectionLabels[section]}
             </button>

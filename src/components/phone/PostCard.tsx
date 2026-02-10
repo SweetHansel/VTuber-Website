@@ -89,12 +89,12 @@ export function PostCard({ post }: Readonly<PostCardProps>) {
       )}
 
       {/* Content */}
-      <div className=" p-4 ">
+      <div className="relative z-10 p-4">
         {/* Type badge */}
         <Badge
           label={postType}
           colorClass={POST_TYPE_COLORS[postType] || POST_TYPE_COLORS.general}
-          className="mb-2"
+          className="mb-3"
         />
 
         {/* Title */}

@@ -96,7 +96,7 @@ export function SongModalContent({
         <Badge
           label={data.trackType}
           colorClass={TRACK_TYPE_COLORS[data.trackType as TrackType]}
-          className="mb-2"
+          className="mb-3 self-start"
         />
 
         <h2 className="mb-1 text-2xl font-bold text-(--modal-text)">{data.title}</h2>

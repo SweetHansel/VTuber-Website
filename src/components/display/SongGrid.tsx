@@ -60,7 +60,7 @@ export function SongGrid({
 
   return (
     <div className="grid gap-4 grid-cols-4">
-      {Array(5).fill(filteredTracks).flat().map((track, index) => (
+      {Array(1).fill(filteredTracks).flat().map((track, index) => (
         <motion.div
           key={index +"_"+track.id}
         >

@@ -62,7 +62,7 @@ export function ModelModalContent({
           label={data.modelType}
           colorClass={MODEL_TYPE_COLORS[data.modelType as ModelType]}
           icon={is3D ? <Box className="h-3 w-3" /> : <User className="h-3 w-3" />}
-          className="mb-3"
+          className="mb-3 self-start"
         />
 
         {/* Name & Version */}

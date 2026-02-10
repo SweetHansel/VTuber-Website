@@ -102,13 +102,13 @@ export function SongCard({ track }: Readonly<SongCardProps>) {
         <Badge
           label={trackType}
           colorClass={TRACK_TYPE_COLORS[trackType as TrackType]}
-          className="absolute left-2 top-4 "
+          className="relative top-2 left-2"
         />
 
         {/* Currently playing indicator */}
         {isCurrentlyPlaying && (
-          <div className="absolute bottom-2 right-2 flex items-center  gap-4 ">
-            <span className="flex  gap-0.5">
+          <div className="absolute bottom-2 right-2 flex items-center gap-4">
+            <span className="flex gap-0.5">
               {[1, 2, 3].map((bar) => (
                 <motion.span
                   key={bar}

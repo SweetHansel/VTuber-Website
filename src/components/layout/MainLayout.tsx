@@ -46,70 +46,76 @@ export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
         off={focusState != "default"}
         className="relative"
       >
-          <motion.div key={"book-position"}
-            className={cn(
-              "z-0 absolute h-full w-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex pointer-events-none items-center perspective-1000 justify-center",
-            )}
-            animate={bookTransform.position}
-            transition={sceneSpring}
-          >
-            <motion.div key={"book-rotation"}
-              className="absolute h-full w-full"
-              animate={bookTransform.rotation}
-              transition={sceneSpring}
-            >
-              <BookLayout />
-            </motion.div>
-          </motion.div>
-
-          <motion.div key={"media-position"}
-            className="z-0 absolute h-full w-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none perspective-1000"
-            animate={mediaTransform.position}
-            transition={sceneSpring}
-          >
-            <motion.div key={"media-rotation"}
-              className="absolute h-full w-full"
-              animate={mediaTransform.rotation}
-              transition={sceneSpring}
-            >
-              <InteractiveMediaFromCMS
-                location="main-character"
-                className="h-full w-full pointer-events-auto"
-              />
-            </motion.div>
-          </motion.div>
-
-          <SongSeekbar />
-
-          <motion.div key={"phone-position"}
-            className="z-0 absolute h-full w-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none perspective-1000"
-            animate={phoneTransform.position}
-            transition={sceneSpring}
-          >
-            <motion.div key={"phone-rotation"}
-              className="absolute h-full w-full"
-              animate={phoneTransform.rotation}
-              transition={sceneSpring}
-            >
-              <PhoneLayout />
-            </motion.div>
-          </motion.div>
-
-          <LeftBar />
-
-          {focusState !== "default" && (
-            <button
-              key="exit-button"
-              onClick={() => setFocus("default")}
-              className="fixed top-4 left-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm text-white/70 hover:bg-white/20 hover:text-white transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
+        <motion.div
+          key={"book-position"}
+          className={cn(
+            "z-0 absolute h-full w-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex pointer-events-none items-center perspective-1000 justify-center",
           )}
+          animate={bookTransform.position}
+          transition={sceneSpring}
+        >
+          <motion.div
+            key={"book-rotation"}
+            className="absolute h-full w-full"
+            animate={bookTransform.rotation}
+            transition={sceneSpring}
+          >
+            <BookLayout />
+          </motion.div>
+        </motion.div>
 
-          <LivestreamAlert />
+        <motion.div
+          key={"media-position"}
+          className="z-0 absolute h-full w-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none perspective-1000"
+          animate={mediaTransform.position}
+          transition={sceneSpring}
+        >
+          <motion.div
+            key={"media-rotation"}
+            className="absolute h-full w-full"
+            animate={mediaTransform.rotation}
+            transition={sceneSpring}
+          >
+            <InteractiveMediaFromCMS
+              location="main-character"
+              className="h-full w-full pointer-events-auto"
+            />
+          </motion.div>
+        </motion.div>
 
-          <Modal />
+        <SongSeekbar />
+
+        <motion.div
+          key={"phone-position"}
+          className="z-0 absolute h-full w-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none perspective-1000"
+          animate={phoneTransform.position}
+          transition={sceneSpring}
+        >
+          <motion.div
+            key={"phone-rotation"}
+            className="absolute h-full w-full"
+            animate={phoneTransform.rotation}
+            transition={sceneSpring}
+          >
+            <PhoneLayout />
+          </motion.div>
+        </motion.div>
+        
+        {focusState == "default" && <LeftBar />}
+
+        {focusState !== "default" && (
+          <button
+            key="exit-button"
+            onClick={() => setFocus("default")}
+            className="fixed top-4 left-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm text-white/70 hover:bg-white/20 hover:text-white transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        )}
+
+        <LivestreamAlert />
+
+        <Modal />
       </AspectLock>
     </div>
   );

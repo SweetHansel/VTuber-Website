@@ -1,18 +1,22 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { useLayoutStore, layoutConfig } from "@/stores/layoutStore";
+import { motion } from "framer-motion";
+import { useLayoutStore } from "@/stores/layoutStore";
+import {
+  useComponentTransform,
+  sceneSpring,
+} from "@/hooks/useComponentTransform";
 import { X } from "lucide-react";
 import { SongSeekbar } from "@/components/audio/SongSeekbar";
 import { LivestreamAlert } from "@/components/ui/LivestreamAlert";
 import { Modal } from "@/components/content/Modal";
-import { UpdatesScreen } from "@/components/phone/UpdatesScreen";
 import { LeftBar } from "./LeftBar";
 import { InteractiveMediaFromCMS } from "@/components/media";
-import { AspectLock } from "./AspectLock";
 import { BookLayout } from "./BookLayout";
-import { cn } from "@/lib/utils";
 import { PhoneLayout } from "./PhoneLayout";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { AspectLock } from "./AspectLock";
 
 interface MainLayoutProps {
   children?: React.ReactNode;
@@ -20,124 +24,93 @@ interface MainLayoutProps {
 
 export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
   const { focusState, setFocus } = useLayoutStore();
-  const config = layoutConfig[focusState];
-
-  // Calculate dimensions
-  const leftWidth = config.A;
-  const rightWidth = 100 - config.A;
-  const bottomRightHeight = config.B;
-  const topRightHeight = 100 - config.B;
+  const bookTransform = useComponentTransform("book");
+  const phoneTransform = useComponentTransform("phone");
+  const mediaTransform = useComponentTransform("media");
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-(--modal-bg)">
-      {/* Main Layout Container */}
-
+    <div
+      className="relative h-screen w-screen overflow-hidden bg-(--modal-bg) flex justify-center items-center"
+      onClick={() => setFocus("default")}
+    >
       <InteractiveMediaFromCMS
         showEmpty
         location="landing-bg"
-        className="h-full w-full absolute bottom-0"
+        className="absolute h-full w-full"
         imageClass="object-cover"
+        onClick={() => setFocus("default")}
       />
+
       <AspectLock
-        aspectRatio={16 / 9}
-        anchorX="center"
-        anchorY="center"
+        aspectRatio={4 / 3}
         off={focusState != "default"}
+        className="relative"
       >
-        <main
-          className="flex h-full w-full"
-          onClick={() => setFocus("default")}
-        >
-          {/* Left Section */}
-          <motion.div
-            className="relative h-full z-30"
-            initial={false}
-            animate={{
-              width: `${leftWidth}%`,
-            }}
-            transition={{ type: "tween", ease: "linear", duration: 0.2 }}
+          <motion.div key={"book-position"}
+            className={cn(
+              "z-0 absolute h-full w-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex pointer-events-none items-center perspective-1000 justify-center",
+            )}
+            animate={bookTransform.position}
+            transition={sceneSpring}
           >
-            <PhoneLayout />
-          </motion.div>
-
-          {/* Global Audio Player */}
-          <SongSeekbar />
-
-          {/* Right Section (container for top-right and bottom-right) */}
-          <motion.div
-            className="flex h-full flex-col z-0"
-            initial={false}
-            animate={{
-              width: `${rightWidth}%`,
-            }}
-            transition={{ type: "tween", ease: "linear", duration: 0.2 }}
-          >
-            {/* Top Right */}
-            <motion.div
-              className="relative w-full z-10"
-              initial={false}
-              animate={{
-                height: `${topRightHeight}%`,
-              }}
-              transition={{ type: "tween", ease: "linear", duration: 0.2 }}
-            >
-              <AspectLock
-                aspectRatio={1}
-                anchorX="left"
-                anchorY="bottom"
-                className="absolute"
-              >
-                <InteractiveMediaFromCMS
-                  location="main-character"
-                  className="absolute h-full w-full left-[20%] top-0"
-                />
-              </AspectLock>
-            </motion.div>
-
-            {/* Bottom Right - Main Content */}
-            <motion.div
-              className="relative w-full"
-              initial={false}
-              animate={{
-                height: `${bottomRightHeight}%`,
-              }}
-              transition={{ type: "tween", ease: "linear", duration: 0.2 }}
+            <motion.div key={"book-rotation"}
+              className="absolute h-full w-full"
+              animate={bookTransform.rotation}
+              transition={sceneSpring}
             >
               <BookLayout />
             </motion.div>
           </motion.div>
-        </main>
-      </AspectLock>
 
-      <AnimatePresence>
-        {focusState == "default" && (
-          <motion.div
-            key="leftbar"
-            className="h-full"
+          <motion.div key={"media-position"}
+            className="z-0 absolute h-full w-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none perspective-1000"
+            animate={mediaTransform.position}
+            transition={sceneSpring}
           >
-            <LeftBar />
+            <motion.div key={"media-rotation"}
+              className="absolute h-full w-full"
+              animate={mediaTransform.rotation}
+              transition={sceneSpring}
+            >
+              <InteractiveMediaFromCMS
+                location="main-character"
+                className="h-full w-full pointer-events-auto"
+              />
+            </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
 
-      {/* Back to default button */}
-      <AnimatePresence>
-        {focusState !== "default" && (
-          <motion.button
-            key="exit-button"
-            onClick={() => setFocus("default")}
-            className="fixed top-4 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm text-white/70 hover:bg-white/20 hover:text-white transition-colors"
+          <SongSeekbar />
+
+          <motion.div key={"phone-position"}
+            className="z-0 absolute h-full w-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none perspective-1000"
+            animate={phoneTransform.position}
+            transition={sceneSpring}
           >
-            <X className="h-5 w-5" />
-          </motion.button>
-        )}
-      </AnimatePresence>
+            <motion.div key={"phone-rotation"}
+              className="absolute h-full w-full"
+              animate={phoneTransform.rotation}
+              transition={sceneSpring}
+            >
+              <PhoneLayout />
+            </motion.div>
+          </motion.div>
 
-      {/* Livestream Alert */}
-      <LivestreamAlert />
+          <LeftBar />
 
-      {/* Modal */}
-      <Modal />
+          {focusState !== "default" && (
+            <button
+              key="exit-button"
+              onClick={() => setFocus("default")}
+              className="fixed top-4 left-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm text-white/70 hover:bg-white/20 hover:text-white transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          )}
+
+          <LivestreamAlert />
+
+          <Modal />
+      </AspectLock>
     </div>
   );
 }

@@ -145,14 +145,14 @@ export function InteractiveMedia({
           <motion.div
             key={spawn.id}
             initial={{ opacity: 1, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.5 }}
             className="pointer-events-none absolute"
-            style={{
+            animate={{
               left: spawn.x - spawn.size / 2,
               top: spawn.y - spawn.size / 2,
               width: spawn.size,
               height: spawn.size,
+              opacity: 1, scale: 1 
             }}
           >
             <Image

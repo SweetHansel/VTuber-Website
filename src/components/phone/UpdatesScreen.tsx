@@ -32,7 +32,7 @@ export function UpdatesScreen() {
   }
 
   return (
-    <div className="flex h-full flex-col p-1 bg-black">
+    <div className="flex h-full flex-col p-4 bg-black">
       {/* Loading state */}
       {loading && (
         <div className="flex flex-1 items-center justify-center">
@@ -43,7 +43,7 @@ export function UpdatesScreen() {
       {/* Content cards */}
       {!loading && (
         <>
-          <div className="text-(--phone-text) flex flex-row justify-between">
+          <div className="text-white flex flex-row justify-between">
             <div><StatusBarTime /></div>
             <div className="flex flex-row">
               <BatteryMediumIcon />
@@ -55,7 +55,7 @@ export function UpdatesScreen() {
               <PostCard key={post.id} post={post} />
             ))}
             {(!posts || posts.length === 0) && (
-              <p className="py-8 text-center text-sm text-(--phone-text)/40">
+              <p className="py-8 text-center text-base text-(--phone-text)/40">
                 No content found
               </p>
             )}

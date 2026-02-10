@@ -34,6 +34,9 @@ export function LeftPage({
     index,
     (v) => 180 - (clamp(v - pageIndex, 0.25, 0.75) - 0.25) * 2 * 180,
   );
+  const pointerEvents = useTransform(rotateY, (v) =>
+    v > 90 ? "none" : "auto",
+  );
   const innerPageTransforms = useTransform(
     index,
     (v) => clamp(v - pageIndex - 1, -0.5, 0.5) + 0.5,
@@ -41,9 +44,9 @@ export function LeftPage({
 
   return (
     <motion.div
-      className="absolute bg-(--page-bg) w-[50%] h-full top-0 origin-bottom-right backface-hidden transform-flat"
-      style={{ rotateY }}
-      transition={{ duration: 0.3, bounce: 0 }}
+      className="absolute bg-(--page-bg) w-[50.2%] h-full top-0 left-0 origin-bottom-right backface-hidden transform-flat"
+      style={{ rotateY, pointerEvents }}
+      onClick={(e) => e.stopPropagation()}
     >
       <Page index={innerPageTransforms} onNavigate={onNavigate} />
     </motion.div>
@@ -60,6 +63,9 @@ export function RightPage({
     index,
     (v) => (clamp(v - pageIndex - 1, 0.25, 0.75) - 0.25) * 2 * -180,
   );
+  const pointerEvents = useTransform(rotateY, (v) =>
+    v < -90 ? "none" : "auto",
+  );
   const innerPageTransforms = useTransform(
     index,
     (v) => clamp(v - pageIndex - 1, -0.5, 0.5) + 0.5,
@@ -68,8 +74,8 @@ export function RightPage({
   return (
     <motion.div
       className="absolute bg-(--page-bg) w-[50%] h-full top-0 origin-bottom-left backface-hidden transform-flat"
-      style={{ rotateY, translateX: "100%" }}
-      transition={{ duration: 0.3, bounce: 0 }}
+      style={{ rotateY, pointerEvents, translateX: "100%" }}
+      onClick={(e) => e.stopPropagation()}
     >
       <Page index={innerPageTransforms} onNavigate={onNavigate} />
     </motion.div>
@@ -104,7 +110,11 @@ export function ExpandingPage({
 type StyleValue = number | string;
 type StyleObject = Record<string, StyleValue>;
 
-function interpolateValue(from: StyleValue, to: StyleValue, t: number): StyleValue {
+function interpolateValue(
+  from: StyleValue,
+  to: StyleValue,
+  t: number,
+): StyleValue {
   if (typeof from === "number" && typeof to === "number") {
     return from + (to - from) * t;
   }

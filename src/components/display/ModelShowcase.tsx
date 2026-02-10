@@ -38,7 +38,7 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
         <div className="text-center text-(--page-text)">
           <Box className="mx-auto h-16 w-16 mb-4 text-(--page-text)/60" />
           <h2 className="text-xl font-bold">Model Showcase</h2>
-          <p className="text-sm text-(--page-text)/60 mt-2">
+          <p className="text-base text-(--page-text)/60 mt-2">
             Select a model to view
           </p>
         </div>
@@ -52,7 +52,7 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
         <div className="text-center text-(--page-text)">
           <Box className="mx-auto h-16 w-16 mb-4 text-(--page-text)/60" />
           <h2 className="text-xl font-bold">{model.name}</h2>
-          <p className="text-sm text-(--page-text)/60 mt-2">
+          <p className="text-base text-(--page-text)/60 mt-2">
             No showcase images
           </p>
         </div>
@@ -66,19 +66,19 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
   return (
     <div className="flex h-full w-full flex-col">
       {/* Model name */}
-      <div className="mb-3 flex items-center justify-center gap-2">
+      <div className="mb-3 flex items-center justify-center  gap-4 ">
         <div className="text-center">
-          <h2 className="text-lg font-bold text-(--page-text)">{model.name}</h2>
+          <h2 className="text-3xl font-bold text-(--page-text)">{model.name}</h2>
           {model.version && (
-            <p className="text-sm text-(--page-text)/60">v{model.version}</p>
+            <p className="text-xl text-(--page-text)/60">v{model.version}</p>
           )}
         </div>
         <button
           onClick={handleOpenDetails}
-          className="rounded-full p-2 text-(--page-text)/60 transition-colors hover:bg-(--page-surface)/10 hover:text-(--page-text)"
+          className="rounded-full p-4 text-(--page-text)/60 transition-colors hover:bg-(--page-surface)/10 hover:text-(--page-text)"
           title="View details"
         >
-          <Info className="h-5 w-5" />
+          <Info className="h-8 w-8" />
         </button>
       </div>
 
@@ -116,14 +116,14 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
 
       {/* Caption */}
       {currentItem.caption && (
-        <p className="mt-2 text-center text-sm text-(--page-text)/70">
+        <p className="mt-2 text-center text-xl text-(--page-text)/70">
           {currentItem.caption}
         </p>
       )}
 
       {/* Dot indicators */}
       {hasMultiple && (
-        <div className="mt-3 flex justify-center gap-2">
+        <div className="mt-3 flex justify-center  gap-4 ">
           {showcase.map((_, index) => (
             <button
               key={"dot_" + index}

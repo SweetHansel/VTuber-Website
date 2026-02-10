@@ -1,152 +1,76 @@
 "use client";
 
-import { ReactNode, useRef, useState, useEffect, useLayoutEffect } from "react";
-import { motion } from "framer-motion";
+import { ReactNode, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
-
-type AnchorX = "left" | "center" | "right";
-type AnchorY = "top" | "center" | "bottom";
+import { animate, motion, useMotionValue, useTransform } from "framer-motion";
+import { sceneSpring } from "@/hooks/useComponentTransform";
 
 interface AspectLockProps {
   children: ReactNode;
-  aspectRatio: number; // width / height (e.g., 16/9 = 1.78, 3/4 = 0.75)
-  anchorX?: AnchorX;
-  anchorY?: AnchorY;
+  aspectRatio: number;
   off?: boolean;
   className?: string;
-}
-
-// Calculate dimensions that fit aspect ratio within given bounds
-function calculateDimensions(
-  parentWidth: number,
-  parentHeight: number,
-  aspectRatio: number
-) {
-  const parentRatio = parentWidth / parentHeight;
-  if (parentRatio > aspectRatio) {
-    const height = parentHeight;
-    const width = height * aspectRatio;
-    return { width, height };
-  } else {
-    const width = parentWidth;
-    const height = width / aspectRatio;
-    return { width, height };
-  }
 }
 
 export function AspectLock({
   children,
   aspectRatio,
-  anchorX = "left",
-  anchorY = "top",
   off = false,
   className,
 }: AspectLockProps) {
-  const parentRef = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [isReady, setIsReady] = useState(false);
-  const [shouldAnimate, setShouldAnimate] = useState(false);
-  const lastDimensionsRef = useRef({ width: 0, height: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const parentW = useMotionValue(1920);
+  const parentH = useMotionValue(1080);
+  const offAnimated = useMotionValue(off ? 1 : 0);
 
-  // Immediate calculation on mount (before paint)
-  useLayoutEffect(() => {
-    if (off) return;
-    const parent = parentRef.current?.parentElement;
+  useEffect(() => {
+    const controls = animate(offAnimated, off ? 1 : 0, {
+      duration: sceneSpring.duration,
+      ease: sceneSpring.ease,
+    });
+    return () => controls.stop();
+  }, [off]);
+
+  useEffect(() => {
+    const parent = containerRef.current?.parentElement;
     if (!parent) return;
 
-    const parentWidth = parent.clientWidth;
-    const parentHeight = parent.clientHeight;
-    if (parentWidth < 100 || parentHeight < 100) return;
-
-    const dims = calculateDimensions(parentWidth, parentHeight, aspectRatio);
-    lastDimensionsRef.current = dims;
-    setDimensions(dims);
-    setIsReady(true);
-  }, [aspectRatio, off]);
-
-  // Enable animations only after initial layout settles
-  useEffect(() => {
-    if (!isReady) return;
-    const timer = setTimeout(() => setShouldAnimate(true), 100);
-    return () => clearTimeout(timer);
-  }, [isReady]);
-
-  // ResizeObserver for ongoing updates
-  useEffect(() => {
-    if (off) return;
-    const parent = parentRef.current?.parentElement;
-    if (!parent) return;
-
-    let debounceTimer: NodeJS.Timeout | null = null;
-
-    const updateDimensions = () => {
-      const parentWidth = parent.clientWidth;
-      const parentHeight = parent.clientHeight;
-
-      const minSize = 100;
-      if (parentWidth < minSize || parentHeight < minSize) return;
-
-      const { width, height } = calculateDimensions(parentWidth, parentHeight, aspectRatio);
-
-      if (
-        Math.abs(width - lastDimensionsRef.current.width) > 1 ||
-        Math.abs(height - lastDimensionsRef.current.height) > 1
-      ) {
-        lastDimensionsRef.current = { width, height };
-        setDimensions({ width, height });
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      if (width > 0 && height > 0) {
+        parentW.set(width);
+        parentH.set(height);
       }
-    };
+    });
 
-    const debouncedUpdate = () => {
-      if (debounceTimer) clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(updateDimensions, 50);
-    };
+    observer.observe(parent);
+    return () => observer.disconnect();
+  }, [parentW, parentH]);
 
-    const resizeObserver = new ResizeObserver(debouncedUpdate);
-    resizeObserver.observe(parent);
+  const width = useTransform(() => {
+    const t = offAnimated.get();
+    const pw = parentW.get();
+    const ph = parentH.get();
+    const constrained = pw / ph > aspectRatio ? ph * aspectRatio : pw;
+    return constrained + (pw - constrained) * t;
+  });
 
-    return () => {
-      if (debounceTimer) clearTimeout(debounceTimer);
-      resizeObserver.disconnect();
-    };
-  }, [aspectRatio, off]);
-
-  // Map anchors to flexbox alignment
-  const justifyMap: Record<AnchorX, string> = {
-    left: "justify-start",
-    center: "justify-center",
-    right: "justify-end",
-  };
-
-  const alignMap: Record<AnchorY, string> = {
-    top: "items-start",
-    center: "items-center",
-    bottom: "items-end",
-  };
+  const height = useTransform(() => {
+    const t = offAnimated.get();
+    const pw = parentW.get();
+    const ph = parentH.get();
+    const constrained = pw / ph > aspectRatio ? ph : pw / aspectRatio;
+    return constrained + (ph - constrained) * t;
+  });
 
   return (
     <div
-      ref={parentRef}
-      className={cn(
-        "pointer-events-none absolute inset-0 flex",
-        justifyMap[anchorX],
-        alignMap[anchorY]
-      )}
+      ref={containerRef}
+      className="absolute inset-0 flex pointer-events-none justify-center items-center"
     >
       <motion.div
         className={cn("pointer-events-auto", className)}
-        style={{
-          width: off || !isReady ? "100%" : dimensions.width,
-          height: off || !isReady ? "100%" : dimensions.height,
-          opacity: isReady? 1:0,
-        }}
-        initial={false}
-        animate={{
-          width: off || !isReady ? "100%" : dimensions.width,
-          height: off || !isReady ? "100%" : dimensions.height,
-          opacity: isReady? 1:0,
-        }}
-        transition={{ duration: shouldAnimate ? 0.5 : 0, ease: "easeInOut" }}
+        style={{ width, height }}
       >
         {children}
       </motion.div>

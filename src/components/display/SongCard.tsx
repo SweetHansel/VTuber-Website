@@ -6,6 +6,8 @@ import { useAudioStore, type Track } from "@/stores/audioStore";
 import { useModalStore } from "@/stores/modalStore";
 import { cn, formatDuration } from "@/lib/utils";
 import { Play, Pause, Music } from "lucide-react";
+import { Badge } from "@/components/ui";
+import { TRACK_TYPE_COLORS, type TrackType } from "@/constants/discography";
 import { type MusicTrack, getMedia } from "@/hooks/useCMS";
 
 interface SongCardProps {
@@ -97,27 +99,16 @@ export function SongCard({ track }: Readonly<SongCardProps>) {
         </div>
 
         {/* Type badge */}
-        <div className="absolute left-2 top-2">
-          <span
-            className={cn(
-              "rounded-full px-2 py-0.5 text-xs font-medium capitalize",
-              trackType === "original"
-                ? "bg-green-500/80 text-white"
-                : trackType === "cover" || trackType === "karaoke"
-                  ? "bg-blue-500/80 text-white"
-                  : trackType === "remix"
-                    ? "bg-purple-500/80 text-white"
-                    : "bg-gray-500/80 text-white",
-            )}
-          >
-            {trackType}
-          </span>
-        </div>
+        <Badge
+          label={trackType}
+          colorClass={TRACK_TYPE_COLORS[trackType as TrackType]}
+          className="absolute left-2 top-4 "
+        />
 
         {/* Currently playing indicator */}
         {isCurrentlyPlaying && (
-          <div className="absolute bottom-2 right-2 flex items-center gap-1">
-            <span className="flex gap-0.5">
+          <div className="absolute bottom-2 right-2 flex items-center  gap-4 ">
+            <span className="flex  gap-0.5">
               {[1, 2, 3].map((bar) => (
                 <motion.span
                   key={bar}
@@ -138,15 +129,15 @@ export function SongCard({ track }: Readonly<SongCardProps>) {
       </div>
 
       {/* Info */}
-      <div className="p-3">
+      <div className="py-2">
         <h3 className="line-clamp-1 font-medium text-(--page-text)">{title}</h3>
         {originalArtist && (
-          <p className="line-clamp-1 text-sm text-(--page-text)/60">
+          <p className="line-clamp-1 text-base text-(--page-text)/60">
             Original: {originalArtist}
           </p>
         )}
         {duration && (
-          <p className="mt-1 text-xs text-(--page-text)/40">
+          <p className="mt-1 text-sm text-(--page-text)/40">
             {formatDuration(duration)}
           </p>
         )}

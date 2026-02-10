@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '@/lib/utils'
-import { extractPlainText } from '@/components/richtext/RichTextRenderer'
+import { extractPlainText } from '@/components/ui/RichTextRenderer'
 
 export const Posts: CollectionConfig = {
   slug: 'posts',

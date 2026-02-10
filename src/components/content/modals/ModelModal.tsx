@@ -4,10 +4,10 @@ import { useState } from "react";
 import Image from "next/image";
 import { Calendar, User, Box, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import { cn, formatDate } from "@/lib/utils";
-import { is3DModelType } from "@/constants/models";
-import { PeopleDisplay } from "@/components/people";
-import { RichTextRenderer } from "@/components/richtext/RichTextRenderer";
-import { getMedia, getTag, type Tag } from "@/hooks/useCMS";
+import { is3DModelType, MODEL_TYPE_COLORS, type ModelType } from "@/constants/models";
+import { PeopleDisplay, Tags, Badge } from "@/components/ui";
+import { RichTextRenderer } from "@/components/ui/RichTextRenderer";
+import { getMedia, getTag, type Tag as CMSTag } from "@/hooks/useCMS";
 import type { Credit } from "@/lib/people";
 import type { Model } from "@/payload-types";
 
@@ -23,7 +23,7 @@ export function ModelModalContent({
   const showcase = data.showcase ?? [];
   const modelFile = getMedia(data.modelFile);
 
-  const tags = (data.tags ?? []).map(getTag).filter((t): t is Tag => !!t);
+  const tags = (data.tags ?? []).map(getTag).filter((t): t is CMSTag => !!t);
 
   // Get first showcase image as thumbnail
   const firstShowcase = showcase[0];
@@ -44,12 +44,12 @@ export function ModelModalContent({
     .filter(rs => rs.mediaObj?.url);
 
   return (
-    <div className="flex gap-6">
+    <div className="flex  gap-4 ">
       {/* Thumbnail */}
       <div className="relative h-64 w-48 shrink-0 overflow-hidden rounded-xl">
         <Image src={thumbnail} alt={data.name} fill className="object-cover" />
         {data.isActive && (
-          <div className="absolute right-2 top-2 rounded-full bg-green-500/90 px-2 py-0.5 text-xs font-medium text-white">
+          <div className="absolute right-2 top-4 rounded-full bg-green-500/90 px-2 py-0.5 text-sm font-medium text-white">
             Active
           </div>
         )}
@@ -58,19 +58,12 @@ export function ModelModalContent({
       {/* Info */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Type badge */}
-        <div className="mb-3 flex items-center gap-2">
-          <span
-            className={cn(
-              "flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium uppercase",
-              is3D
-                ? "bg-purple-500/20 text-purple-300"
-                : "bg-blue-500/20 text-blue-300",
-            )}
-          >
-            {is3D ? <Box className="h-3 w-3" /> : <User className="h-3 w-3" />}
-            {data.modelType}
-          </span>
-        </div>
+        <Badge
+          label={data.modelType}
+          colorClass={MODEL_TYPE_COLORS[data.modelType as ModelType]}
+          icon={is3D ? <Box className="h-3 w-3" /> : <User className="h-3 w-3" />}
+          className="mb-3"
+        />
 
         {/* Name & Version */}
         <h2 className="mb-1 text-2xl font-bold text-(--modal-text)">{data.name}</h2>
@@ -80,7 +73,7 @@ export function ModelModalContent({
 
         {/* Debut date */}
         {data.debutDate && (
-          <p className="mb-4 flex items-center gap-1.5 text-sm text-(--modal-text)/40">
+          <p className="mb-4 flex items-center  gap-4 .5 text-base text-(--modal-text)/40">
             <Calendar className="h-4 w-4" />
             Debut:{" "}
             {formatDate(data.debutDate, {
@@ -94,13 +87,13 @@ export function ModelModalContent({
         {/* Description */}
         {data.description && (
           <div className="mb-4">
-            <RichTextRenderer content={data.description} className="text-sm" />
+            <RichTextRenderer content={data.description} className="text-base" />
           </div>
         )}
 
         {/* Technical specs (for 3D models) */}
         {data.technicalSpecs && is3D && (
-          <div className="mb-4 grid grid-cols-2 gap-2 text-sm">
+          <div className="mb-4 grid grid-cols-2  gap-4 text-base">
             {!!data.technicalSpecs.polyCount && (
               <div className="rounded-lg bg-(--modal-surface)/5 px-3 py-2">
                 <p className="text-(--modal-text)/40">Polygons</p>
@@ -142,7 +135,7 @@ export function ModelModalContent({
             <a
               href={modelFile.url}
               download
-              className="inline-flex items-center gap-2 rounded-full bg-(--modal-primary)/20 px-4 py-2 text-sm font-medium text-(--modal-primary) transition-colors hover:bg-(--modal-primary)/30"
+              className="inline-flex items-center  gap-4 rounded-full bg-(--modal-primary)/20 px-4 py-2 text-base font-medium text-(--modal-primary) transition-colors hover:bg-(--modal-primary)/30"
             >
               <Download className="h-4 w-4" />
               Download Model
@@ -154,29 +147,12 @@ export function ModelModalContent({
         )}
 
         {/* Tags */}
-        {tags.length > 0 && (
-          <div className="mb-4">
-            <div className="flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <span
-                  key={tag.id}
-                  className="rounded-full px-2.5 py-1 text-xs font-medium"
-                  style={{
-                    backgroundColor: tag.color ? `${tag.color}20` : 'var(--modal-surface)',
-                    color: tag.color || 'var(--modal-text)',
-                  }}
-                >
-                  {tag.name}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
+        <Tags tags={tags} className="mb-4" />
 
         {/* Ref Sheets Gallery */}
         {validRefSheets.length > 0 && (
           <div className="mb-4">
-            <p className="mb-2 text-sm text-(--modal-text)/40">Reference Sheets</p>
+            <p className="mb-2 text-base text-(--modal-text)/40">Reference Sheets</p>
             <div className="relative">
               <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-(--modal-surface)/5">
                 <Image
@@ -187,7 +163,7 @@ export function ModelModalContent({
                 />
               </div>
               {validRefSheets[currentRefIndex].label && (
-                <p className="mt-1 text-center text-xs text-(--modal-text)/60">
+                <p className="mt-1 text-center text-sm text-(--modal-text)/60">
                   {validRefSheets[currentRefIndex].label}
                 </p>
               )}
@@ -195,17 +171,17 @@ export function ModelModalContent({
                 <>
                   <button
                     onClick={() => setCurrentRefIndex((i) => (i === 0 ? validRefSheets.length - 1 : i - 1))}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-1 text-white/80 transition-colors hover:bg-black/70 hover:text-white"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-4 text-white/80 transition-colors hover:bg-black/70 hover:text-white"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => setCurrentRefIndex((i) => (i === validRefSheets.length - 1 ? 0 : i + 1))}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-1 text-white/80 transition-colors hover:bg-black/70 hover:text-white"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-4 text-white/80 transition-colors hover:bg-black/70 hover:text-white"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>
-                  <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1">
+                  <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2  gap-4 ">
                     {validRefSheets.map((_, idx) => (
                       <button
                         key={"refsheet_"+idx}
@@ -226,7 +202,7 @@ export function ModelModalContent({
         {/* Credits */}
         {credits.length > 0 && (
           <div className="mt-auto">
-            <p className="mb-2 text-sm text-(--modal-text)/40">Credits</p>
+            <p className="mb-2 text-base text-(--modal-text)/40">Credits</p>
             <PeopleDisplay credits={credits} />
           </div>
         )}

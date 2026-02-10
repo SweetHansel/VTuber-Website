@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { ExternalLink } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { PeopleDisplay } from "@/components/people";
-import { getMedia, getPerson, getTag, type Tag } from "@/hooks/useCMS";
+import { PeopleDisplay, Tags, Badge } from "@/components/ui";
+import { ARTWORK_TYPE_COLORS, type ArtworkType } from "@/constants/artworks";
+import { getMedia, getPerson, getTag, type Tag as CMSTag } from "@/hooks/useCMS";
 import { getPersonFromCredit, type Credit } from "@/lib/people";
 import type { Artwork, Person } from "@/payload-types";
 
@@ -28,7 +28,7 @@ export function ArtworkModalContent({
     .map((p) => getPerson(p))
     .filter((p): p is Person => !!p);
 
-  const tags = (data.tags ?? []).map(getTag).filter((t): t is Tag => !!t);
+  const tags = (data.tags ?? []).map(getTag).filter((t): t is CMSTag => !!t);
 
   // Get artist name from credits
   const artistCredit = credits.find(c =>
@@ -52,20 +52,12 @@ export function ArtworkModalContent({
       </div>
 
       {/* Type badge */}
-      <span
-        className={cn(
-          "mb-3 inline-block rounded-full px-3 py-1 text-sm font-medium capitalize",
-          data.artworkType === "official"
-            ? "bg-blue-500/20 text-blue-300"
-            : data.artworkType === "fanart"
-              ? "bg-cyan-500/20 text-cyan-300"
-              : data.artworkType === "commissioned"
-                ? "bg-purple-500/20 text-purple-300"
-                : "bg-gray-500/20 text-gray-300",
-        )}
-      >
-        {data.artworkType}
-      </span>
+      <Badge
+        label={data.artworkType}
+        colorClass={ARTWORK_TYPE_COLORS[data.artworkType as ArtworkType]}
+        size="md"
+        className="mb-3"
+      />
 
       {/* Title */}
       {data.title && (
@@ -80,7 +72,7 @@ export function ArtworkModalContent({
       {/* Credits */}
       {credits.length > 0 && (
         <div className="mb-4">
-          <p className="mb-2 text-sm text-(--modal-text)/40">Credits</p>
+          <p className="mb-2 text-base text-(--modal-text)/40">Credits</p>
           <PeopleDisplay credits={credits} />
         </div>
       )}
@@ -88,30 +80,13 @@ export function ArtworkModalContent({
       {/* Featured People */}
       {featuredPeople.length > 0 && (
         <div className="mb-4">
-          <p className="mb-2 text-sm text-(--modal-text)/40">Featured</p>
+          <p className="mb-2 text-base text-(--modal-text)/40">Featured</p>
           <PeopleDisplay people={featuredPeople} size="md" />
         </div>
       )}
 
       {/* Tags */}
-      {tags.length > 0 && (
-        <div className="mb-4">
-          <div className="flex flex-wrap gap-2">
-            {tags.map((tag) => (
-              <span
-                key={tag.id}
-                className="rounded-full px-2.5 py-1 text-xs font-medium"
-                style={{
-                  backgroundColor: tag.color ? `${tag.color}20` : 'var(--modal-surface)',
-                  color: tag.color || 'var(--modal-text)',
-                }}
-              >
-                {tag.name}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
+      <Tags tags={tags} className="mb-4" />
 
       {/* Source link */}
       {data.sourceUrl && (
@@ -119,7 +94,7 @@ export function ArtworkModalContent({
           href={data.sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-full bg-(--modal-surface)/10 px-4 py-2 text-sm text-(--modal-text)/70 transition-colors hover:bg-(--modal-surface)/20 hover:text-(--modal-text)"
+          className="inline-flex items-center  gap-4 rounded-full bg-(--modal-surface)/10 px-4 py-2 text-base text-(--modal-text)/70 transition-colors hover:bg-(--modal-surface)/20 hover:text-(--modal-text)"
         >
           View Original
           <ExternalLink className="h-4 w-4" />

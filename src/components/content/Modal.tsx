@@ -55,12 +55,13 @@ export function Modal() {
           <motion.div
             key="modal-content"
             className="fixed left-1/2 top-1/2 z-50 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 px-4"
+            onClick={(e)=>{e.stopPropagation()}}
           >
-            <div className="relative rounded-2xl bg-(--modal-bg) p-6 shadow-2xl">
+            <div className="relative rounded-2xl bg-(--modal-bg) p-4 shadow-2xl">
               {/* Close button */}
               <button
                 onClick={closeModal}
-                className="absolute right-4 top-4 rounded-full p-2 text-(--modal-text)/60 transition-colors hover:bg-(--modal-surface)/10 hover:text-(--modal-text)"
+                className="absolute right-4 top-4 rounded-full p-4 text-(--modal-text)/60 transition-colors hover:bg-(--modal-surface)/10 hover:text-(--modal-text)"
               >
                 <X className="h-5 w-5" />
               </button>

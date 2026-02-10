@@ -53,25 +53,25 @@ export function LivestreamAlert() {
             className="absolute inset-0 rounded-xl border-2 border-red-500"
           />
           {/* Background with gradient border */}
-          <div className="relative bg-linear-to-br from-red-600 to-blue-600 p-0.5">
-            <div className="relative bg-(--modal-bg) p-3">
+          <div className="relative bg-linear-to-br from-red-600 to-blue-600 p-4 .5">
+            <div className="relative bg-(--modal-bg) p-4 ">
               {/* Close button */}
               <button
                 onClick={() => hideAlertBanner()}
-                className="absolute right-2 top-2 rounded-full p-1 text-(--modal-text)/60 transition-colors hover:bg-(--modal-text)/10 hover:text-(--modal-text)"
+                className="absolute right-2 top-4 rounded-full p-4 text-(--modal-text)/60 transition-colors hover:bg-(--modal-text)/10 hover:text-(--modal-text)"
               >
                 <X className="h-4 w-4" />
               </button>
 
               {/* Live indicator */}
-              <div className="mb-2 flex items-center gap-2">
-                <span className="flex items-center gap-1">
+              <div className="mb-2 flex items-center  gap-4 ">
+                <span className="flex items-center  gap-4 ">
                   <Radio className="h-4 w-4 animate-pulse text-red-500" />
-                  <span className="text-xs font-bold uppercase text-red-500">
+                  <span className="text-sm font-bold uppercase text-red-500">
                     Live
                   </span>
                 </span>
-                <span className="text-xs capitalize text-(--modal-text)/60">
+                <span className="text-sm capitalize text-(--modal-text)/60">
                   on {primaryStream.platform}
                 </span>
               </div>
@@ -87,7 +87,7 @@ export function LivestreamAlert() {
                   />
                   {/* Viewer count overlay */}
                   {primaryStream.viewerCount !== undefined && (
-                    <div className="absolute bottom-1 right-1 flex items-center gap-1 rounded bg-(--modal-bg)/70 px-1.5 py-0.5 text-xs text-(--modal-text)">
+                    <div className="absolute bottom-1 right-1 flex items-center  gap-4 rounded bg-(--modal-bg)/70 px-1.5 py-0.5 text-sm text-(--modal-text)">
                       <Users className="h-3 w-3" />
                       {primaryStream.viewerCount.toLocaleString()}
                     </div>
@@ -96,10 +96,10 @@ export function LivestreamAlert() {
               )}
 
               {/* Stream info */}
-              <h3 className="mb-1 line-clamp-2 text-sm font-medium text-(--modal-text)">
+              <h3 className="mb-1 line-clam p-4 text-base font-medium text-(--modal-text)">
                 {primaryStream.title}
               </h3>
-              <p className="mb-3 text-xs text-(--modal-text)/60">
+              <p className="mb-3 text-sm text-(--modal-text)/60">
                 {primaryStream.channelName}
                 {!primaryStream.isOwner && " (Friend)"}
               </p>
@@ -109,7 +109,7 @@ export function LivestreamAlert() {
                 href={primaryStream.streamUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-red-600 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
+                className="flex w-full items-center justify-center  gap-4 rounded-lg bg-red-600 py-2 text-base font-medium text-white transition-colors hover:bg-red-700"
               >
                 <ExternalLink className="h-4 w-4" />
                 Watch Now

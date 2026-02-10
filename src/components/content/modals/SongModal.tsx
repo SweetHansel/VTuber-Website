@@ -5,11 +5,12 @@ import Image from "next/image";
 import { Play, Pause, ExternalLink, ChevronDown, ChevronUp, Calendar, Disc } from "lucide-react";
 import { useAudioStore, type Track } from "@/stores/audioStore";
 import { formatDuration, formatDate } from "@/lib/utils";
-import { PeopleDisplay } from "@/components/people";
-import { RichTextRenderer } from "@/components/richtext/RichTextRenderer";
+import { PeopleDisplay, Tags, Badge } from "@/components/ui";
+import { RichTextRenderer } from "@/components/ui/RichTextRenderer";
+import { TRACK_TYPE_COLORS, type TrackType } from "@/constants/discography";
 import { getMedia, getTag, getAlbum } from "@/hooks/useCMS";
 import type { Credit } from "@/lib/people";
-import type { MusicTrack, Tag } from "@/payload-types";
+import type { MusicTrack, Tag as CMSTag } from "@/payload-types";
 
 interface SongModalProps {
   data: MusicTrack;
@@ -50,7 +51,7 @@ export function SongModalContent({
   const album = getAlbum(data.album);
   const albumCover = album ? getMedia(album.coverArt) : undefined;
 
-  const tags = (data.tags ?? []).map(getTag).filter((t): t is Tag => !!t);
+  const tags = (data.tags ?? []).map(getTag).filter((t): t is CMSTag => !!t);
 
   const hasLyrics = data.lyrics?.root?.children && data.lyrics.root.children.length > 0;
 
@@ -84,7 +85,7 @@ export function SongModalContent({
   };
 
   return (
-    <div className="flex gap-6">
+    <div className="flex  gap-4 ">
       {/* Cover Art */}
       <div className="relative h-48 w-48 shrink-0 overflow-hidden rounded-xl">
         <Image src={coverArt} alt={data.title} fill className="object-cover" />
@@ -92,9 +93,11 @@ export function SongModalContent({
 
       {/* Info */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <span className="mb-2 w-fit rounded-full bg-blue-500/20 px-3 py-1 text-xs font-medium capitalize text-blue-400">
-          {data.trackType}
-        </span>
+        <Badge
+          label={data.trackType}
+          colorClass={TRACK_TYPE_COLORS[data.trackType as TrackType]}
+          className="mb-2"
+        />
 
         <h2 className="mb-1 text-2xl font-bold text-(--modal-text)">{data.title}</h2>
 
@@ -105,10 +108,10 @@ export function SongModalContent({
         )}
 
         {/* Meta info row */}
-        <div className="mb-4 flex flex-wrap items-center gap-4 text-sm text-(--modal-text)/40">
+        <div className="mb-4 flex flex-wrap items-center  gap-4 text-base text-(--modal-text)/40">
           {data.duration && <span>{formatDuration(data.duration)}</span>}
           {data.releaseDate && (
-            <span className="flex items-center gap-1">
+            <span className="flex items-center  gap-4 ">
               <Calendar className="h-3.5 w-3.5" />
               {formatDate(data.releaseDate, { month: 'short', day: 'numeric', year: 'numeric' })}
             </span>
@@ -117,7 +120,7 @@ export function SongModalContent({
 
         {/* Album */}
         {album && (
-          <div className="mb-4 flex items-center gap-3 rounded-lg bg-(--modal-surface)/5 p-2">
+          <div className="mb-4 flex items-center  gap-4 rounded-lg bg-(--modal-surface)/5 p-4 ">
             {albumCover?.url && (
               <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded">
                 <Image src={albumCover.url} alt={album.title} fill className="object-cover" />
@@ -129,8 +132,8 @@ export function SongModalContent({
               </div>
             )}
             <div className="min-w-0">
-              <p className="text-xs text-(--modal-text)/40">From album</p>
-              <p className="truncate text-sm font-medium text-(--modal-text)">{album.title}</p>
+              <p className="text-sm text-(--modal-text)/40">From album</p>
+              <p className="truncate text-base font-medium text-(--modal-text)">{album.title}</p>
             </div>
           </div>
         )}
@@ -139,7 +142,7 @@ export function SongModalContent({
         {audioUrl && (
           <button
             onClick={handlePlayClick}
-            className="mb-4 flex w-fit items-center gap-2 rounded-full bg-white px-6 py-3 font-medium text-black transition-transform hover:scale-105"
+            className="mb-4 flex w-fit items-center  gap-4 rounded-full bg-white px-6 py-3 font-medium text-black transition-transform hover:scale-105"
           >
             {isCurrentlyPlaying ? (
               <>
@@ -158,37 +161,20 @@ export function SongModalContent({
         {/* Credits */}
         {credits.length > 0 && (
           <div className="mb-4">
-            <p className="mb-2 text-sm text-(--modal-text)/40">Credits</p>
+            <p className="mb-2 text-base text-(--modal-text)/40">Credits</p>
             <PeopleDisplay credits={credits} />
           </div>
         )}
 
         {/* Tags */}
-        {tags.length > 0 && (
-          <div className="mb-4">
-            <div className="flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <span
-                  key={tag.id}
-                  className="rounded-full px-2.5 py-1 text-xs font-medium"
-                  style={{
-                    backgroundColor: tag.color ? `${tag.color}20` : 'var(--modal-surface)',
-                    color: tag.color || 'var(--modal-text)',
-                  }}
-                >
-                  {tag.name}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
+        <Tags tags={tags} className="mb-4" />
 
         {/* Lyrics (collapsible) */}
         {hasLyrics && (
           <div className="mb-4">
             <button
               onClick={() => setShowLyrics(!showLyrics)}
-              className="flex items-center gap-1 text-sm text-(--modal-text)/60 hover:text-(--modal-text)"
+              className="flex items-center  gap-4 text-base text-(--modal-text)/60 hover:text-(--modal-text)"
             >
               {showLyrics ? (
                 <>
@@ -204,7 +190,7 @@ export function SongModalContent({
             </button>
             {showLyrics && (
               <div className="mt-3 max-h-48 overflow-y-auto rounded-lg bg-(--modal-surface)/5 p-4 scrollbar-thin">
-                <RichTextRenderer content={data.lyrics} className="text-sm whitespace-pre-wrap" />
+                <RichTextRenderer content={data.lyrics} className="text-base whitespace-pre-wrap" />
               </div>
             )}
           </div>
@@ -213,15 +199,15 @@ export function SongModalContent({
         {/* Streaming Links */}
         {(data.streamingLinks ?? []).length > 0 && (
           <div className="mt-auto">
-            <p className="mb-2 text-sm text-(--modal-text)/40">Listen on</p>
-            <div className="flex flex-wrap gap-2">
+            <p className="mb-2 text-base text-(--modal-text)/40">Listen on</p>
+            <div className="flex flex-wrap  gap-4 ">
               {(data.streamingLinks ?? []).map((link) => (
                 <a
                   key={link.platform}
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                  className={`flex items-center  gap-4 .5 rounded-full px-3 py-1.5 text-base font-medium transition-colors ${
                     PLATFORM_COLORS[link.platform] || PLATFORM_COLORS.other
                   }`}
                 >

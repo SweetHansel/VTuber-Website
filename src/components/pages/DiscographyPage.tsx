@@ -1,11 +1,8 @@
 "use client";
 
-import { SongGrid } from "@/components/discography/SongGrid";
+import { SongGrid } from "@/components/display/SongGrid";
 import { InteractiveMediaFromCMS } from "@/components/media";
-import {
-  ExpandingPage,
-  type LRProps,
-} from "@/components/layout/BookLayout";
+import { ExpandingPage, type LRProps } from "@/components/layout/BookLayout";
 import { useMotionValueState } from "@/hooks/useMotionValueState";
 import { useMusicTracks } from "@/hooks/useCMS";
 import { ScrollContainer } from "../layout";
@@ -25,7 +22,7 @@ function DiscographyRight({ index }: Readonly<LRProps>) {
       index={index}
       min={100}
       max={200}
-      className="absolute h-full right-0 overflow-clip pointer-events-none mask-l-from-80% mask-l-to-95%"
+      className="absolute h-full right-0 overflow-clip pointer-events-none mask-l-from-75% mask-l-to-100%"
     >
       <InteractiveMediaFromCMS
         location="page-discography"
@@ -50,21 +47,23 @@ function DiscographyLeft({ index }: Readonly<LRProps>) {
   }
 
   return (
-    <div className="flex h-full w-full flex-col p-4 gap-3">
-      <div className="px-2 py-1 bg-(--page-surface)/5">
-        <h1 className="text-base text-(--page-text)">Cover</h1>
+    <div className="flex h-full w-full p-4 justify-center items-center">
+      <div className="flex max-w-2xl max-h-[70vh] h-full flex-col  gap-4 overflow-hidden">
+        <div className="px-4 py-3 rounded-xl bg-(--page-surface)/5">
+          <h1 className="text-3xl font-bold text-(--page-text)">Cover</h1>
+        </div>
+        <ScrollContainer className="flex-1 rounded-xl min-h-0 overflow-y-scroll bg-(--page-surface)/5 p-4 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20 pointer-events-auto">
+          <SongGrid tracks={tracks} filter={filters[1].value} />
+        </ScrollContainer>
+        <div className="px-4 py-3 rounded-xl bg-(--page-surface)/5">
+          <h1 className="text-3xl font-bold text-(--page-text)">Originals</h1>
+        </div>
+        <ScrollContainer className="flex-1 rounded-xl min-h-0 overflow-y-scroll bg-(--page-surface)/5 p-4 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
+          <SongGrid tracks={tracks} filter={filters[2].value} />
+        </ScrollContainer>
       </div>
-      <ScrollContainer className="flex-1 overflow-y-auto bg-(--page-surface)/5 p-3 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
-        <SongGrid tracks={tracks} filter={filters[1].value} />
-      </ScrollContainer>
-      <div className="px-2 py-1 bg-(--page-surface)/5">
-        <h1 className="text-base text-(--page-text)">Originals</h1>
-      </div>
-      <ScrollContainer className="flex-1 overflow-y-auto bg-(--page-surface)/5 p-3 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
-        <SongGrid tracks={tracks} filter={filters[2].value} />
-      </ScrollContainer>
     </div>
   );
 }
 
-export const DiscographyPage = [DiscographyLeft, DiscographyRight]
+export const DiscographyPage = [DiscographyLeft, DiscographyRight];

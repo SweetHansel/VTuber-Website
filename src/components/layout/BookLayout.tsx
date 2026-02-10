@@ -6,19 +6,13 @@ import { ArtworksPage } from "@/components/pages/ArtworksPage";
 import { DiscographyPage } from "@/components/pages/DiscographyPage";
 import { VTuberModelsPage } from "@/components/pages/VTuberModelsPage";
 import { ChevronLeft, ChevronRight, ListTree } from "lucide-react";
-import {
-  animate,
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-} from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { CONTENT_SECTIONS } from "@/constants/sections";
 import { cn, clamp } from "@/lib/utils";
-import { AspectLock } from "./AspectLock";
 import { InteractiveMediaFromCMS } from "@/components/media";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { LeftPage, LRProps, RightPage, ToCPage } from "./book";
+import { AspectLock } from "./AspectLock";
 
 // Re-export types for backwards compatibility
 export { mapToFlatOnly, ExpandingPage, type LRProps } from "./book";
@@ -43,7 +37,7 @@ export function BookLayout() {
   const touchStartRef = useRef<number | null>(null);
 
   const setIndex = (val: number) => {
-    setFocus('bottom-right')
+    // setFocus('bottom-right')
     rough.set(val);
   };
 
@@ -105,17 +99,9 @@ export function BookLayout() {
   };
 
   return (
-    <AspectLock
-      aspectRatio={16 / 9}
-      anchorX="left"
-      anchorY="top"
-      className="absolute perspective-1000 transform-3d pointer-events-none"
-    >
+    <AspectLock aspectRatio={16 / 9}  className="absolute">
       <div
-        className={cn(
-          "h-full w-full pointer-events-auto",
-          focusState == "default" && "rotate-x-10 -rotate-z-5",
-        )}
+        className="h-full w-full absolute pointer-events-auto"
         onClick={(e) => {
           if (focusState == "default") setFocus("bottom-right");
           e.stopPropagation();
@@ -124,88 +110,85 @@ export function BookLayout() {
         <InteractiveMediaFromCMS
           showEmpty
           location="landing-bottom-right"
-          className="absolute h-[102%] w-[102%] top-[-1%] left-[-2%] object-contain"
+          className="absolute h-full w-full object-contain"
         />
-        <div className="absolute h-[98%] w-[98%] top-[1%] left-0">
-          <div
-            className="absolute h-full w-full perspective-[1000px]"
-            onClick={(e) => e.stopPropagation()}
-            onWheel={handleWheel}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-            {sections.map((section, i) => (
-              <LeftPage
-                key={`left-${section}`}
-                index={index}
-                pageIndex={i}
-                Page={pages[section][0]}
-                onNavigate={setIndex}
-              />
-            ))}
-            {/* Right pages rendered in reverse DOM order to fix 3D stacking */}
-            {sections.toReversed().map((section, i) => (
-              <RightPage
-                key={`right-${section}`}
-                index={index}
-                pageIndex={sections.length - i - 1}
-                Page={pages[section][1]}
-                onNavigate={setIndex}
-              />
-            ))}
-            {/* ToC Page (index 0, only has right side with content) */}
-            <RightPage
-              key="right-toc"
+        <div
+          className="absolute h-[96%] w-[96%] top-[2%] left-[2%]  perspective-[1000px]"
+          onWheel={handleWheel}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          {sections.map((section, i) => (
+            <LeftPage
+              key={`left-${section}`}
               index={index}
-              pageIndex={-1}
-              Page={ToCPage}
+              pageIndex={i}
+              Page={pages[section][0]}
               onNavigate={setIndex}
             />
+          ))}
+          {/* Right pages rendered in reverse DOM order to fix 3D stacking */}
+          {sections.toReversed().map((section, i) => (
+            <RightPage
+              key={`right-${section}`}
+              index={index}
+              pageIndex={sections.length - i - 1}
+              Page={pages[section][1]}
+              onNavigate={setIndex}
+            />
+          ))}
+          {/* ToC Page (index 0, only has right side with content) */}
+          <RightPage
+            key="right-toc"
+            index={index}
+            pageIndex={-1}
+            Page={ToCPage}
+            onNavigate={setIndex}
+          />
 
-            <motion.div
-              className="absolute h-full w-full pointer-events-none"
-              style={{ visibility: showPrevButtons }}
-            >
-              <button
-                onClick={prevPage}
-                className="absolute bottom-0 left-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
+          <motion.div
+            className="absolute h-full w-full pointer-events-none"
+            style={{ visibility: showPrevButtons }}
+          >
+            <button
+              onClick={prevPage}
+              className="absolute bottom-0 left-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
             border-b-60 border-b-(--page-surface)/20
             border-r-60 border-r-transparent
             hover:border-b-(--page-surface)/40 transition-colors"
-                aria-label="Previous page"
-              >
-                <ChevronLeft className="absolute -bottom-12.5 left-1.25 w-4 h-4 text-(--page-text)/60" />
-              </button>
+              aria-label="Previous page"
+            >
+              <ChevronLeft className="absolute -bottom-12.5 left-1.25 w-4 h-4 text-(--page-text)/60" />
+            </button>
 
-              <button
-                onClick={() => setIndex(0)}
-                className="absolute top-0 left-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
+            <button
+              onClick={() => setIndex(0)}
+              className="absolute top-4 left-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
             border-t-60 border-t-(--page-surface)/20
             border-r-60 border-r-transparent
             hover:border-t-(--page-surface)/40 transition-colors"
-                aria-label="ToC"
-              >
-                <ListTree className="absolute -top-12.5 left-1.25 w-4 h-4 text-(--page-text)/60" />
-              </button>
-            </motion.div>
-
-            <motion.div
-              className="absolute h-full w-full pointer-events-none"
-              style={{ visibility: showNextButton }}
+              aria-label="ToC"
             >
-              <button
-                onClick={nextPage}
-                className="absolute bottom-0 right-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
+              <ListTree className="absolute -top-4 .5 left-1.25 w-4 h-4 text-(--page-text)/60" />
+            </button>
+          </motion.div>
+
+          <motion.div
+            className="absolute h-full w-full pointer-events-none"
+            style={{ visibility: showNextButton }}
+          >
+            <button
+              onClick={nextPage}
+              className="absolute bottom-0 right-0 w-0 h-0 z-50 cursor-pointer pointer-events-auto
             border-b-60 border-b-(--page-surface)/20
             border-l-60 border-l-transparent
             hover:border-b-(--page-surface)/40 transition-colors"
-                aria-label="Next page"
-              >
-                <ChevronRight className="absolute -bottom-12.5 right-1.25 w-4 h-4 text-(--page-text)/60" />
-              </button>
-            </motion.div>
-          </div>
+              aria-label="Next page"
+            >
+              <ChevronRight className="absolute -bottom-12.5 right-1.25 w-4 h-4 text-(--page-text)/60" />
+            </button>
+          </motion.div>
         </div>
       </div>
     </AspectLock>

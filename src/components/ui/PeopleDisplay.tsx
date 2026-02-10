@@ -30,8 +30,8 @@ type Size = 'sm' | 'md' | 'lg'
 
 const sizeClasses = {
   sm: 'h-6 w-6 text-[10px]',
-  md: 'h-8 w-8 text-xs',
-  lg: 'h-12 w-12 text-sm',
+  md: 'h-8 w-8 text-sm',
+  lg: 'h-12 w-12 text-base',
 }
 
 const sizePx = {
@@ -48,8 +48,8 @@ const overlapClasses = {
 
 const pillClasses = {
   sm: 'h-6 text-[10px] px-2',
-  md: 'h-8 text-xs px-2.5',
-  lg: 'h-12 text-sm px-3',
+  md: 'h-8 text-sm px-2.5',
+  lg: 'h-12 text-base px-3',
 }
 
 // ============================================
@@ -113,13 +113,13 @@ function Avatar({ person, size, showRole, className, onClick }: Readonly<AvatarP
 
       {/* Tooltip */}
       {showTooltip && (
-        <div className="absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-(--modal-bg) px-3 py-1.5 text-sm shadow-lg">
+        <div className="absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-(--modal-bg) px-3 py-1.5 text-base shadow-lg">
           <p className="font-medium text-(--modal-text)">{person.name}</p>
           {showRole && (
-            <p className="text-xs text-(--modal-text)/60">{showRole}</p>
+            <p className="text-sm text-(--modal-text)/60">{showRole}</p>
           )}
           {!showRole && person.roles && (
-            <p className="text-xs text-(--modal-text)/60">{person.roles}</p>
+            <p className="text-sm text-(--modal-text)/60">{person.roles}</p>
           )}
           <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-(--modal-bg)" />
         </div>
@@ -183,17 +183,17 @@ export function PeopleDisplay({
         <div className={cn('space-y-3', className)}>
           {Array.from(groupedCredits.entries()).map(([role, roleCredits]) => (
             <div key={role}>
-              <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-(--modal-text)/40">
+              <p className="mb-1.5 text-sm font-medium uppercase tracking-wide text-(--modal-text)/40">
                 {normalizeRoleName(role)}
               </p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap  gap-4 ">
                 {roleCredits.map((credit, index) => {
                   const person = getPersonFromCredit(credit)
                   const displayName = getCreditDisplayName(credit)
                   return (
                     <div
                       key={credit.id || index}
-                      className="flex items-center gap-2 rounded-full bg-(--modal-surface)/10 px-3 py-1.5 text-sm"
+                      className="flex items-center  gap-4 rounded-full bg-(--modal-surface)/10 px-3 py-1.5 text-base"
                     >
                       {person && (
                         <Avatar person={person} size="sm" showRole={role} />
@@ -211,14 +211,14 @@ export function PeopleDisplay({
 
     // Pills variant (default for credits)
     return (
-      <div className={cn('flex flex-wrap gap-2', className)}>
+      <div className={cn('flex flex-wrap  gap-4 ', className)}>
         {credits.map((credit, index) => {
           const person = getPersonFromCredit(credit)
           const displayName = getCreditDisplayName(credit)
           return (
             <div
               key={credit.id || index}
-              className="flex items-center gap-2 rounded-full bg-(--modal-surface)/10 px-3 py-1.5 text-sm"
+              className="flex items-center  gap-4 rounded-full bg-(--modal-surface)/10 px-3 py-1.5 text-base"
             >
               {person && (
                 <Avatar person={person} size="sm" showRole={credit.role} />
@@ -279,7 +279,7 @@ export function PeopleDisplay({
           {expanded && people.length > maxVisible && (
             <button
               onClick={() => setExpanded(false)}
-              className="ml-2 text-xs text-(--modal-text)/50 hover:text-(--modal-text)/70"
+              className="ml-2 text-sm text-(--modal-text)/50 hover:text-(--modal-text)/70"
             >
               Show less
             </button>
@@ -290,11 +290,11 @@ export function PeopleDisplay({
 
     // Pills variant for people
     return (
-      <div className={cn('flex flex-wrap gap-2', className)}>
+      <div className={cn('flex flex-wrap  gap-4 ', className)}>
         {people.map((person) => (
           <div
             key={person.id}
-            className="flex items-center gap-2 rounded-full bg-(--modal-surface)/10 px-3 py-1.5 text-sm"
+            className="flex items-center  gap-4 rounded-full bg-(--modal-surface)/10 px-3 py-1.5 text-base"
           >
             <Avatar person={person} size="sm" />
             <span className="text-(--modal-text)">{person.name}</span>

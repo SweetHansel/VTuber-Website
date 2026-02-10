@@ -1,12 +1,9 @@
-// Artwork type constants - single source of truth
+// Artwork type constants
 // Used in: Artworks collection, MasonryGallery, useCMS, seed route
 
-/**
- * Artwork types as defined in the Artworks collection
- */
-export const ARTWORK_TYPES = ['fanart', 'official', 'commissioned', 'other'] as const
+import type { Artwork } from '@/payload-types'
 
-export type ArtworkType = typeof ARTWORK_TYPES[number]
+export type ArtworkType = Artwork['artworkType']
 
 /**
  * Filter options for the gallery UI
@@ -17,11 +14,11 @@ export const ARTWORK_FILTER_OPTIONS = ['all', 'fanart', 'official', 'commissione
 export type ArtworkFilter = typeof ARTWORK_FILTER_OPTIONS[number]
 
 /**
- * Color classes for artwork type badges in the gallery
+ * Color classes for artwork type badges
  */
 export const ARTWORK_TYPE_COLORS: Record<ArtworkType, string> = {
-  official: 'bg-blue-500/80 text-white',
-  fanart: 'bg-cyan-500/80 text-white',
-  commissioned: 'bg-purple-500/80 text-white',
-  other: 'bg-gray-500/80 text-white',
+  official: 'bg-blue-500 text-white',
+  fanart: 'bg-cyan-500 text-white',
+  commissioned: 'bg-purple-500 text-white',
+  other: 'bg-gray-500 text-white',
 }

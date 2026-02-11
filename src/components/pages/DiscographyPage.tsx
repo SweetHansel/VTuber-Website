@@ -48,7 +48,7 @@ function DiscographyLeft({ index }: Readonly<LRProps>) {
 
   return (
     <div className="flex h-full w-full p-4 justify-center items-center">
-      <div className="flex max-w-2xl max-h-[70vh] h-full flex-col  gap-4 overflow-hidden">
+      <div className="flex max-w-2xl max-h-[567px] h-full flex-col  gap-4 overflow-hidden">
         <div className="px-4 py-3 rounded-xl bg-(--page-surface)/5">
           <h1 className="text-2xl font-bold text-(--page-text)">Cover</h1>
         </div>

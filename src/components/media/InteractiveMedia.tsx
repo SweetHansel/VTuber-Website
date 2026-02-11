@@ -136,6 +136,7 @@ export function InteractiveMedia({
         src={currentMedia.src}
         alt={currentMedia.alt || 'Interactive media'}
         fill
+        priority
         className={imageClass ?? "object-contain"}
         unoptimized={isAnimatedImage(currentMedia.src)}
       />

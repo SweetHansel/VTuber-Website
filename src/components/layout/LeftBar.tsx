@@ -56,7 +56,7 @@ export function LeftBar() {
   if (loading) {
     return (
       <div className="fixed left-0 top-1/2 z-50 -translate-y-1/2 flex flex-col  gap-4 ">
-        <div className="flex h-12 w-12 items-center justify-center rounded-r-2xl bg-black/40 backdrop-blur-lg">
+        <div className="flex h-12 w-12 items-center justify-center rounded-r-2xl bg-black/60">
           <Loader2 className="h-5 w-5 animate-spin text-white/40" />
         </div>
       </div>
@@ -75,7 +75,7 @@ export function LeftBar() {
           href={link.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="group relative flex h-[15%] w-12 items-center justify-center rounded-r-xl bg-black/40 text-white/70 backdrop-blur-lg transition-all duration-300 hover:bg-black/60 hover:text-white"
+          className="group relative flex h-[15%] w-12 items-center justify-center rounded-r-xl bg-black/60 text-white/70 transition-colors duration-300 hover:bg-black/70 hover:text-white"
           aria-label={link.name}
         >
           <div className="rotate-90 flex  flex-row  gap-4 ">

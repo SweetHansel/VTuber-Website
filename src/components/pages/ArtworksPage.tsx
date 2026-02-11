@@ -41,7 +41,7 @@ function ArtworksRight({ index }: Readonly<LRProps>) {
       className="absolute h-full right-0 mask-l-from-75% mask-l-to-100%"
     >
       {/* Gallery */}
-      <div className="absolute h-full max-w-[80vw] aspect-11/9 right-0">
+      <div className="absolute h-full aspect-11/9 right-0">
         {loading || !artworks ? (
           <div className="flex h-full w-full items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-(--page-text)/40" />

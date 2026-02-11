@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { BatteryMediumIcon, Loader2, SignalHigh } from "lucide-react";
 import { PostCard } from "@/components/phone/PostCard";
 import { usePosts } from "@/hooks/useCMS";
 import type { PostType } from "@/constants/content";
+import { staggerContainer, staggerItem } from "@/constants/animations";
 
 type FilterType = PostType | undefined;
 
@@ -50,16 +52,23 @@ export function UpdatesScreen() {
               <SignalHigh />
             </div>
           </div>
-          <div className="bg-(--phone-bg) flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-track-(--phone-surface)/5 scrollbar-thumb-(--phone-surface)/20">
+          <motion.div
+            className="bg-(--phone-bg) flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-track-(--phone-surface)/5 scrollbar-thumb-(--phone-surface)/20"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+          >
             {posts?.map((post) => (
-              <PostCard key={post.id} post={post} />
+              <motion.div key={post.id} variants={staggerItem}>
+                <PostCard post={post} />
+              </motion.div>
             ))}
             {(!posts || posts.length === 0) && (
               <p className="py-8 text-center text-base text-(--phone-text)/40">
                 No content found
               </p>
             )}
-          </div>
+          </motion.div>
         </>
       )}
     </div>

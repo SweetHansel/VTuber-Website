@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { User, Box, Loader2 } from "lucide-react";
 import type { LRProps } from "@/components/layout/BookLayout";
@@ -82,11 +83,22 @@ function VTuberModelsRight({ index }: Readonly<LRProps>) {
 
       {/* Model grid */}
       {allModels && (
-        <ModelGrid
-          models={filteredModels}
-          selectedModelId={selectedModel?.id}
-          onSelect={setSelectedModel}
-        />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            className="flex-1 overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <ModelGrid
+              models={filteredModels}
+              selectedModelId={selectedModel?.id}
+              onSelect={setSelectedModel}
+            />
+          </motion.div>
+        </AnimatePresence>
       )}
     </div>
   );

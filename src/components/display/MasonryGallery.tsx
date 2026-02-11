@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { useModalStore } from "@/stores/modalStore";
 import { type Artwork, getMedia } from "@/hooks/useCMS";
@@ -8,6 +9,7 @@ import { ARTWORK_TYPE_COLORS, type ArtworkFilter, type ArtworkType } from "@/con
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui";
 import { ScrollContainer } from "../layout";
+import { staggerContainer, staggerItem } from "@/constants/animations";
 
 function getAspectRatio(artwork: Artwork): number {
   const media = getMedia(artwork.image);
@@ -107,10 +109,13 @@ export function MasonryGallery({
       ref={containerRef}
       className="relative w-full h-full p-4 flex flex-col  gap-4 overflow-scroll scrollbar-thin"
     >
-      {rows.map((row, rowIndex) => (
-        <div
+      {containerWidth > 0 && rows.map((row, rowIndex) => (
+        <motion.div
           key={"row_" + rowIndex}
-          className="flex flex-row-reverse justify-start  gap-4 "
+          className="flex flex-row-reverse justify-start gap-4"
+          variants={staggerContainer}
+          initial="hidden"
+          animate="show"
         >
           {row.map(({ artwork, ratio }) => {
             const imageUrl = getMedia(artwork.image)?.url;
@@ -118,11 +123,12 @@ export function MasonryGallery({
             if (!imageUrl) return null;
 
             return (
-              <div
+              <motion.div
                 key={artwork.id}
                 className="relative shrink-0 cursor-pointer overflow-hidden group"
                 style={{ height: rowHeight, aspectRatio: ratio }}
                 onClick={() => openModal("artwork", artwork)}
+                variants={staggerItem}
               >
                 <Image
                   src={imageUrl}
@@ -139,10 +145,10 @@ export function MasonryGallery({
                   colorClass={ARTWORK_TYPE_COLORS[artwork.artworkType as ArtworkType]}
                   className="absolute top-2 left-2 z-10"
                 />
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       ))}
 
       {filteredArtworks.length === 0 && (

@@ -65,7 +65,7 @@ function DiscographyLeft({ index }: Readonly<LRProps>) {
                   </h1>
                 </div>
                 <ScrollContainer className="flex-1 ml-2 mr-20 rounded-xl min-h-0 bg-(--page-surface)/5 p-8 scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20 pointer-events-auto">
-                  <SongGrid tracks={tracks} filter={filters[1].value} />
+                  <SongGrid tracks={tracks ?? []} filter={filters[1].value} />
                 </ScrollContainer>
               </TiltCard>
               <TiltCard className="flex-1 gap-4 flex-col flex overflow-hidden" tiltRange={8} idleAmplitude={3}>
@@ -75,7 +75,7 @@ function DiscographyLeft({ index }: Readonly<LRProps>) {
                   </h1>
                 </div>
                 <ScrollContainer className="flex-1 ml-2 mr-20 rounded-xl min-h-0 bg-(--page-surface)/5 p-8 scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
-                  <SongGrid tracks={tracks} filter={filters[2].value} />
+                  <SongGrid tracks={tracks ?? []} filter={filters[2].value} />
                 </ScrollContainer>
               </TiltCard>
             </div>

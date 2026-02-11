@@ -9,10 +9,10 @@ import { Radio, X, ExternalLink, Users } from "lucide-react";
 import { POLLING_INTERVAL_MS } from "@/constants/config";
 
 export function LivestreamAlert() {
-  const { streams, showAlert, dismissStream, hideAlertBanner } =
+  const { streams, showAlert, hideAlertBanner } =
     useLivestreamStore();
 
-  const primaryStream = getPrimaryStream(streams.filter((s) => showAlert));
+  const primaryStream = getPrimaryStream(streams.filter(() => showAlert));
 
   // Auto-poll for livestream status
   useEffect(() => {

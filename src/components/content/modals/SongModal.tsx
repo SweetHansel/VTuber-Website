@@ -69,7 +69,7 @@ export function SongModalContent({
     if (!audioUrl) return;
 
     if (isCurrentTrack) {
-      isPlaying ? pause() : play();
+      if (isPlaying) { pause(); } else { play(); }
     } else {
       const track: Track = {
         id: trackId,

@@ -38,7 +38,7 @@ export function SongCard({ track }: Readonly<SongCardProps>) {
     if (!audioUrl) return;
 
     if (isCurrentTrack) {
-      isPlaying ? pause() : play();
+      if (isPlaying) { pause(); } else { play(); }
     } else {
       const audioTrack: Track = {
         id,

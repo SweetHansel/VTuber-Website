@@ -20,7 +20,7 @@ interface MainLayoutProps {
   children?: React.ReactNode;
 }
 
-export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
+export function MainLayout({}: Readonly<MainLayoutProps>) {
   const { focusState, setFocus, scaleFactor, setRootDimension } =
     useLayoutStore();
   const bookTransform = useComponentTransform("book");

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useRef, useEffect } from "react";
-import { motion, scale } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { useModalStore } from "@/stores/modalStore";
 import { type Artwork, getMedia } from "@/hooks/useCMS";
@@ -116,6 +116,7 @@ export function MasonryGallery({
       {containerWidth > 0 &&
         rows.map((row, rowIndex) => (
           <motion.div
+          key={"outer_row_" + rowIndex}
           className="w-full flex flex-row-reverse justify-start"
             animate={{ x: [-30, 0, -30] }}
             transition={{

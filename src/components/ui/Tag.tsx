@@ -14,7 +14,6 @@ interface TagProps {
 export function Tag({
   tag,
   variant = "opaque",
-  size = "sm",
   onClick,
   className,
 }: TagProps) {
@@ -73,7 +72,6 @@ export function Badge({
   label,
   colorClass = "bg-gray-500/20 text-gray-300",
   icon,
-  size = "sm",
   className,
 }: BadgeProps) {
   return (

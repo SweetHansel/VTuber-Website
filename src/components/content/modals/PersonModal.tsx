@@ -69,8 +69,8 @@ export function PersonModalContent({ data }: Readonly<PersonModalProps>) {
       {/* Social Links */}
       {socials.length > 0 && (
         <div className="w-full">
-          <p className="mb-3 text-sm text-(--modal-text)/40">Links</p>
-          <div className="flex flex-wrap justify-center gap-2">
+          <p className="mb-3 text-base text-(--modal-text)/40">Links</p>
+          <div className="flex flex-wrap justify-center  gap-4 ">
             {socials.map((social) => {
               const config = PLATFORM_CONFIG[social.platform] || PLATFORM_CONFIG.other
               return (
@@ -80,7 +80,7 @@ export function PersonModalContent({ data }: Readonly<PersonModalProps>) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className={cn(
-                    'flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors',
+                    'flex items-center  gap-4 .5 rounded-full px-4 py-2 text-base font-medium transition-colors',
                     config.color,
                   )}
                 >

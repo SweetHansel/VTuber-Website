@@ -110,7 +110,7 @@ export function VRMViewer({
       </Canvas>
 
       {/* Loading overlay */}
-      <div className="pointer-events-none absolute bottom-2 right-2 rounded bg-black/50 px-2 py-1 text-xs text-white/60">
+      <div className="pointer-events-none absolute bottom-2 right-2 rounded bg-black/50 px-2 py-1 text-sm text-white/60">
         Drag to rotate
       </div>
     </div>

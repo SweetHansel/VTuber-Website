@@ -10,13 +10,14 @@ import { useMotionValueState } from "@/hooks/useMotionValueState";
 import { useArtworks } from "@/hooks/useCMS";
 import { Loader2 } from "lucide-react";
 
+
 function ArtworksLeft({ index }: Readonly<LRProps>) {
   return (
     <ExpandingPage
       index={index}
       min={100}
       max={200}
-      className="absolute h-full oveflow-clip mask-r-from-80% mask-r-to-95%"
+      className="absolute h-full oveflow-clip mask-r-from-50% mask-r-to-100%"
     >
       <InteractiveMediaFromCMS
         location="page-artworks"
@@ -37,10 +38,10 @@ function ArtworksRight({ index }: Readonly<LRProps>) {
       index={index}
       min={100}
       max={200}
-      className="absolute h-full right-0 mask-l-from-80% mask-l-to-95%"
+      className="absolute h-full right-0 mask-l-from-50% mask-l-to-100%"
     >
       {/* Gallery */}
-      <div className="absolute h-full p-4 aspect-11/9 right-0">
+      <div className="absolute h-full aspect-12/9 right-0">
         {loading || !artworks ? (
           <div className="flex h-full w-full items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-(--page-text)/40" />

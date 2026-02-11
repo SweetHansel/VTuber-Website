@@ -1,151 +1,145 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { useLayoutStore, layoutConfig } from "@/stores/layoutStore";
+import { AnimatePresence, motion } from "framer-motion";
+import { useLayoutStore, SCENE, BOOK, PHONE } from "@/stores/layoutStore";
+import { useComponentTransform } from "@/hooks/useComponentTransform";
+import { sceneSpring } from "@/constants/animations";
 import { X } from "lucide-react";
 import { SongSeekbar } from "@/components/audio/SongSeekbar";
 import { LivestreamAlert } from "@/components/ui/LivestreamAlert";
 import { Modal } from "@/components/content/Modal";
-import { UpdatesScreen } from "@/components/phone/UpdatesScreen";
 import { LeftBar } from "./LeftBar";
 import { InteractiveMediaFromCMS } from "@/components/media";
-import { AspectLock } from "./AspectLock";
 import { BookLayout } from "./BookLayout";
-import { cn } from "@/lib/utils";
 import { PhoneLayout } from "./PhoneLayout";
+import { TiltCard } from "@/components/ui/TiltCard";
+import { useEffect, useRef } from "react";
+import { fadeVariants } from "@/constants/animations";
 
 interface MainLayoutProps {
   children?: React.ReactNode;
 }
 
-export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
-  const { focusState, setFocus } = useLayoutStore();
-  const config = layoutConfig[focusState];
+export function MainLayout({}: Readonly<MainLayoutProps>) {
+  const { focusState, setFocus, scaleFactor, setRootDimension } =
+    useLayoutStore();
+  const bookTransform = useComponentTransform("book");
+  const phoneTransform = useComponentTransform("phone");
+  const mediaTransform = useComponentTransform("media");
 
-  // Calculate dimensions
-  const leftWidth = config.A;
-  const rightWidth = 100 - config.A;
-  const bottomRightHeight = config.B;
-  const topRightHeight = 100 - config.B;
+  const sceneRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = sceneRef.current?.parentElement;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => {
+      setRootDimension(entry.contentRect);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [setRootDimension]);
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-(--modal-bg)">
-      {/* Main Layout Container */}
-
+    <div
+      className="relative h-screen w-screen overflow-hidden bg-(--modal-bg)"
+      onClick={() => setFocus("default")}
+    >
       <InteractiveMediaFromCMS
         showEmpty
         location="landing-bg"
-        className="h-full w-full absolute bottom-0"
+        className="absolute h-full w-full"
         imageClass="object-cover"
+        onClick={() => setFocus("default")}
       />
-      <AspectLock
-        aspectRatio={16 / 9}
-        anchorX="center"
-        anchorY="center"
-        off={focusState != "default"}
+
+      {/* Scaled scene */}
+      <div
+        ref={sceneRef}
+        className="absolute inset-0 flex items-center justify-center pointer-events-none"
       >
-        <main
-          className="flex h-full w-full"
-          onClick={() => setFocus("default")}
+        <div
+          className="absolute pointer-events-auto perspective-distant"
+          style={{
+            width: SCENE.width,
+            height: SCENE.height,
+            transform: `scale(${scaleFactor})`,
+            transformOrigin: "center",
+          }}
         >
-          {/* Left Section */}
           <motion.div
-            className="relative h-full z-30"
-            initial={false}
-            animate={{
-              width: `${leftWidth}%`,
-            }}
-            transition={{ type: "tween", ease: "linear", duration: 0.2 }}
+            key={"book"}
+            style={{ width: BOOK.width, height: BOOK.height }}
+            className="z-0 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none perspective-distant"
+            animate={bookTransform}
+            transition={sceneSpring}
           >
-            <PhoneLayout />
-          </motion.div>
-
-          {/* Global Audio Player */}
-          <SongSeekbar />
-
-          {/* Right Section (container for top-right and bottom-right) */}
-          <motion.div
-            className="flex h-full flex-col z-0"
-            initial={false}
-            animate={{
-              width: `${rightWidth}%`,
-            }}
-            transition={{ type: "tween", ease: "linear", duration: 0.2 }}
-          >
-            {/* Top Right */}
-            <motion.div
-              className="relative w-full z-10"
-              initial={false}
-              animate={{
-                height: `${topRightHeight}%`,
-              }}
-              transition={{ type: "tween", ease: "linear", duration: 0.2 }}
-            >
-              <AspectLock
-                aspectRatio={1}
-                anchorX="left"
-                anchorY="bottom"
-                className="absolute"
-              >
-                <InteractiveMediaFromCMS
-                  location="main-character"
-                  className="absolute h-full w-full left-[20%] top-0"
-                />
-              </AspectLock>
-            </motion.div>
-
-            {/* Bottom Right - Main Content */}
-            <motion.div
-              className="relative w-full"
-              initial={false}
-              animate={{
-                height: `${bottomRightHeight}%`,
-              }}
-              transition={{ type: "tween", ease: "linear", duration: 0.2 }}
-            >
+            <TiltCard className="h-full w-full" tiltRange={2} idleAmplitude={5} idleDuration={4} disabled={focusState !== "default"}>
               <BookLayout />
-            </motion.div>
+            </TiltCard>
           </motion.div>
-        </main>
-      </AspectLock>
+
+          <motion.div
+            key={"media-position"}
+            style={{ width: 1000, height: 1000 }}
+            className="z-0 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none perspective-distant"
+            animate={mediaTransform}
+            transition={sceneSpring}
+          >
+            <TiltCard className="h-full w-full" tiltRange={6} idleAmplitude={5} idleDuration={4} idleDelay={1} disabled={focusState !== "default"}>
+              <InteractiveMediaFromCMS
+                location="main-character"
+                className="h-full w-full pointer-events-auto"
+              />
+            </TiltCard>
+          </motion.div>
+
+          <motion.div
+            key={"phone"}
+            style={{ width: PHONE.width, height: PHONE.height }}
+            className="z-0 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none perspective-distant"
+            animate={phoneTransform}
+            transition={sceneSpring}
+          >
+            <TiltCard className="h-full w-full" tiltRange={6} idleAmplitude={5} idleDuration={4} idleDelay={3} disabled={focusState !== "default"}>
+              <PhoneLayout />
+            </TiltCard>
+          </motion.div>
+        </div>
+      </div>
+
+      <SongSeekbar />
 
       <AnimatePresence>
         {focusState == "default" && (
           <motion.div
-            key="leftbar"
-            initial={{ translateX: -30 }}
-            animate={{ translateX: 0 }}
-            exit={{ translateX: -30 }}
-            transition={{ type: "tween", ease: "linear", duration: 0.2 }}
-            className="h-full"
+            variants={fadeVariants}
+            initial="initial"
+            animate="enter"
+            exit="exit"
           >
             <LeftBar />
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Back to default button */}
       <AnimatePresence>
         {focusState !== "default" && (
           <motion.button
+            variants={fadeVariants}
+            initial="initial"
+            animate="enter"
+            exit="exit"
             key="exit-button"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ type: "tween", ease: "linear", duration: 0.2 }}
             onClick={() => setFocus("default")}
-            className="fixed top-4 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm text-white/70 hover:bg-white/20 hover:text-white transition-colors"
-            aria-label="Back to overview"
+            className="fixed top-4 left-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm text-white/70 hover:bg-white/20 hover:text-white transition-colors"
           >
             <X className="h-5 w-5" />
           </motion.button>
         )}
       </AnimatePresence>
 
-      {/* Livestream Alert */}
       <LivestreamAlert />
 
-      {/* Modal */}
       <Modal />
     </div>
   );

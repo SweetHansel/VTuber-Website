@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import fs from 'node:fs'
 import path from 'node:path'
-import { ARTWORK_TYPES } from '@/constants/artworks'
+import { ARTWORK_TYPE_COLORS, type ArtworkType } from '@/constants/artworks'
 
 // Protect with a secret - set SEED_SECRET env var in Vercel
 const SEED_SECRET = process.env.SEED_SECRET || 'dev-seed-secret'
@@ -331,7 +331,7 @@ export async function POST(request: Request) {
           data: {
             title: name.replaceAll(/_/g, ' '),
             image: mediaId,
-            artworkType: randomPick(ARTWORK_TYPES),
+            artworkType: randomPick(Object.keys(ARTWORK_TYPE_COLORS) as ArtworkType[]),
             credits: [
               { role: 'Artist', person: randomPick(createdPeopleIds) },
             ],

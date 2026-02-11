@@ -6,6 +6,7 @@ import { useModalStore } from '@/stores/modalStore'
 import { cn, formatDate } from '@/lib/utils'
 import { Calendar, MapPin, ExternalLink } from 'lucide-react'
 import { POST_TYPE_COLORS, type PostType } from '@/constants/content'
+import { Badge } from '@/components/ui'
 import { getMedia, type Media } from '@/hooks/useCMS'
 import type { Post } from '@/payload-types'
 
@@ -58,17 +59,17 @@ export function PostCard({ post }: Readonly<PostCardProps>) {
   const date = eventDate || publishedAt || (post.createdAt ? String(post.createdAt) : undefined)
 
   const handleClick = () => {
-    openModal('post', String(post.id), post)
+    openModal('post', post)
   }
 
   return (
     <motion.article
       onClick={handleClick}
       className={cn(
-        'group cursor-pointer overflow-hidden border-t border-primary',
+        'group cursor-pointer overflow-hidden border-y-2 bg-(--phone-bg) border-primary',
       )}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.05, x: 10, z:10}}
+      whileTap={{ scale: 0.95 }}
     >
       {/* Image */}
       {image && (
@@ -80,7 +81,7 @@ export function PostCard({ post }: Readonly<PostCardProps>) {
             className="object-cover transition-transform group-hover:scale-105"
           />
           {post.isPinned && (
-            <div className="absolute left-2 top-2 rounded-full bg-yellow-500/90 px-2 py-0.5 text-xs font-medium text-black">
+            <div className="absolute left-2 top-4 rounded-full bg-yellow-500/90 px-2 py-0.5 text-base font-medium text-black">
               Pinned
             </div>
           )}
@@ -88,37 +89,34 @@ export function PostCard({ post }: Readonly<PostCardProps>) {
       )}
 
       {/* Content */}
-      <div className="p-3">
+      <div className="relative z-10 p-4">
         {/* Type badge */}
-        <span
-          className={cn(
-            'mb-2 inline-block rounded-full px-2 py-0.5 text-xs font-medium capitalize',
-            POST_TYPE_COLORS[postType] || POST_TYPE_COLORS.general
-          )}
-        >
-          {postType}
-        </span>
+        <Badge
+          label={postType}
+          colorClass={POST_TYPE_COLORS[postType] || POST_TYPE_COLORS.general}
+          className="mb-3"
+        />
 
         {/* Title */}
-        <h3 className="mb-1 line-clamp-2 text-sm font-medium text-(--phone-text)">
+        <h3 className="mb-1 line-clamp-4 text-lg font-medium text-(--phone-text)">
           {title}
         </h3>
 
         {/* Excerpt */}
         {excerpt && (
-          <p className="mb-2 line-clamp-2 text-xs text-(--phone-text)/60">{excerpt}</p>
+          <p className="mb-2 line-clamp-4 text-base text-(--phone-text)/60">{excerpt}</p>
         )}
 
         {/* Meta info */}
-        <div className="flex flex-wrap items-center gap-2 text-xs text-(--phone-text)/50">
+        <div className="flex flex-wrap items-center  gap-4 text-base text-(--phone-text)/50">
           {eventDate && (
-            <span className="flex items-center gap-1">
+            <span className="flex items-center  gap-4 ">
               <Calendar className="h-3 w-3" />
               {formatDate(eventDate, { month: 'short', day: 'numeric' })}
             </span>
           )}
           {location && (
-            <span className="flex items-center gap-1">
+            <span className="flex items-center  gap-4 ">
               <MapPin className="h-3 w-3" />
               {location}
             </span>

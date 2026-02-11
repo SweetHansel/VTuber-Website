@@ -1,49 +1,6 @@
 import type { CollectionConfig } from 'payload'
-
-// Helper to extract plain text from Lexical rich text content
-function extractPlainText(content: unknown): string {
-  if (!content || typeof content !== 'object') return ''
-
-  const root = (content as { root?: unknown }).root
-  if (!root || typeof root !== 'object') return ''
-
-  const children = (root as { children?: unknown[] }).children
-  if (!Array.isArray(children)) return ''
-
-  let text = ''
-
-  function traverse(nodes: unknown[]) {
-    for (const node of nodes) {
-      if (!node || typeof node !== 'object') continue
-
-      const nodeObj = node as { type?: string; text?: string; children?: unknown[] }
-
-      if (nodeObj.type === 'text' && typeof nodeObj.text === 'string') {
-        text += nodeObj.text
-      }
-
-      if (Array.isArray(nodeObj.children)) {
-        traverse(nodeObj.children)
-      }
-
-      // Add space after paragraphs
-      if (nodeObj.type === 'paragraph') {
-        text += ' '
-      }
-    }
-  }
-
-  traverse(children)
-  return text.trim()
-}
-
-// Helper to generate slug from title
-function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .replaceAll(/[^a-z0-9]+/g, '-')
-    .replaceAll(/(^-|-$)/g, '')
-}
+import { slugify } from '@/lib/utils'
+import { extractPlainText } from '@/components/ui/RichTextRenderer'
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
@@ -65,7 +22,7 @@ export const Posts: CollectionConfig = {
 
         // Auto-generate slug from title if not provided
         if (!data.slug && data.title) {
-          data.slug = generateSlug(data.title)
+          data.slug = slugify(data.title)
         }
 
         // Auto-generate excerpt from content if empty

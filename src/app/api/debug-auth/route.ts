@@ -11,9 +11,6 @@ export async function GET(request: Request) {
     const hasPayloadToken = cookieHeader.includes('payload-token')
 
     // Try to get the user from the request
-    const { headers } = await import('next/headers')
-    const headersList = await headers()
-
     // Count users in database
     const { totalDocs: userCount } = await payload.count({ collection: 'users' })
 

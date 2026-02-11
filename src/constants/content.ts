@@ -11,10 +11,10 @@ export type PostType = 'blog' | 'stream' | 'event' | 'release' | 'collab' | 'gen
  * Used consistently across PosttCard and Modal
  */
 export const POST_TYPE_COLORS: Record<PostType, string> = {
-  blog: 'bg-indigo-500/20 text-indigo-300',
-  stream: 'bg-purple-500/20 text-purple-300',
-  event: 'bg-blue-500/20 text-blue-300',
-  release: 'bg-green-500/20 text-green-300',
-  collab: 'bg-pink-500/20 text-pink-300',
-  general: 'bg-gray-500/20 text-gray-300',
+  blog: 'bg-indigo-500 text-white',
+  stream: 'bg-purple-500 text-white',
+  event: 'bg-blue-500 text-white',
+  release: 'bg-green-500 text-white',
+  collab: 'bg-pink-500 text-white',
+  general: 'bg-gray-500 text-white',
 }

@@ -26,13 +26,11 @@ export type ModalContent =
 interface ModalState {
   isOpen: boolean
   modalType: ModalType
-  contentId: string | null
   contentData: ModalDataMap[keyof ModalDataMap] | null
 
   // Type-safe openModal with proper type-data pairing
   openModal: <T extends keyof ModalDataMap>(
     type: T,
-    id: string,
     data: ModalDataMap[T]
   ) => void
   closeModal: () => void
@@ -41,20 +39,17 @@ interface ModalState {
 export const useModalStore = create<ModalState>((set) => ({
   isOpen: false,
   modalType: null,
-  contentId: null,
   contentData: null,
 
-  openModal: (type, id, data) => set({
+  openModal: (type, data) => set({
     isOpen: true,
     modalType: type,
-    contentId: id,
     contentData: data,
   }),
 
   closeModal: () => set({
     isOpen: false,
     modalType: null,
-    contentId: null,
     contentData: null,
   }),
 }))

@@ -3,6 +3,7 @@
 import { useMemo, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { SongCard } from './SongCard'
+import { staggerContainer, staggerItem } from '@/constants/animations'
 import { type MusicTrack, getMedia } from '@/hooks/useCMS'
 import { useAudioStore, type Track } from '@/stores/audioStore'
 
@@ -59,13 +60,11 @@ export function SongGrid({
   }, [filteredTracks, currentTrack, setTrack])
 
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-      {filteredTracks.map((track, index) => (
+    <motion.div className="grid gap-8 grid-cols-3" variants={staggerContainer} initial="hidden" animate="show">
+      {Array(4).fill(filteredTracks).flat().map((track, index) => (
         <motion.div
-          key={track.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.05 }}
+          key={index +"_"+track.id}
+          variants={staggerItem}
         >
           <SongCard track={track} />
         </motion.div>
@@ -76,6 +75,6 @@ export function SongGrid({
           No songs found
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }

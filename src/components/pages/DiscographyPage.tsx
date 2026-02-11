@@ -48,17 +48,17 @@ function DiscographyLeft({ index }: Readonly<LRProps>) {
 
   return (
     <div className="flex h-full w-full p-4 justify-center items-center">
-      <div className="flex max-w-2xl max-h-[567px] h-full flex-col  gap-4 overflow-hidden">
+      <div className="flex max-w-2xl max-h-[680px] h-full flex-col  gap-4 overflow-hidden">
         <div className="px-4 py-3 rounded-xl bg-(--page-surface)/5">
           <h1 className="text-2xl font-bold text-(--page-text)">Cover</h1>
         </div>
-        <ScrollContainer className="flex-1 rounded-xl min-h-0 overflow-y-scroll bg-(--page-surface)/5 p-4 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20 pointer-events-auto">
+        <ScrollContainer className="flex-1 rounded-xl min-h-0 bg-(--page-surface)/5 p-4 scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20 pointer-events-auto">
           <SongGrid tracks={tracks} filter={filters[1].value} />
         </ScrollContainer>
         <div className="px-4 py-3 rounded-xl bg-(--page-surface)/5">
           <h1 className="text-2xl font-bold text-(--page-text)">Originals</h1>
         </div>
-        <ScrollContainer className="flex-1 rounded-xl min-h-0 overflow-y-scroll bg-(--page-surface)/5 p-4 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
+        <ScrollContainer className="flex-1 rounded-xl min-h-0 bg-(--page-surface)/5 p-4 scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
           <SongGrid tracks={tracks} filter={filters[2].value} />
         </ScrollContainer>
       </div>

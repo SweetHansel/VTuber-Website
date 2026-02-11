@@ -66,10 +66,10 @@ export function PostCard({ post }: Readonly<PostCardProps>) {
     <motion.article
       onClick={handleClick}
       className={cn(
-        'group cursor-pointer overflow-hidden border-t border-primary',
+        'group cursor-pointer overflow-hidden border-t-2 border-primary',
       )}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
     >
       {/* Image */}
       {image && (

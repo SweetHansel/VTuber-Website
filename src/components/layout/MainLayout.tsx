@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useLayoutStore, SCENE, BOOK, PHONE } from "@/stores/layoutStore";
 import { useComponentTransform } from "@/hooks/useComponentTransform";
-import { sceneSpring } from "@/constants/animations";
+import { sceneSpring, idleFloat} from "@/constants/animations";
 import { X } from "lucide-react";
 import { SongSeekbar } from "@/components/audio/SongSeekbar";
 import { LivestreamAlert } from "@/components/ui/LivestreamAlert";
@@ -72,7 +72,9 @@ export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
             animate={bookTransform}
             transition={sceneSpring}
           >
-            <BookLayout />
+            <motion.div className="h-full w-full" variants={idleFloat} custom={{ duration: 4, delay: 0 }} animate="idle">
+              <BookLayout />
+            </motion.div>
           </motion.div>
 
           <motion.div
@@ -82,10 +84,12 @@ export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
             animate={mediaTransform}
             transition={sceneSpring}
           >
-            <InteractiveMediaFromCMS
-              location="main-character"
-              className="h-full w-full pointer-events-auto"
-            />
+            <motion.div className="h-full w-full" variants={idleFloat} custom={{ duration: 4, delay: 1 }} animate="idle">
+              <InteractiveMediaFromCMS
+                location="main-character"
+                className="h-full w-full pointer-events-auto"
+              />
+            </motion.div>
           </motion.div>
 
           <motion.div
@@ -95,7 +99,9 @@ export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
             animate={phoneTransform}
             transition={sceneSpring}
           >
-            <PhoneLayout />
+            <motion.div className="h-full w-full" variants={idleFloat} custom={{ duration: 4, delay: 3 }} animate="idle">
+              <PhoneLayout />
+            </motion.div>
           </motion.div>
         </div>
       </div>

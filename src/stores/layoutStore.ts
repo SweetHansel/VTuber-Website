@@ -6,7 +6,7 @@ export type ComponentId = "book" | "phone" | "media";
 // Reference dimensions (fixed pixel space, scaled via CSS transform)
 export const SCENE = { width: 1440, height: 1080 } as const;
 export const BOOK = { width: 1920, height: 1080 } as const;
-export const PHONE = { width: 720, height: 1280 } as const;
+export const PHONE = { width: 720, height: 1080 } as const;
 
 export interface ComponentTransform {
   x: number; // px
@@ -36,23 +36,23 @@ interface LayoutState {
 export const defaultScenePresets: Record<FocusState, Record<ComponentId, ComponentTransform>> = {
   "no-item": {
     phone: { x: -1.5 * SCENE.width, y: 0, scale: 0.8, rotateX: 2, rotateZ: -1, opacity: 1 },
-    media: { x: 1.5 * SCENE.width, y: -1.5 * SCENE.height, scale: 0.5, rotateX: 0, rotateZ: 0, opacity: 1 },
-    book:  { x: 1.5 * SCENE.width, y: 1.5 * SCENE.height, scale: 0.6, rotateX: 11, rotateZ: -8, opacity: 1 },
+    media: { x: 1.5 * SCENE.width, y: -1.5 * SCENE.height, scale: 0.65, rotateX: 0, rotateZ: 0, opacity: 1 },
+    book:  { x: 1.5 * SCENE.width, y: 1.5 * SCENE.height, scale: 0.55, rotateX: 11, rotateZ: -8, opacity: 1 },
   },
   default: {
-    phone: { x: -0.25 * SCENE.width, y: 0, scale: 0.8, rotateX: 2, rotateZ: -1, opacity: 1 },
-    media: { x: 0.15 * SCENE.width, y: -0.25 * SCENE.height, scale: 0.5, rotateX: 0, rotateZ: 0, opacity: 1 },
-    book:  { x: 0.1 * SCENE.width, y: 0.25 * SCENE.height, scale: 0.6, rotateX: 11, rotateZ: -8, opacity: 1 },
+    phone: { x: -0.22 * SCENE.width, y: -0.05 * SCENE.height, scale: 0.85, rotateX: 2, rotateZ: -1, opacity: 1 },
+    media: { x: 0.25 * SCENE.width, y: -0.2 * SCENE.height, scale: 0.6, rotateX: 0, rotateZ: 0, opacity: 1 },
+    book:  { x: 0, y: 0.25 * SCENE.height, scale: 0.6, rotateX: 11, rotateZ: -8, opacity: 1 },
   },
   left: {
     phone: { x: 0, y: 0, scale: 1, rotateX: 0, rotateZ: 0, opacity: 1 },
-    media: { x: 1.55 * SCENE.width, y: -0.25 * SCENE.height, scale: 0.5, rotateX: 0, rotateZ: 0, opacity: 0.1 },
+    media: { x: 1.55 * SCENE.width, y: -0.2 * SCENE.height, scale: 0.6, rotateX: 0, rotateZ: 0, opacity: 0.1 },
     book:  { x: 1.5 * SCENE.width, y: 0.25 * SCENE.height, scale: 0.6, rotateX: 11, rotateZ: -8, opacity: 0.1 },
   },
   "bottom-right": {
-    phone: { x: -1.5 * SCENE.width, y: 0, scale: 0.5, rotateX: 2, rotateZ: -1, opacity: 0.1 },
-    media: { x: 0.15 * SCENE.width, y: -1.5 * SCENE.height, scale: 0.5, rotateX: 0, rotateZ: 0, opacity: 0.1 },
-    book:  { x: 0, y: 0, scale: 1, rotateX: 0, rotateZ: 0, opacity: 1 },
+    phone: { x: -1.5 * SCENE.width, y: 0, scale: 0.85, rotateX: 2, rotateZ: -1, opacity: 0.1 },
+    media: { x: 0.15 * SCENE.width, y: -1.5 * SCENE.height, scale: 0.6, rotateX: 0, rotateZ: 0, opacity: 0.1 },
+    book:  { x: -0.02 * BOOK.width, y: 0, scale: 1, rotateX: 0, rotateZ: 0, opacity: 1 },
   },
 };
 

@@ -1,11 +1,15 @@
 "use client";
 
 import { useMemo, useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, scale } from "framer-motion";
 import Image from "next/image";
 import { useModalStore } from "@/stores/modalStore";
 import { type Artwork, getMedia } from "@/hooks/useCMS";
-import { ARTWORK_TYPE_COLORS, type ArtworkFilter, type ArtworkType } from "@/constants/artworks";
+import {
+  ARTWORK_TYPE_COLORS,
+  type ArtworkFilter,
+  type ArtworkType,
+} from "@/constants/artworks";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui";
 import { ScrollContainer } from "../layout";
@@ -107,49 +111,53 @@ export function MasonryGallery({
   return (
     <ScrollContainer
       ref={containerRef}
-      className="relative w-full h-full p-4 flex flex-col  gap-4 overflow-scroll scrollbar-thin"
+      className="relative w-full h-full p-4 flex flex-col gap-4 scrollbar-thin"
     >
-      {containerWidth > 0 && rows.map((row, rowIndex) => (
-        <motion.div
-          key={"row_" + rowIndex}
-          className="flex flex-row-reverse justify-start gap-4"
-          variants={staggerContainer}
-          initial="hidden"
-          animate="show"
-        >
-          {row.map(({ artwork, ratio }) => {
-            const imageUrl = getMedia(artwork.image)?.url;
+      {containerWidth > 0 &&
+        rows.map((row, rowIndex) => (
+          <motion.div
+            key={"row_" + rowIndex}
+            className="flex flex-row-reverse justify-start gap-4 w-full"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+          >
+            {row.map(({ artwork, ratio }) => {
+              const imageUrl = getMedia(artwork.image)?.url;
 
-            if (!imageUrl) return null;
+              if (!imageUrl) return null;
 
-            return (
-              <motion.div
-                key={artwork.id}
-                className="relative shrink-0 cursor-pointer overflow-hidden group"
-                style={{ height: rowHeight, aspectRatio: ratio }}
-                onClick={() => openModal("artwork", artwork)}
-                variants={staggerItem}
-              >
-                <Image
-                  src={imageUrl}
-                  alt={artwork.title || "Artwork"}
-                  fill
-                  className={cn(
-                    "object-cover transition-transform duration-300 group-hover:scale-105",
-                    artwork.isFeatured && "ring-2 ring-yellow-500/50",
-                  )}
-                />
+              return (
+                <motion.div
+                  key={artwork.id}
+                  className="relative shrink-0 cursor-pointer overflow-hidden group"
+                  style={{ height: rowHeight, aspectRatio: ratio }}
+                  onClick={() => openModal("artwork", artwork)}
+                  variants={staggerItem}
+                  whileHover={{ scale: 1.08 }}
+                >
+                  <Image
+                    src={imageUrl}
+                    alt={artwork.title || "Artwork"}
+                    fill
+                    className={cn(
+                      "object-cover transition-transform duration-300 group-hover:scale-105",
+                      artwork.isFeatured && "ring-2 ring-yellow-500/50",
+                    )}
+                  />
 
-                <Badge
-                  label={artwork.artworkType}
-                  colorClass={ARTWORK_TYPE_COLORS[artwork.artworkType as ArtworkType]}
-                  className="absolute top-2 left-2 z-10"
-                />
-              </motion.div>
-            );
-          })}
-        </motion.div>
-      ))}
+                  <Badge
+                    label={artwork.artworkType}
+                    colorClass={
+                      ARTWORK_TYPE_COLORS[artwork.artworkType as ArtworkType]
+                    }
+                    className="absolute top-2 left-2 z-10"
+                  />
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        ))}
 
       {filteredArtworks.length === 0 && (
         <div className="w-full py-12 text-center text-(--page-text)/40">

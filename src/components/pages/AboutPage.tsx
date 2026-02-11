@@ -102,7 +102,7 @@ function AboutRight({ index }: Readonly<LRProps>) {
   const currentModel = getModel(profile.currentModel);
 
   return (
-    <ScrollContainer className="h-full flex flex-col overflow-y-auto p-4 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20 items-center">
+    <ScrollContainer className="h-full flex flex-col p-4 scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20 items-center">
       <div className="flex flex-col w-full max-w-3xl gap-4 my-auto">
         <RefSheetCarousel refSheets={currentModel?.refSheets} />
 

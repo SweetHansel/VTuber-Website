@@ -41,7 +41,7 @@ export const ScrollContainer = forwardRef<HTMLDivElement, ScrollContainerProps>(
     return (
       <div
         ref={ref}
-        className={cn("overflow-auto overscroll-contain", className)}
+        className={cn("overflow-y-auto overflow-x-clip scrollbar-thin  overscroll-contain", className)}
         onWheel={handleWheel}
         {...props}
       >

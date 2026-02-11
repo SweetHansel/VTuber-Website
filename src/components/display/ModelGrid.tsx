@@ -22,7 +22,7 @@ export function ModelGrid({ models, selectedModelId, onSelect }: ModelGridProps)
   }
 
   return (
-    <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
+    <div className="flex-1 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
       <ScrollContainer>
         <motion.div
           className="grid grid-cols-4 gap-4 p-4"

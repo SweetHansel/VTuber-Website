@@ -103,7 +103,7 @@ function AboutRight({ index }: Readonly<LRProps>) {
 
   return (
     <ScrollContainer className="h-full flex flex-col p-4 scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20 items-center">
-      <div className="flex flex-col w-full max-w-3xl gap-4 my-auto">
+      <div className="flex flex-col w-full max-w-2xl gap-4 my-auto">
         <RefSheetCarousel refSheets={currentModel?.refSheets} />
 
         <div className="flex flex-col w-full max-w-lg gap-4 mx-auto">

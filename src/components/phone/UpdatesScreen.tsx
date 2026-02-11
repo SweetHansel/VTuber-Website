@@ -53,7 +53,7 @@ export function UpdatesScreen() {
             </div>
           </div>
           <motion.div
-            className="bg-(--phone-bg) flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-track-(--phone-surface)/5 scrollbar-thumb-(--phone-surface)/20"
+            className="bg-(--phone-bg) flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-track-(--phone-surface)/5 scrollbar-thumb-(--phone-surface)/20 transform-3d"
             variants={staggerContainer}
             initial="hidden"
             animate="show"

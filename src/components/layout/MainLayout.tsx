@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useLayoutStore, SCENE, BOOK, PHONE } from "@/stores/layoutStore";
 import { useComponentTransform } from "@/hooks/useComponentTransform";
-import { sceneSpring, idleFloat} from "@/constants/animations";
+import { sceneSpring } from "@/constants/animations";
 import { X } from "lucide-react";
 import { SongSeekbar } from "@/components/audio/SongSeekbar";
 import { LivestreamAlert } from "@/components/ui/LivestreamAlert";
@@ -12,6 +12,7 @@ import { LeftBar } from "./LeftBar";
 import { InteractiveMediaFromCMS } from "@/components/media";
 import { BookLayout } from "./BookLayout";
 import { PhoneLayout } from "./PhoneLayout";
+import { TiltCard } from "@/components/ui/TiltCard";
 import { useEffect, useRef } from "react";
 import { fadeVariants } from "@/constants/animations";
 
@@ -68,40 +69,40 @@ export function MainLayout({ children: _children }: Readonly<MainLayoutProps>) {
           <motion.div
             key={"book"}
             style={{ width: BOOK.width, height: BOOK.height }}
-            className="z-0 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+            className="z-0 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none perspective-distant"
             animate={bookTransform}
             transition={sceneSpring}
           >
-            <motion.div className="h-full w-full" variants={idleFloat} custom={{ duration: 4, delay: 0 }} animate="idle">
+            <TiltCard className="h-full w-full" tiltRange={2} idleAmplitude={5} idleDuration={4} disabled={focusState !== "default"}>
               <BookLayout />
-            </motion.div>
+            </TiltCard>
           </motion.div>
 
           <motion.div
             key={"media-position"}
             style={{ width: 1000, height: 1000 }}
-            className="z-0 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+            className="z-0 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none perspective-distant"
             animate={mediaTransform}
             transition={sceneSpring}
           >
-            <motion.div className="h-full w-full" variants={idleFloat} custom={{ duration: 4, delay: 1 }} animate="idle">
+            <TiltCard className="h-full w-full" tiltRange={6} idleAmplitude={5} idleDuration={4} idleDelay={1} disabled={focusState !== "default"}>
               <InteractiveMediaFromCMS
                 location="main-character"
                 className="h-full w-full pointer-events-auto"
               />
-            </motion.div>
+            </TiltCard>
           </motion.div>
 
           <motion.div
             key={"phone"}
             style={{ width: PHONE.width, height: PHONE.height }}
-            className="z-0 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+            className="z-0 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none perspective-distant"
             animate={phoneTransform}
             transition={sceneSpring}
           >
-            <motion.div className="h-full w-full" variants={idleFloat} custom={{ duration: 4, delay: 3 }} animate="idle">
+            <TiltCard className="h-full w-full" tiltRange={6} idleAmplitude={5} idleDuration={4} idleDelay={3} disabled={focusState !== "default"}>
               <PhoneLayout />
-            </motion.div>
+            </TiltCard>
           </motion.div>
         </div>
       </div>

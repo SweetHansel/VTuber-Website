@@ -52,7 +52,7 @@ export const defaultScenePresets: Record<FocusState, Record<ComponentId, Compone
   "bottom-right": {
     phone: { x: -1.5 * SCENE.width, y: 0, scale: 0.85, rotateX: 2, rotateZ: -1, opacity: 0.1 },
     media: { x: 0.15 * SCENE.width, y: -1.5 * SCENE.height, scale: 0.6, rotateX: 0, rotateZ: 0, opacity: 0.1 },
-    book:  { x: -0.02 * BOOK.width, y: 0, scale: 1, rotateX: 0, rotateZ: 0, opacity: 1 },
+    book:  { x: -0.01 * BOOK.width, y: 0, scale: 1, rotateX: 0, rotateZ: 0, opacity: 1 },
   },
 };
 

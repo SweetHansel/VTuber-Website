@@ -129,7 +129,7 @@ export function SongCard({ track }: Readonly<SongCardProps>) {
       </div>
 
       {/* Info */}
-      <div className="py-2">
+      <div className="pt-2">
         <h3 className="line-clamp-1 font-medium text-(--page-text)">{title}</h3>
         {originalArtist && (
           <p className="line-clamp-1 text-base text-(--page-text)/60">

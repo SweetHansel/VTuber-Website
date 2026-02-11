@@ -25,12 +25,12 @@ export function ModelGrid({ models, selectedModelId, onSelect }: ModelGridProps)
     <div className="flex-1 scrollbar-thin scrollbar-track-(--page-surface)/5 scrollbar-thumb-(--page-surface)/20">
       <ScrollContainer>
         <motion.div
-          className="grid grid-cols-4 gap-4 p-4"
+          className="grid grid-cols-3 gap-4 p-4"
           variants={staggerContainer}
           initial="hidden"
           animate="show"
         >
-          {Array(1)
+          {Array(3)
             .fill(models)
             .flat()
             .map((model, i) => (

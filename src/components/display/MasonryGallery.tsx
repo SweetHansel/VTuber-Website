@@ -104,58 +104,69 @@ export function MasonryGallery({
   }, [cmsArtworks, filter]);
 
   const rows = useMemo(
-    () => computeRows(filteredArtworks, containerWidth, rowHeight, 8),
+    () => computeRows(filteredArtworks, 0.9*containerWidth, rowHeight, 8),
     [filteredArtworks, containerWidth, rowHeight],
   );
 
   return (
     <ScrollContainer
       ref={containerRef}
-      className="relative w-full h-full p-4 flex flex-col gap-4 scrollbar-thin"
+      className="relative w-full h-full p-4 flex flex-col gap-4 transform-flat pr-10"
     >
       {containerWidth > 0 &&
         rows.map((row, rowIndex) => (
           <motion.div
-            key={"row_" + rowIndex}
-            className="flex flex-row-reverse justify-start gap-4 w-full"
-            variants={staggerContainer}
-            initial="hidden"
-            animate="show"
+          className="w-full flex flex-row-reverse justify-start"
+            animate={{ x: [-30, 0, -30] }}
+            transition={{
+              duration: 12,
+              delay: -rowIndex*3,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
           >
-            {row.map(({ artwork, ratio }) => {
-              const imageUrl = getMedia(artwork.image)?.url;
+            <motion.div
+              key={"row_" + rowIndex}
+              className="flex flex-row-reverse justify-start gap-4 w-[90%]"
+              variants={staggerContainer}
+              initial="hidden"
+              animate="show"
+              whileHover={{ scale: 1.08, z: 10}}
+            >
+              {row.map(({ artwork, ratio }) => {
+                const imageUrl = getMedia(artwork.image)?.url;
 
-              if (!imageUrl) return null;
+                if (!imageUrl) return null;
 
-              return (
-                <motion.div
-                  key={artwork.id}
-                  className="relative shrink-0 cursor-pointer overflow-hidden group"
-                  style={{ height: rowHeight, aspectRatio: ratio }}
-                  onClick={() => openModal("artwork", artwork)}
-                  variants={staggerItem}
-                  whileHover={{ scale: 1.08 }}
-                >
-                  <Image
-                    src={imageUrl}
-                    alt={artwork.title || "Artwork"}
-                    fill
-                    className={cn(
-                      "object-cover transition-transform duration-300 group-hover:scale-105",
-                      artwork.isFeatured && "ring-2 ring-yellow-500/50",
-                    )}
-                  />
+                return (
+                  <motion.div
+                    key={artwork.id}
+                    className="relative shrink-0 cursor-pointer overflow-hidden group"
+                    style={{ height: rowHeight, aspectRatio: ratio }}
+                    onClick={() => openModal("artwork", artwork)}
+                    variants={staggerItem}
+                  >
+                    <Image
+                      src={imageUrl}
+                      alt={artwork.title || "Artwork"}
+                      fill
+                      className={cn(
+                        "object-cover transition-transform duration-300 group-hover:scale-105",
+                        artwork.isFeatured && "ring-2 ring-yellow-500/50",
+                      )}
+                    />
 
-                  <Badge
-                    label={artwork.artworkType}
-                    colorClass={
-                      ARTWORK_TYPE_COLORS[artwork.artworkType as ArtworkType]
-                    }
-                    className="absolute top-2 left-2 z-10"
-                  />
-                </motion.div>
-              );
-            })}
+                    <Badge
+                      label={artwork.artworkType}
+                      colorClass={
+                        ARTWORK_TYPE_COLORS[artwork.artworkType as ArtworkType]
+                      }
+                      className="absolute top-2 left-2 z-10"
+                    />
+                  </motion.div>
+                );
+              })}
+            </motion.div>
           </motion.div>
         ))}
 

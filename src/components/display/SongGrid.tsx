@@ -60,8 +60,8 @@ export function SongGrid({
   }, [filteredTracks, currentTrack, setTrack])
 
   return (
-    <motion.div className="grid gap-4 grid-cols-4" variants={staggerContainer} initial="hidden" animate="show">
-      {Array(1).fill(filteredTracks).flat().map((track, index) => (
+    <motion.div className="grid gap-8 grid-cols-3" variants={staggerContainer} initial="hidden" animate="show">
+      {Array(4).fill(filteredTracks).flat().map((track, index) => (
         <motion.div
           key={index +"_"+track.id}
           variants={staggerItem}

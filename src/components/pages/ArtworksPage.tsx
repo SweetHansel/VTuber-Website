@@ -17,7 +17,7 @@ function ArtworksLeft({ index }: Readonly<LRProps>) {
       index={index}
       min={100}
       max={200}
-      className="absolute h-full oveflow-clip mask-r-from-75% mask-r-to-100%"
+      className="absolute h-full oveflow-clip mask-r-from-50% mask-r-to-100%"
     >
       <InteractiveMediaFromCMS
         location="page-artworks"
@@ -38,10 +38,10 @@ function ArtworksRight({ index }: Readonly<LRProps>) {
       index={index}
       min={100}
       max={200}
-      className="absolute h-full right-0 mask-l-from-75% mask-l-to-100%"
+      className="absolute h-full right-0 mask-l-from-50% mask-l-to-100%"
     >
       {/* Gallery */}
-      <div className="absolute h-full aspect-11/9 right-0">
+      <div className="absolute h-full aspect-12/9 right-0">
         {loading || !artworks ? (
           <div className="flex h-full w-full items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-(--page-text)/40" />

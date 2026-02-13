@@ -65,6 +65,10 @@ export function Modal() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 8 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            
           >
             <div className="relative rounded-2xl bg-(--modal-bg) p-4 shadow-2xl">
               {/* Close button */}

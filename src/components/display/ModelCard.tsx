@@ -69,7 +69,7 @@ export function ModelCard({ model, selected, onClick }: ModelCardProps) {
       )}
     >
       {/* Thumbnail */}
-      <div className="relative aspect-3/4 w-full overflow-hidden">
+      <div className="relative aspect-3/5 w-full overflow-hidden">
         <Image
           src={cardData.thumbnail}
           alt={model.name}
@@ -87,14 +87,14 @@ export function ModelCard({ model, selected, onClick }: ModelCardProps) {
           colorClass={MODEL_TYPE_COLORS[model.modelType as ModelType]}
           className="top-4 left-2 relative"
         />
-      </div>
 
-      {/* Info */}
-      <div className=" p-4 ">
-        <h3 className="font-medium text-(--page-text)">{model.name}</h3>
-        {model.version && (
-          <p className="text-base text-(--page-text)/60">v{model.version}</p>
-        )}
+        {/* Info */}
+        <div className="p-4 absolute bottom-0 w-full bg-linear-to-t from-(--page-surface)/20">
+          <h3 className="font-medium text-(--page-text)">{model.name}</h3>
+          {model.version && (
+            <p className="text-base text-(--page-text)/60">v{model.version}</p>
+          )}
+        </div>
       </div>
     </motion.div>
   );

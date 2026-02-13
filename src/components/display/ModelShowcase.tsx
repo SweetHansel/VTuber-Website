@@ -64,9 +64,9 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
   const currentMedia = getMedia(currentItem.media);
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="relative flex h-[80%]  w-[80%] flex-col p-10 bg-(--page-surface)/10 rounded-xl">
       {/* Model name */}
-      <div className="mb-3 flex items-center justify-center  gap-4 ">
+      <div className="mb-3 flex items-center justify-center gap-4 ">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-(--page-text)">
             {model.name}
@@ -75,14 +75,16 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
             <p className="text-xl text-(--page-text)/60">v{model.version}</p>
           )}
         </div>
+      </div>
+
+      
         <button
           onClick={handleOpenDetails}
-          className="rounded-full p-4 text-(--page-text)/60 transition-colors hover:bg-(--page-surface)/10 hover:text-(--page-text)"
+          className="absolute top-2 left-2 rounded-full p-4 text-(--page-text)/60 transition-colors hover:bg-(--page-surface)/10 hover:text-(--page-text)"
           title="View details"
         >
           <Info className="h-8 w-8" />
         </button>
-      </div>
 
       {/* Image container */}
       <div className="relative flex-1 min-h-0">
@@ -94,6 +96,7 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
             className="object-contain"
           />
         </div>
+
 
         {/* Navigation buttons */}
         {hasMultiple && (

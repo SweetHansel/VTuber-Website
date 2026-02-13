@@ -17,7 +17,7 @@ type ModelTab = "2d" | "3d";
 function VTuberModelsLeft() {
   const model = useModelShowcaseStore((state) => state.selectedModel);
   return (
-    <div className="h-full w-full p-4 ">
+    <div className="h-full w-full p-4 flex justify-center items-center">
       <ModelShowcase model={model} />
     </div>
   );

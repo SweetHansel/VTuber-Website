@@ -30,10 +30,7 @@ export function ModelGrid({ models, selectedModelId, onSelect }: ModelGridProps)
           initial="hidden"
           animate="show"
         >
-          {Array(3)
-            .fill(models)
-            .flat()
-            .map((model, i) => (
+          {models.map((model, i) => (
               <motion.div key={`${model.id}-${i}`} variants={staggerItem}>
                 <ModelCard
                   model={model}

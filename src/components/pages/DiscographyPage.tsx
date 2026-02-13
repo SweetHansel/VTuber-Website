@@ -60,7 +60,7 @@ function DiscographyLeft({ index }: Readonly<LRProps>) {
             <div className="flex w-full max-w-2xl max-h-[980px] h-full flex-col gap-4 overflow-visible perspective-distant">
               <TiltCard className="flex-1 gap-4 flex-col flex overflow-hidden" tiltRange={8} idleAmplitude={3}>
                 <div className="px-4 py-3 rounded-xl bg-(--page-surface)/5">
-                  <h1 className="text-2xl mx-5 font-bold text-(--page-text)">
+                  <h1 className="text-2xl mx-3 font-bold text-(--page-text)">
                     Cover
                   </h1>
                 </div>
@@ -70,7 +70,7 @@ function DiscographyLeft({ index }: Readonly<LRProps>) {
               </TiltCard>
               <TiltCard className="flex-1 gap-4 flex-col flex overflow-hidden" tiltRange={8} idleAmplitude={3}>
                 <div className="px-4 py-3 rounded-xl bg-(--page-surface)/5">
-                  <h1 className="text-2xl mx-5 font-bold text-(--page-text)">
+                  <h1 className="text-2xl mx-3 font-bold text-(--page-text)">
                     Originals
                   </h1>
                 </div>

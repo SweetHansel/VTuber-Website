@@ -49,6 +49,7 @@ export function Modal() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
+             onClick={(e)=>{e.stopPropagation()}}
           />
         )}
       </AnimatePresence>
@@ -59,7 +60,7 @@ export function Modal() {
           <motion.div
             key="modal-content"
             className="fixed left-1/2 top-1/2 z-50 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 px-4"
-            onClick={(e)=>{e.stopPropagation()}}
+           
             initial={{ opacity: 0, scale: 0.95, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 8 }}

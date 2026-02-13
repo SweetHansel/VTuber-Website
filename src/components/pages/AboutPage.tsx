@@ -70,7 +70,7 @@ function AboutLeft({ index, onNavigate }: Readonly<LRProps>) {
         onClick={() => {
           onNavigate(4);
         }}
-        className="rounded-full bg-(--page-surface)/10 px-4 py-2 text-base font-medium text-(--page-text) transition-colors hover:bg-(--page-surface)/20"
+        className="rounded-full bg-(--page-surface)/10 px-4 py-2 text-xl font-medium text-(--page-text) transition-colors hover:bg-(--page-surface)/20"
       >
         View All Models →
       </button>

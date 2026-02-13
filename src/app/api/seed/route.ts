@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     // ============================================
     // STEP 1: Upload all media files from public/
     // ============================================
-    const publicDir = path.join(process.cwd(), 'public')
+    const publicDir = path.join(process.cwd(), 'seed')
     const files = fs.readdirSync(publicDir).filter(f => {
       const ext = path.extname(f).toLowerCase()
       return ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.mp3', '.wav', '.mp4', '.webm'].includes(ext)

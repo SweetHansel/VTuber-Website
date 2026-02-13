@@ -12,8 +12,7 @@ import { SongModalContent } from "./modals/SongModal";
 import type { Artwork, Post, MusicTrack, Model, Person } from "@/payload-types";
 
 export function Modal() {
-  const { isOpen, modalType, contentData, closeModal } =
-    useModalStore();
+  const { isOpen, modalType, contentData, closeModal } = useModalStore();
 
   // Close on escape
   useEffect(() => {
@@ -43,13 +42,15 @@ export function Modal() {
         {isOpen && (
           <motion.div
             key="modal-backdrop"
-            onClick={closeModal}
             className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-             onClick={(e)=>{e.stopPropagation()}}
+            onClick={(e) => {
+              closeModal();
+              e.stopPropagation();
+            }}
           />
         )}
       </AnimatePresence>
@@ -60,7 +61,6 @@ export function Modal() {
           <motion.div
             key="modal-content"
             className="fixed left-1/2 top-1/2 z-50 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 px-4"
-           
             initial={{ opacity: 0, scale: 0.95, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 8 }}
@@ -76,10 +76,7 @@ export function Modal() {
               </button>
 
               {/* Content based on type */}
-              <ModalContent
-                type={modalType}
-                data={contentData}
-              />
+              <ModalContent type={modalType} data={contentData} />
             </div>
           </motion.div>
         )}

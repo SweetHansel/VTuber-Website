@@ -44,7 +44,7 @@ export function LivestreamAlert() {
       {showAlert && (
         <motion.div
           className={cn(
-            "fixed z-50 overflow-hidden rounded-xl shadow-2xl",
+            "fixed z-50 rounded-xl shadow-2xl",
             "bottom-24 right-4 w-72 md:bottom-20 md:w-80",
           )}
           initial={{ opacity: 0, y: 24, scale: 0.95 }}
@@ -54,13 +54,15 @@ export function LivestreamAlert() {
         >
           {/* Pulse animation */}
           <motion.div
-            className="absolute inset-0 rounded-xl border-2 border-red-500"
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute inset-0 rounded-xl border-3 border-red-500"
+            animate={{
+              opacity: [0.5, 0],
+              scale: [1, 1.06],
+            }}
+            transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
           />
           {/* Background with gradient border */}
-          <div className="relative bg-linear-to-br from-red-600 to-blue-600 p-4 .5">
-            <div className="relative bg-(--modal-bg) p-4 ">
+            <div className="relative rounded-xl bg-(--modal-bg) p-4 ">
               {/* Close button */}
               <button
                 onClick={() => hideAlertBanner()}
@@ -102,7 +104,7 @@ export function LivestreamAlert() {
               )}
 
               {/* Stream info */}
-              <h3 className="mb-1 line-clam p-4 text-base font-medium text-(--modal-text)">
+              <h3 className="mb-1 line-clamp-1 text-base font-medium text-(--modal-text)">
                 {primaryStream.title}
               </h3>
               <p className="mb-3 text-sm text-(--modal-text)/60">
@@ -121,7 +123,6 @@ export function LivestreamAlert() {
                 Watch Now
               </a>
             </div>
-          </div>
         </motion.div>
       )}
     </AnimatePresence>

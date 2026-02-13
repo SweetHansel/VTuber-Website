@@ -59,6 +59,8 @@ export function SongCard({ track }: Readonly<SongCardProps>) {
 
   return (
     <motion.div
+      layout
+      key={id}
       onClick={handleCardClick}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}

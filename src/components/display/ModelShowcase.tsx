@@ -68,7 +68,9 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
       {/* Model name */}
       <div className="mb-3 flex items-center justify-center  gap-4 ">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-(--page-text)">{model.name}</h2>
+          <h2 className="text-3xl font-bold text-(--page-text)">
+            {model.name}
+          </h2>
           {model.version && (
             <p className="text-xl text-(--page-text)/60">v{model.version}</p>
           )}
@@ -84,16 +86,14 @@ export function ModelShowcase({ model }: Readonly<ModelShowcaseProps>) {
 
       {/* Image container */}
       <div className="relative flex-1 min-h-0">
-        <AnimatePresence mode="wait">
-          <motion.div key={currentIndex} className="absolute inset-0">
-            <Image
-              src={currentMedia?.url || "/placeholder-model.png"}
-              alt={currentItem.caption || model.name}
-              fill
-              className="object-contain"
-            />
-          </motion.div>
-        </AnimatePresence>
+        <div key={currentIndex} className="absolute inset-0">
+          <Image
+            src={currentMedia?.url || "/placeholder-model.png"}
+            alt={currentItem.caption || model.name}
+            fill
+            className="object-contain"
+          />
+        </div>
 
         {/* Navigation buttons */}
         {hasMultiple && (

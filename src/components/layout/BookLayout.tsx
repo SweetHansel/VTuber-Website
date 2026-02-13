@@ -169,7 +169,7 @@ export function BookLayout() {
             hover:border-t-(--page-surface)/40 transition-colors"
             aria-label="ToC"
           >
-            <ListTree className="absolute -top-4 .5 left-1.25 w-4 h-4 text-(--page-text)/60" />
+            <ListTree className="absolute -top-12.5 left-1.25 w-4 h-4 text-(--page-text)/60" />
           </button>
         </motion.div>
 

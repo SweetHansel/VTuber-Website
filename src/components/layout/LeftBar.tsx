@@ -68,18 +68,18 @@ export function LeftBar() {
   }
 
   return (
-    <div className="fixed left-0 h-full top-1/2 z-50 -translate-y-1/2 flex flex-col  gap-4 justify-center">
+    <div className="fixed left-0 h-full top-1/2 z-50 -translate-y-1/2 flex flex-col gap-4 justify-center">
       {socialLinks.map((link) => (
         <a
           key={link.name}
           href={link.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="group relative flex h-[15%] w-12 items-center justify-center rounded-r-xl bg-black/60 text-white/70 transition-colors duration-300 hover:bg-black/70 hover:text-white"
+          className="group relative flex flex-1 max-h-[15%] w-12 items-center justify-center rounded-r-xl bg-black/60 text-white/70 transition-colors duration-300 hover:bg-black/70 hover:text-white"
           aria-label={link.name}
         >
-          <div className="rotate-90 flex  flex-row  gap-4 ">
-            <h1 className="text-white text-base">{link.name}</h1>
+          <div className="relative flex flex-col gap-4 ">
+            <h1 className="[writing-mode:vertical-lr] max-h-[70%] line-clamp-1 text-white text-base">{link.name}</h1>
             <link.icon className="h-5 w-5" />
           </div>
 

@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "engines": {
-    "node": "^20.0.0"
-  },
   "//":"currently using migrate fresh as a way to simplify dev, will remove alter at production lol",
   "scripts": {
     "dev": "next dev --experimental-https",
